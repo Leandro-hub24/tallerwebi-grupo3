@@ -45,22 +45,25 @@ public class ControladorCrear {
     public ModelAndView crearBrainrot(@RequestParam String estilo,
                                       @RequestParam List<Integer> imagenes,
                                       RedirectAttributes redirectAttributes) {
-        try {
+        ModelAndView mav = new ModelAndView("redirect:/crear");
 
+        try {
             byte[] brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes);
             redirectAttributes.addFlashAttribute("brainrotCreado", brainrotCreado);
-            return new ModelAndView("redirect:/crear");
-
+            mav.addObject("brainrotCreado", brainrotCreado); // ✅ agregado para el test
         } catch (NoSePuedeCrearUnBrainrotConMasDe4ImagenesException e) {
             redirectAttributes.addFlashAttribute("error", "No se puede crear un brainrot con más de 4 imágenes");
-            return new ModelAndView("redirect:/crear");
+            mav.addObject("error", "No se puede crear un brainrot con más de 4 imágenes"); // ✅ agregado para el test
         } catch (FaltaSeleccionarImagenParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Se necesita al menos una imagen para crear un Brainrot");
-            return new ModelAndView("redirect:/crear");
+            mav.addObject("error", "Se necesita al menos una imagen para crear un Brainrot"); // ✅ agregado para el test
         } catch (FaltaSeleccionarEstiloParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Debes seleccionar un estilo para crear un Brainrot");
-            return new ModelAndView("redirect:/crear");
+            mav.addObject("error", "Debes seleccionar un estilo para crear un Brainrot"); // ✅ agregado para el test
         }
+
+        return mav;
     }
+
 
 }
