@@ -26,23 +26,24 @@ public class ControladorCrearTest {
     void siEnviaMasDe4ImagenesMuestraError() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
         givenExisteUsuario();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
-        ModelAndView mav = whenUsuarioEnvia5ImagenesYEstilo(imagenes, "monstruoso");
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        ModelAndView mav = whenUsuarioEnvia5ImagenesYEstilo(imagenes, "monstruoso", redirectAttributes);
+        verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
         thenMuestraError(mav);
     }
 
-    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
+    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
         when(servicioCrear.crearBrainrot(estilo, imagenes)).thenThrow(new NoSePuedeCrearUnBrainrotConMasDe4ImagenesException("error"));
-        return EnviaImagenesYEstilo(imagenes, estilo);
+        return EnviaImagenesYEstilo(imagenes, estilo, redirectAttributes);
     }
 
-    private ModelAndView EnviaImagenesYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarEstiloParaCrearBrainrotException {
-        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+    private ModelAndView EnviaImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws FaltaSeleccionarImagenParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarEstiloParaCrearBrainrotException {
         ModelAndView mav = controladorCrear.crearBrainrot(estilo, imagenes, redirectAttributes);
         return mav;
     }
 
     private void thenMuestraError(ModelAndView mav) {
-        assertEquals("crear", mav.getViewName());
+        assertEquals("redirect:/crear", mav.getViewName());
         assertTrue(mav.getModel().containsKey("error"));
     }
 
@@ -50,12 +51,13 @@ public class ControladorCrearTest {
     void siEnvia2ImagenesYEstiloCreaBrainrot() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
         givenExisteUsuario();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
-        ModelAndView mav = EnviaImagenesYEstilo(imagenes, "monstruoso");
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        ModelAndView mav = EnviaImagenesYEstilo(imagenes, "monstruoso", redirectAttributes);
         thenCreaBrainrotYLoMuestra(mav);
     }
 
     private void thenCreaBrainrotYLoMuestra(ModelAndView mav) {
-        assertEquals("crear", mav.getViewName());
+        assertEquals("redirect:/crear", mav.getViewName());
         assertTrue(mav.getModel().containsKey("brainrotCreado"));
     }
 
