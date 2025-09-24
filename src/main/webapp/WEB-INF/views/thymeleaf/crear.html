@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crear Brainrot</title>
+    <!-- ✅ Bootstrap 5.2 desde webjars -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <style>
+        .imagen-seleccionada {
+            border: 2px solid #007bff;
+        }
+        .imagen-opcion {
+            cursor: pointer;
+            transition: transform 0.2s;
+            max-width: 100px;
+        }
+        .imagen-opcion:hover {
+            transform: scale(1.05);
+        }
+        .resultado-brainrot {
+            width: 100%;
+            height: 400px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .resultado-brainrot img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Crear Brainrot</h2>
+
+    <!-- ✅ Mensaje de error -->
+    <div th:if="${error != null}" class="alert alert-danger text-center" th:text="${error}"></div>
+
+    <div class="row">
+        <!-- Panel de selección -->
+        <div class="col-md-6">
+            <form th:action="@{/crear}" method="post">
+                <!-- Selección de imágenes -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Selecciona imágenes:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <!-- Lista de imágenes precargadas -->
+                        <img th:each="img : ${imagenesDisponibles}" th:src="@{${img.url}}"
+                             th:alt="${img.nombre}"
+                             th:data-id="${img.id}"
+                             class="img-thumbnail imagen-opcion"
+                             onclick="toggleSeleccion(this)">
+                    </div>
+                    <input type="hidden" name="imagenes" id="imagenesSeleccionadas">
+                </div>
+
+                <!-- Selección de estilo -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Selecciona un estilo:</label>
+                    <select class="form-select" name="estilo" required>
+                        <option value="">-- Elige un estilo --</option>
+                        <option value="monstruoso">Monstruoso</option>
+                        <option value="romantico">Romántico</option>
+                        <option value="elegante">Elegante</option>
+                        <option value="abstracto">Abstracto</option>
+                    </select>
+                </div>
+
+                <!-- Botón crear -->
+                <button type="submit" class="btn btn-primary w-100">Crear Brainrot</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-bold">Resultado:</label>
+            <div class="resultado-brainrot">
+                <img th:if="${brainrot != null}" th:src="@{/img/${brainrot}}" alt="Brainrot generado">
+                <span th:if="${brainrot == null}" class="text-muted">Aquí se mostrará tu Brainrot</span>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{js/crear_funciones.js}"></script>
+
+</body>
+</html>

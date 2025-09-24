@@ -1,8 +1,5 @@
-package com.tallerwebi.dominiogonza;
+package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.RepositorioCrear;
-import com.tallerwebi.dominio.ServicioCrear;
-import com.tallerwebi.dominio.ServicioCrearImpl;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
