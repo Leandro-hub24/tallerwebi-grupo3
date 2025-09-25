@@ -50,16 +50,16 @@ public class ControladorCrear {
         try {
             byte[] brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes);
             redirectAttributes.addFlashAttribute("brainrotCreado", brainrotCreado);
-            mav.addObject("brainrotCreado", brainrotCreado); // ✅ agregado para el test
+            mav.addObject("brainrotCreado", brainrotCreado);
         } catch (NoSePuedeCrearUnBrainrotConMasDe4ImagenesException e) {
             redirectAttributes.addFlashAttribute("error", "No se puede crear un brainrot con más de 4 imágenes");
-            mav.addObject("error", "No se puede crear un brainrot con más de 4 imágenes"); // ✅ agregado para el test
+            mav.addObject("error", "No se puede crear un brainrot con más de 4 imágenes");
         } catch (FaltaSeleccionarImagenParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Se necesita al menos una imagen para crear un Brainrot");
-            mav.addObject("error", "Se necesita al menos una imagen para crear un Brainrot"); // ✅ agregado para el test
+            mav.addObject("error", "Se necesita al menos una imagen para crear un Brainrot");
         } catch (FaltaSeleccionarEstiloParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Debes seleccionar un estilo para crear un Brainrot");
-            mav.addObject("error", "Debes seleccionar un estilo para crear un Brainrot"); // ✅ agregado para el test
+            mav.addObject("error", "Debes seleccionar un estilo para crear un Brainrot");
         }
 
         return mav;
