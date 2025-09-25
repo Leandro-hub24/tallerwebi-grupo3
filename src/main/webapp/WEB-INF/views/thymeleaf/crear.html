@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Crear Brainrot</title>
-    <!-- ✅ Bootstrap 5.2 desde webjars -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <style>
         .imagen-seleccionada {
@@ -40,18 +39,15 @@
 <div class="container mt-5">
     <h2 class="mb-4 text-center">Crear Brainrot</h2>
 
-    <!-- ✅ Mensaje de error -->
+
     <div th:if="${error != null}" class="alert alert-danger text-center" th:text="${error}"></div>
 
     <div class="row">
-        <!-- Panel de selección -->
         <div class="col-md-6">
             <form th:action="@{/crear}" method="post">
-                <!-- Selección de imágenes -->
                 <div class="mb-3">
                     <label class="form-label fw-bold">Selecciona imágenes:</label>
                     <div class="d-flex flex-wrap gap-2">
-                        <!-- Lista de imágenes precargadas -->
                         <img th:each="img : ${imagenesDisponibles}" th:src="@{${img.url}}"
                              th:alt="${img.nombre}"
                              th:data-id="${img.id}"
@@ -61,7 +57,6 @@
                     <input type="hidden" name="imagenes" id="imagenesSeleccionadas">
                 </div>
 
-                <!-- Selección de estilo -->
                 <div class="mb-3">
                     <label class="form-label fw-bold">Selecciona un estilo:</label>
                     <select class="form-select" name="estilo" required>
@@ -73,7 +68,6 @@
                     </select>
                 </div>
 
-                <!-- Botón crear -->
                 <button type="submit" class="btn btn-primary w-100">Crear Brainrot</button>
             </form>
         </div>
