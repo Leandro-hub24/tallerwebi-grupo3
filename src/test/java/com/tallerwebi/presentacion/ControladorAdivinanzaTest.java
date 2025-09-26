@@ -24,7 +24,7 @@ public class ControladorAdivinanzaTest {
 
     @Test
     public void debeRetornarVistaOpcionIncorrecta() {
-        // Preparación
+     // Preparación
 
         givenHayControladores();
 
