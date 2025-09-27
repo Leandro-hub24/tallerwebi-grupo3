@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 
 public class ServicioAdivinanzaTest {
 
-    SessionFactory sessionFactory;
+
     Usuario usuario = new Usuario();
 
     RepositorioUsuario repositorioUsuario = mock(RepositorioUsuario.class);

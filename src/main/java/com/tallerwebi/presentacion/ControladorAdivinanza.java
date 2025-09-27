@@ -28,6 +28,11 @@ public class ControladorAdivinanza {
         return new ModelAndView("Opcion-incorrecta");
     }
 
+    @RequestMapping(path = "/adivinanza-por-voz", method = RequestMethod.GET)
+    public ModelAndView irAAdivinanzaVoz() {
+        return new ModelAndView("adivinanza-por-voz");
+    }
+
 
 
 }

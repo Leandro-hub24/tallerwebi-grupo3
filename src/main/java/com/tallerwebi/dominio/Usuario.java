@@ -16,7 +16,7 @@ public class Usuario {
     private String rol;
     private Boolean activo = false;
     private Long rompezabezaNivel;
-    private int puntajeAdivinanza = 0;
+    private Integer puntajeAdivinanza;
 
     public Long getId() {
         return id;
@@ -55,9 +55,9 @@ public class Usuario {
         this.rompezabezaNivel = rompezabezaNivel;
     }
 
-    public int getPuntajeAdivinanza() {return puntajeAdivinanza;}
+    public Integer getPuntajeAdivinanza() {return puntajeAdivinanza;}
 
-    public void setPuntajeAdivinanza(int puntajeAdivinanza) {this.puntajeAdivinanza = puntajeAdivinanza;}
+    public void setPuntajeAdivinanza(Integer puntajeAdivinanza) {this.puntajeAdivinanza = puntajeAdivinanza;}
 
     public boolean activo() {
         return activo;
