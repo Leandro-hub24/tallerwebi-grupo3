@@ -10,8 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 
 @Controller
-public class ControladorVersus {
-
+public class ControladorAdivinanzaVoz {
     // Mapa de imágenes y sus nombres (sin extensión)
     private final Map<String, String> imagenes = new LinkedHashMap<>() {{
         put("bellerina-cappuccina", "Ballerina Capuccina");
@@ -27,36 +26,34 @@ public class ControladorVersus {
         put("tuntuntunsahur", "Tuntuntun Sahur");
     }};
 
-    @GetMapping("/versus")
+    @GetMapping("/adivinanza-por-voz")
     public ModelAndView mostrarVersus() {
-        // Seleccionar una imagen aleatoria
         List<String> nombresArchivos = new ArrayList<>(imagenes.keySet());
         String nombreArchivo = nombresArchivos.get(new Random().nextInt(nombresArchivos.size()));
         String respuestaCorrecta = imagenes.get(nombreArchivo);
 
-        // Crear opciones de respuesta (mezcladas)
-        List<String> opciones = new ArrayList<>(imagenes.values());
-        Collections.shuffle(opciones);
-
         ModelMap model = new ModelMap();
         model.put("imagen", "/img/versus/" + nombreArchivo + ".png");
-        model.put("opciones", opciones.subList(0, 5)); // Tomar solo 3 opciones
         model.put("imagenActual", nombreArchivo);
-        return new ModelAndView("versus", model);
+        return new ModelAndView("adivinanza-por-voz", model);
+
     }
 
-    @PostMapping("/versus/verificar")
-    public ModelAndView verificarRespuesta(
-            @RequestParam String respuesta,
+    @PostMapping("/adivinanza-por-voz/resultado-versus")
+    public ModelAndView verificarPorVoz(
+            @RequestParam String transcripcion,
             @RequestParam String imagenActual) {
 
-        boolean esCorrecto = respuesta.equals(imagenes.get(imagenActual));
+        String respuestaCorrecta = imagenes.get(imagenActual);
+        boolean esCorrecto = transcripcion.equalsIgnoreCase(respuestaCorrecta);
+
         ModelAndView model = new ModelAndView("resultado-versus");
         model.addObject("esCorrecto", esCorrecto);
-        model.addObject("respuestaCorrecta", imagenes.get(imagenActual));
+        model.addObject("respuestaCorrecta", respuestaCorrecta);
         model.addObject("imagen", "/img/versus/" + imagenActual + ".png");
         return model;
     }
+
 
 
 }
