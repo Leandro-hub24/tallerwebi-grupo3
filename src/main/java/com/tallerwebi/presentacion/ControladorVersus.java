@@ -25,6 +25,7 @@ public class ControladorVersus {
         put("saturno-saturnita", "Saturno Saturnita");
         put("tralalero", "Tralalero Tralala");
         put("tuntuntunsahur", "Tuntuntun Sahur");
+
     }};
 
     @GetMapping("/versus")

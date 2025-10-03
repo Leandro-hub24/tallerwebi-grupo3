@@ -46,9 +46,10 @@
 
         </div>
 
-        <form id="formVoz" action="/adivinanza-por-voz/verificar2" method="post" style="display: none;">
-            <input type="hidden" name="transcripcion" id="inputTranscripcion">
-            <input type="hidden" name="imagenActual" th:value="${imagenActual}">
+        <form id="formVoz" th:action="@{/adivinanza-por-voz/verificar2}" method="post">
+            <input  type="hidden" name="transcripcion" id="inputTranscripcion">
+            <input  type="hidden"  id="inputImagenActual" name="imagenActual" th:value="${imagenActual}">
+            <input  type="hidden" name="aliasDetectado" id="inputAliasDetectado">
         </form>
 
     </div>
@@ -61,7 +62,7 @@
         crossorigin="anonymous"></script>
 <script th:src="@{/resources/core/js/textToSpeech.js}"></script>
 </body>
-
+|
 
 
 </html>

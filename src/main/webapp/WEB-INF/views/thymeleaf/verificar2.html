@@ -30,6 +30,20 @@
                     </span>
                 ¡Sigue practicando!
             </p>
+            <div class="container mt-4">
+                <div class="alert" th:classappend="${esCorrecto} ? 'alert-success' : 'alert-danger'">
+                    <h4 th:text="${esCorrecto} ? '✅ ¡Correcto!' : '❌ Incorrecto'"></h4>
+                    <p><strong>Lo que dijiste:</strong> <span th:text="${transcripcion}">texto dicho</span></p>
+                    <p><strong>Respuesta esperada:</strong> <span th:text="${respuestaCorrecta}">respuesta</span></p>
+                </div>
+                <div>
+                    <p><strong>Alias reconocido:</strong> <span th:text="${aliasDetectado}">[alias]</span></p>
+                </div>
+
+                <div class="text-center">
+                    <img th:src="@{${imagen}}" class="img-fluid" alt="Imagen de la adivinanza"/>
+                </div>
+            </div>
 
             <div class="mt-4">
                 <a href="/spring/versus" class="btn btn-primary btn-lg">Jugar otra vez</a>
