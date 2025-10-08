@@ -29,7 +29,7 @@ public class ControladorVersusTest {
         assertThat(modelAndView.getModel().get("imagen"), is(notNullValue()));
 
         List<?> opciones = (List<?>) modelAndView.getModel().get("opciones");
-        assertThat(opciones, hasSize(10));
+        assertThat(opciones, hasSize(4));
 
         // Verificar que la imagen existe en la ruta
         String rutaImagen = (String) modelAndView.getModel().get("imagen");
@@ -40,27 +40,29 @@ public class ControladorVersusTest {
     @Test
     public void queVerificaRespuestaCorrecta() {
         // Configuración
-        String nombreArchivo = "tuntuntunsahur";
-        String respuestaCorrecta = "Tuntuntun Sahur";
+        String nombreArchivo = "Tralalero tralala";
+        String respuestaCorrecta = "Tralalero tralala";
+        String imagenActualCompleta = "tralalerocom";
 
         // Ejecución
-        ModelAndView modelAndView = controladorVersus.verificarRespuesta(respuestaCorrecta, nombreArchivo);
+        ModelAndView modelAndView = controladorVersus.verificarRespuesta(respuestaCorrecta, imagenActualCompleta, nombreArchivo);
 
         // Verificación
         assertThat(modelAndView.getViewName(), equalTo("resultado-versus"));
         assertThat(modelAndView.getModel().get("esCorrecto"), is(true));
         assertThat(modelAndView.getModel().get("respuestaCorrecta"), equalTo(respuestaCorrecta));
-        assertThat(modelAndView.getModel().get("imagen"), equalTo("/img/versus/" + nombreArchivo + ".png"));
+        assertThat(modelAndView.getModel().get("imagen"), equalTo("/img/versus/" + imagenActualCompleta + ".png"));
     }
 
     @Test
     public void queVerificaRespuestaIncorrecta() {
         // Configuración
-        String nombreArchivo = "tuntuntunsahur";
+        String nombreArchivo = "Tralalero tralala";
         String respuestaIncorrecta = "Respuesta Incorrecta";
+        String imagenActualCompleta = "tralalerocom";
 
         // Ejecución
-        ModelAndView modelAndView = controladorVersus.verificarRespuesta(respuestaIncorrecta, nombreArchivo);
+        ModelAndView modelAndView = controladorVersus.verificarRespuesta(respuestaIncorrecta, imagenActualCompleta, nombreArchivo);
 
         // Verificación
         assertThat(modelAndView.getViewName(), equalTo("resultado-versus"));
