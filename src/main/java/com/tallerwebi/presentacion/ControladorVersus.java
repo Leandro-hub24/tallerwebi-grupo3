@@ -81,4 +81,6 @@ public class ControladorVersus {
 //                "imagen": "/img/versus/tralalerobg.png"
 //        }
     }
+
+
 }

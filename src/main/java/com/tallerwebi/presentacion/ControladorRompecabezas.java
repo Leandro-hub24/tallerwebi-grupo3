@@ -1,18 +1,19 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.Rompecabeza;
+import com.tallerwebi.dominio.RompecabezasRequest;
 import com.tallerwebi.dominio.ServicioRompecabezas;
 import com.tallerwebi.dominio.excepcion.NivelesNoEncontradosException;
+import com.tallerwebi.dominio.excepcion.PiezaNoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ControladorRompecabezas {
@@ -24,58 +25,106 @@ public class ControladorRompecabezas {
         this.servicioRompecabezas = servicioRompecabezas;
     }
 
-    //Lleva a Rompecabezas
     @RequestMapping(value = "/rompecabezas", method = RequestMethod.GET)
     public ModelAndView irARompecabezasMain(HttpServletRequest request) {
 
-        ModelMap model = new ModelMap();
 
         if (request.getSession().getAttribute("id") != null) {
-            model.addAttribute("rompecabezaNivel", request.getSession().getAttribute("rompecabezaNivel"));
-            return new ModelAndView("rompecabezas", model);
+            Integer rompecabezaNivel = (Integer) request.getSession().getAttribute("rompecabezaNivel");
+            String url = "redirect:/rompecabezas/" + rompecabezaNivel;
+            return new ModelAndView(url);
         }
 
         return irALogin();
 
     }
 
+    @RequestMapping(value = "/rompecabezas", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ModelMap moverFichas(@RequestBody RompecabezasRequest requestRompecabeza, HttpServletRequest request) {
 
-    @RequestMapping(value = "/rompecabezas/niveles", method = RequestMethod.GET)
-    public ModelAndView irARompecabezasNiveles(HttpServletRequest request) {
+
+        List<List<List<String>>> matrizActual = requestRompecabeza.getMatriz();
+        String idPiezaAMover = requestRompecabeza.getIdPieza();
+        Integer idRompecabeza = requestRompecabeza.getIdRompecabeza();
+        Long idUsuario = (Long) request.getSession().getAttribute("id");
+        Integer nivelActualUsuario = (Integer) request.getSession().getAttribute("rompecabezaNivel");
+        ModelMap model = new ModelMap();
+        List<List<List<String>>> matrizConCambios;
+
+
+        try {
+
+            matrizConCambios = servicioRompecabezas.moverPieza(matrizActual, idPiezaAMover);
+            model.put("matrizConCambios", matrizConCambios);
+            boolean gano = servicioRompecabezas.comprobarVictoria(matrizConCambios);
+            if (gano) {
+
+                Integer nivelNuevo = servicioRompecabezas.actualizarNivelEnUsuario(idUsuario, idRompecabeza, nivelActualUsuario);
+                if (nivelNuevo != null) {
+                    request.getSession().setAttribute("rompecabezaNivel", nivelNuevo );
+                    model.put("nivelNuevo", nivelNuevo);
+                    model.put("mensaje", "Victoria");
+                } else {
+                    model.put("nivelNuevo", idRompecabeza + 1);
+                    model.put("mensaje", "Victoria");
+                }
+
+            } else {
+                model.put("mensaje", "No resuelto");
+            }
+
+        } catch (PiezaNoEncontradaException p){
+            model.put("error", p.getMessage());
+            model.put("matrizConCambios", matrizActual);
+        }
+
+        return model;
+    }
+
+    @RequestMapping(value = "/rompecabezas/niveles", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ModelMap irARompecabezasNiveles(HttpServletRequest request) {
 
         ModelMap model = new ModelMap();
 
-        if (request.getSession().getAttribute("id") != null) {
-
+        if (request.getSession().getAttribute("rompecabezaNivel") != null) {
+            Integer rompecabezaNivel = Integer.valueOf(request.getSession().getAttribute("rompecabezaNivel").toString());
             try {
-                ArrayList<Rompecabeza> niveles = servicioRompecabezas.consultarRompecabezasDelUsuario((Long) request.getSession().getAttribute("id"));
+                List<Rompecabeza> niveles = servicioRompecabezas.consultarRompecabezasDelUsuario(rompecabezaNivel);
                 model.put("niveles", niveles);
             } catch (NivelesNoEncontradosException e) {
                 model.put("error", e.getMessage());
             }
 
-            return new ModelAndView("rompecabezas", model);
-
+            return model;
         }
 
-        return irALogin();
+        model.put("error", "Nivel no existe");
+        return model;
 
     }
 
-    @RequestMapping(value = "/rompecabezas/${id_rompecabeza}", method =  RequestMethod.GET)
-    public ModelAndView irARompecabezasJuego(@PathVariable Long id_rompecabeza, HttpServletRequest request) {
+    @RequestMapping(value = "/rompecabezas/{idRompecabeza}", method =  RequestMethod.GET)
+    public ModelAndView irARompecabezasJuego(@PathVariable Long idRompecabeza, HttpServletRequest request) {
 
         ModelMap model = new ModelMap();
 
-        if (request.getSession().getAttribute("id") != null) {
-            try {
-                Rompecabeza nivel = servicioRompecabezas.consultarRompecabeza(id_rompecabeza);
-                model.put("nivel", nivel);
-            } catch (NivelesNoEncontradosException e) {
-                model.put("error", e.getMessage());
-            }
+        Integer rompecabezaNivel = (Integer) request.getSession().getAttribute("rompecabezaNivel");
 
-            return new ModelAndView("rompecabezas", model);
+        if (request.getSession().getAttribute("id") != null) {
+            if ( idRompecabeza <= rompecabezaNivel) {
+                try {
+                    Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(idRompecabeza);
+                    model.put("rompecabeza", rompecabeza);
+                } catch (NivelesNoEncontradosException e) {
+                    model.put("error", e.getMessage());
+                    return new ModelAndView("redirect:/rompecabezas");
+                }
+
+                return new ModelAndView("rompecabezas", model);
+            }
+            return new ModelAndView("redirect:/rompecabezas");
         }
 
         return irALogin();

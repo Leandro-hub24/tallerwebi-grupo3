@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Rompecabezas</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/rompecabezas.css}"/>
+
 
 </head>
 <body style="background-color: #f8fef6; width: 100%; height: 85vh;">
@@ -18,8 +20,9 @@
 
     <section class="d-flex w-100 h-100">
 
-        <article class="w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
-            <img th:src="@{/img/logo_pokemon.png}" alt="imagen">
+        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
+            <img id="imagen-original" th:src="@{${rompecabeza.urlImg}}" alt="Imagen Original" style="display: none;">
+            <div id="contenedor-piezas"></div>
         </article>
 
         <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
@@ -40,17 +43,16 @@
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Bienvenido</h1>
-            <!--<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+            <h1 class="modal-title fs-5" id="modal-title" th:text="${'Nivel: ' + rompecabeza.id}"></h1>
         </div>
-        <div class="modal-body text-center">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continuar</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Comenzar</button>
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Seleccionar nivel</button>
+        <div id="modal-body" class="modal-body text-center" style="max-height: 500px">
+            <h3 class="text-center" th:text="${rompecabeza.nombre}"></h3>
+            <img th:src="@{${rompecabeza.urlImg}}" alt="Imagen Rompecabeza" style="height: 200px;">
         </div>
-        <!--<div class="modal-footer">
-
-        </div>-->
+        <div id="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-comenzar" data-bs-dismiss="modal">Comenzar</button>
+            <button type="button" class="btn btn-primary" id="btn-niveles">Seleccionar nivel</button>
+        </div>
     </div>
 </div>
 </div>
@@ -58,18 +60,13 @@
 <footer class="footer mt-auto py-3 bg-dark" style="height: 10vh; width: 100%;">
 
 </footer>
+
+<script type="text/javascript" th:src="@{/js/rompecabezas.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        document.getElementById("modal_btn").click()
-    });
+
 
 </script>
 
-
-
-
-
-
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

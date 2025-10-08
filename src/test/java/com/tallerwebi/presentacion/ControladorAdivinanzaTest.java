@@ -3,10 +3,16 @@ package com.tallerwebi.presentacion;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 public class ControladorAdivinanzaTest {
+
+
+
     ControladorAdivinanza controlador = new ControladorAdivinanza();
     @Test
     public void debeRetornarVistaOpcionCorrecta() {
@@ -24,7 +30,7 @@ public class ControladorAdivinanzaTest {
 
     @Test
     public void debeRetornarVistaOpcionIncorrecta() {
-        // Preparación
+     // Preparación
 
         givenHayControladores();
 
@@ -55,6 +61,7 @@ public class ControladorAdivinanzaTest {
     private void givenHayControladores() {
 
     }
+
 
 
 
