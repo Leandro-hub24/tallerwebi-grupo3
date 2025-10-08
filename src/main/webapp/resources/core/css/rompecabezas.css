@@ -1,0 +1,29 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#contenedor-piezas {
+  line-height: 0
+}
+
+.tabla {
+    border-collapse: collapse;
+    border: 1px black solid;
+}
+
+.tabla >tbody > tr > td {
+    padding: 0.5px;
+}
+
+#contenedor-piezas > a {
+    text-decoration: none;
+    padding: 0;
+    margin: 0;
+}
+
+.piezaImg {
+    cursor: pointer;
+}
+

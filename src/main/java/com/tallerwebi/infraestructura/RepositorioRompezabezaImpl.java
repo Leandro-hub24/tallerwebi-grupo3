@@ -4,7 +4,9 @@ import com.tallerwebi.dominio.RepositorioRompecabeza;
 import com.tallerwebi.dominio.Rompecabeza;
 import com.tallerwebi.dominio.Usuario;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -24,18 +26,35 @@ public class RepositorioRompezabezaImpl implements RepositorioRompecabeza {
 
     @Override
     public Rompecabeza buscarRompecabeza(Long idRompecabeza) {
-        /*return (Rompecabeza) sessionFactory.getCurrentSession().createCriteria(Rompecabeza.class)
-                .add(Restrictions.eq("id", idRompecabeza))
-                .uniqueResult();*/
-        return null;
+        return sessionFactory.getCurrentSession().get(Rompecabeza.class, idRompecabeza);
     }
 
     @Override
-    public ArrayList<Rompecabeza> buscarRompecabezas(Long idUsuario) {
-        /*return (ArrayList<Rompecabeza>) sessionFactory.getCurrentSession().createCriteria(Rompecabeza.class)
-                .list();*/
-        return null;
+    public List<Rompecabeza> buscarRompecabezas(Integer rompecabezaNivel) {
+        Long rompecabeza = Long.valueOf(rompecabezaNivel);
+        return (List<Rompecabeza>) sessionFactory.getCurrentSession().createCriteria(Rompecabeza.class)
+                .add(Restrictions.le("id", rompecabeza))
+                .list();
     }
 
 
+
+    @Override
+    public Integer modificarRompecabezaNivel(Long idUsuario) {
+
+        Usuario usuario = (Usuario) sessionFactory.getCurrentSession().get(Usuario.class, idUsuario);
+
+        usuario.setRompecabezaNivel(usuario.getRompecabezaNivel() + 1);
+        sessionFactory.getCurrentSession().update(usuario);
+
+        return usuario.getRompecabezaNivel();
+
+    }
+
+    @Override
+    public Long buscarUltimoNivelId() {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(Rompecabeza.class)
+                .setProjection(Projections.rowCount())
+                .uniqueResult();
+    }
 }
