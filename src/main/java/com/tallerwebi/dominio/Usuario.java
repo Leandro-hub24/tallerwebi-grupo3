@@ -15,7 +15,7 @@ public class Usuario {
     private String password;
     private String rol;
     private Boolean activo = false;
-    private Long rompezabezaNivel;
+    private Integer rompecabezaNivel;
 
     public Long getId() {
         return id;
@@ -48,11 +48,11 @@ public class Usuario {
         this.activo = activo;
     }
 
-    public Long getRompezabezaNivel() {
-        return rompezabezaNivel;
+    public Integer getRompecabezaNivel() {
+        return rompecabezaNivel;
     }
-    public void setRompezabezaNivel(Long rompezabezaNivel) {
-        this.rompezabezaNivel = rompezabezaNivel;
+    public void setRompecabezaNivel(Integer rompecabezaNivel) {
+        this.rompecabezaNivel = rompecabezaNivel;
     }
 
     public boolean activo() {
