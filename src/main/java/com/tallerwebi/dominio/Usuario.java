@@ -1,5 +1,8 @@
 package com.tallerwebi.dominio;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,12 +13,13 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String email;
     private String password;
     private String rol;
     private Boolean activo = false;
-    private Long rompezabezaNivel;
+
     private Integer puntajeAdivinanza;
     private Integer rompecabezaNivel;
 
@@ -49,8 +53,6 @@ public class Usuario {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
-    public Long getRompezabezaNivel() {
-        return rompezabezaNivel;
 
     public Integer getRompecabezaNivel() {
         return rompecabezaNivel;
