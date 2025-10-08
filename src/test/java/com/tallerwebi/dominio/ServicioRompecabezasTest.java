@@ -2,15 +2,19 @@ package com.tallerwebi.dominio;
 
 
 import com.tallerwebi.dominio.excepcion.NivelesNoEncontradosException;
+import com.tallerwebi.dominio.excepcion.PiezaNoEncontradaException;
 import com.tallerwebi.dominio.excepcion.RompecabezaNoEncontradoException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,26 +23,128 @@ public class ServicioRompecabezasTest {
     /*
     * el metodo consultar rompecabezas del usuario deberia recibir un id de usuario y devolver un array de rompecabezas
     * el metodo consultar rompecabeza deberia recibir un id de rompecabeza y devolver un rompecabeza
+    * al resolver el rompecabeza debe aumentar rompecabeza nivel del usuario en uno y retornar Victoria
+    * al resolver el rompecabeza y no poder aumentar rompecabeza nivel del usuario en uno retorna un NoSeHaModificadoRompecabezaNivelException
     *
     * */
 
-    private ArrayList<Rompecabeza> rompecabezasMock;
+    private List<Rompecabeza> rompecabezasMock;
+    private List<List<List<String>>> matriz;
     private Rompecabeza rompecabezaMock;
+    private Integer idRompecabeza;
+    private Integer nivelActualUsuario;
+    private Long nivelNuevo;
+    private String idPiezaAMover;
     private ServicioRompecabezas servicioRompecabezas;
     private RepositorioRompecabeza repositorioRompecabezaMock;
+    private static final String imagenBlanco = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAwQYFqEAAAAASUVORK5CYII=";
 
     @BeforeEach
     public void init() {
+        matriz = new ArrayList<>();
         rompecabezasMock = new ArrayList<>();
         rompecabezaMock = mock(Rompecabeza.class);
         rompecabezasMock.add(rompecabezaMock);
         repositorioRompecabezaMock = mock(RepositorioRompecabeza.class);
         servicioRompecabezas = new ServicioRompecabezasImpl(repositorioRompecabezaMock);
 
-        when(repositorioRompecabezaMock.buscarRompecabezas(1L)).thenReturn(rompecabezasMock);
-        when(repositorioRompecabezaMock.buscarRompecabezas(2L)).thenReturn(null);
+        for (int i = 0; i < 3; i++) {
+            List<List<String>> fila = new ArrayList<>();
+            for (int j = 0; j < 3; j++) {
+
+                String idPieza = "img_" + i + "-" + j;
+                String img = "imagen";
+                List<String> pieza = Arrays.asList(idPieza, img);
+                fila.add(pieza);
+            }
+            matriz.add(fila);
+        }
+
+
+        when(repositorioRompecabezaMock.buscarRompecabezas(1)).thenReturn((ArrayList<Rompecabeza>) rompecabezasMock);
+        when(repositorioRompecabezaMock.buscarUltimoNivelId()).thenReturn(3L);
+        when(repositorioRompecabezaMock.modificarRompecabezaNivel(1L)).thenReturn(3);
+        when(repositorioRompecabezaMock.buscarRompecabezas(2)).thenReturn(null);
         when(repositorioRompecabezaMock.buscarRompecabeza(1L)).thenReturn(rompecabezaMock);
         when(repositorioRompecabezaMock.buscarRompecabeza(2L)).thenReturn(null);
+    }
+
+    @Test
+    public void sePodraMoverUnapiezaEnPosicionUnoUnoDentroDeUnaMatrizSiLaPiezaDeArribaEnPosicionCeroUnoEstaVacia(){
+
+        givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(0, 1, "img_1-1");
+
+        List<List<List<String>>> matrizActualizada = whenComprueboSiPuedoMoverLaPieza();
+
+        thenReciboUnaMatrizConElMovimientoRealizado(matrizActualizada, 0, 1);
+
+    }
+
+    @Test
+    public void sePodraMoverUnapiezaEnPosicionUnoUnoDentroDeUnaMatrizSiLaPiezaDeLaIzquierdaEnPosicionUnoCeroEstaVacia(){
+
+        givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(1, 0, "img_1-1");
+
+        List<List<List<String>>> matrizActualizada = whenComprueboSiPuedoMoverLaPieza();
+
+        thenReciboUnaMatrizConElMovimientoRealizado(matrizActualizada, 1, 0);
+
+    }
+
+    @Test
+    public void sePodraMoverUnapiezaEnPosicionUnoUnoDentroDeUnaMatrizSiLaPiezaDeLaDerechaEnPosicionUnoDosEstaVacia(){
+
+        givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(1, 2, "img_1-1");
+
+        List<List<List<String>>> matrizActualizada = whenComprueboSiPuedoMoverLaPieza();
+
+        thenReciboUnaMatrizConElMovimientoRealizado(matrizActualizada, 1, 2);
+
+    }
+
+    @Test
+    public void sePodraMoverUnapiezaEnPosicionUnoUnoDentroDeUnaMatrizSiLaPiezaDeAbajoEnPosicionDosUnoEstaVacia(){
+
+        givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(2, 1, "img_1-1");
+
+        List<List<List<String>>> matrizActualizada = whenComprueboSiPuedoMoverLaPieza();
+
+        thenReciboUnaMatrizConElMovimientoRealizado(matrizActualizada, 2, 1);
+
+    }
+
+    @Test
+    public void siNoEncuentraLaPiezaConElIdEnviadoDevuelveUnPiezaNoEncontradaException(){
+
+        givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(2, 1, "img_3-4");
+
+        assertThrows(
+                PiezaNoEncontradaException.class,
+                ()  -> whenComprueboSiPuedoMoverLaPieza()
+        );
+
+    }
+
+    @Test
+    public void siElRompecabezaEstaResueltoDevuelveTrue() {
+
+        givenTengoUnaMatrizResuelta();
+
+        boolean gano = whenComprueboSiEstaResueltoElRompecabezas();
+
+        thenReciboTrue(gano);
+
+    }
+
+    @Test
+    public void siElRompecabezaNoEstaResueltoDevuelveFalse() {
+
+        givenTengoUnaMatrizNoResuelta();
+
+        boolean gano = whenComprueboSiEstaResueltoElRompecabezas();
+
+        thenReciboFalse(gano);
+
     }
 
     @Test
@@ -46,7 +152,7 @@ public class ServicioRompecabezasTest {
 
         Long id = givenTengoUnIdUsuario();
 
-        ArrayList<Rompecabeza> rompecabezas = whenBuscoRompecabezasDelUsuario(1L);
+        List<Rompecabeza> rompecabezas = whenBuscoRompecabezasDelUsuario(1);
 
         thenReciboUnArrayDeRompecabezas(rompecabezas);
 
@@ -60,7 +166,7 @@ public class ServicioRompecabezasTest {
 
         assertThrows(
                 NivelesNoEncontradosException.class,
-                ()  -> whenBuscoRompecabezasDelUsuario(2L)
+                ()  -> whenBuscoRompecabezasDelUsuario(2)
         );
 
     }
@@ -88,9 +194,74 @@ public class ServicioRompecabezasTest {
 
     }
 
-    private void givenTengoUnIdRompecabeza() {
+    @Test
+    public void siElIdRompecabezaYelNivelActualUsuarioSonDistintosRetornaNull(){
+
+        givenTengoUnIdRompecabezaYNivelActualUsuarioDistintos();
+
+        Integer nivelNuevoUsuario = whenIntentoActualizarNivel(1L, idRompecabeza, nivelActualUsuario);
+
+        thenReciboNull(nivelNuevoUsuario);
+
     }
 
+    @Test
+    public void siElIdRompecabezaYelNivelActualUsuarioSonIgualesPeroElNivelNuevoEsMayorAlUltimoNivelRetornaNull(){
+
+        givenTengoUnIdRompecabezaYNivelActualUsuarioIgualesPeroNivelNuevoEsMayorAlUltimoNivel();
+
+        Integer nivelNuevoUsuario = whenIntentoActualizarNivel(1L, idRompecabeza, nivelActualUsuario);
+
+        thenReciboNull(nivelNuevoUsuario);
+
+    }
+
+    @Test
+    public void siElIdRompecabezaYelNivelActualUsuarioSonIgualesYElNivelNuevoEsMenorAlUltimoNivelRetornaNivelNuevoUsuario(){
+
+        givenTengoUnIdRompecabezaYNivelActualUsuarioIgualesYNivelNuevoEsMenorAlUltimoNivel();
+
+        Integer nivelNuevoUsuario = whenIntentoActualizarNivel(1L, idRompecabeza, nivelActualUsuario);
+
+        thenReciboNivelNuevoUsuario(nivelNuevoUsuario);
+
+    }
+
+
+
+    private void givenTengoUnIdRompecabezaYNivelActualUsuarioIgualesYNivelNuevoEsMenorAlUltimoNivel() {
+        idRompecabeza = 2;
+        nivelActualUsuario = 2;
+        nivelNuevo = repositorioRompecabezaMock.buscarUltimoNivelId();
+    }
+
+    private void thenReciboNivelNuevoUsuario(Integer nivelNuevoUsuario) {
+        Integer nivelNuevoUsuarioEsperado = 3;
+        assertEquals(nivelNuevoUsuarioEsperado, nivelNuevoUsuario);
+    }
+
+    private void givenTengoUnIdRompecabezaYNivelActualUsuarioIgualesPeroNivelNuevoEsMayorAlUltimoNivel() {
+        idRompecabeza = 3;
+        nivelActualUsuario = 3;
+        nivelNuevo = repositorioRompecabezaMock.buscarUltimoNivelId();
+    }
+
+
+    private void givenTengoUnIdRompecabezaYNivelActualUsuarioDistintos() {
+        idRompecabeza = 2;
+        nivelActualUsuario = 3;
+    }
+
+    private Integer whenIntentoActualizarNivel(long idUsuario, Integer idRompecabeza, Integer nivelActualUsuario) {
+        return servicioRompecabezas.actualizarNivelEnUsuario(idUsuario, idRompecabeza, nivelActualUsuario);
+    }
+
+    private void thenReciboNull(Integer nivelNuevoUsuario) {
+        assertEquals(nivelNuevoUsuario, null);
+    }
+
+    private void givenTengoUnIdRompecabeza() {
+    }
 
     private Rompecabeza whenBuscoRompecabezaConId(Long id) {
         return servicioRompecabezas.consultarRompecabeza(id);
@@ -104,16 +275,60 @@ public class ServicioRompecabezasTest {
         return 1L;
     }
 
-    private ArrayList<Rompecabeza> whenBuscoRompecabezasDelUsuario(Long id) {
-        return servicioRompecabezas.consultarRompecabezasDelUsuario(id);
+    private List<Rompecabeza> whenBuscoRompecabezasDelUsuario(Integer rompecabezaNivel) {
+        return servicioRompecabezas.consultarRompecabezasDelUsuario(rompecabezaNivel);
     }
 
-    private void thenReciboUnArrayDeRompecabezas(ArrayList<Rompecabeza> rompecabezas) {
+    private void thenReciboUnArrayDeRompecabezas(List<Rompecabeza> rompecabezas) {
         assertThat(rompecabezas.toString(), equalToIgnoringCase(rompecabezasMock.toString()));
     }
 
 
+    private void givenTengoUnaMatrizYUnIdDeUnaPiezaAMover(int x, int y, String img) {
 
+        matriz.get(x).get(y).set(1, imagenBlanco);
+        idPiezaAMover = img;
 
+    }
 
+    private List<List<List<String>>> whenComprueboSiPuedoMoverLaPieza() {
+
+        return servicioRompecabezas.moverPieza(matriz, idPiezaAMover);
+
+    }
+
+    private void thenReciboUnaMatrizConElMovimientoRealizado( List<List<List<String>>> matrizActualizada, int x, int y) {
+
+        assertThat(matrizActualizada.get(x).get(y).get(0), equalToIgnoringCase(idPiezaAMover));
+        assertThat(matrizActualizada.get(1).get(1).get(1), equalToIgnoringCase(imagenBlanco));
+
+    }
+
+    private void givenTengoUnaMatrizResuelta() {
+    }
+
+    private boolean whenComprueboSiEstaResueltoElRompecabezas() {
+
+        return servicioRompecabezas.comprobarVictoria(matriz);
+
+    }
+
+    private void thenReciboTrue(boolean gano) {
+
+        assertTrue(gano);
+
+    }
+
+    private void thenReciboFalse(boolean gano) {
+
+        assertFalse(gano);
+
+    }
+
+    private void givenTengoUnaMatrizNoResuelta() {
+
+        matriz.get(0).get(1).set(0, "img_1-2");
+        matriz.get(1).get(2).set(0, "img_0-1");
+
+    }
 }

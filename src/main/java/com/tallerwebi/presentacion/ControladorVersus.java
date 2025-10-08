@@ -41,7 +41,7 @@ public class ControladorVersus {
 
         ModelMap model = new ModelMap();
         model.put("imagen", "/img/versus/" + nombreArchivo + ".png");
-        model.put("opciones", opciones.subList(0, 5)); // Tomar solo 3 opciones
+        model.put("opciones", opciones.subList(0, 10));
         model.put("imagenActual", nombreArchivo);
         return new ModelAndView("versus", model);
     }
