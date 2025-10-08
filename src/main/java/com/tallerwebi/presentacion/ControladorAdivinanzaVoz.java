@@ -25,7 +25,7 @@ public class ControladorAdivinanzaVoz {
         put("liriririlarila", "LiririLarila");
         put("los-tralaleritos", "Los Tralaleritos");
         put("saturno-saturnita", "Saturno Saturnita");
-        put("tralalero", "Tralalero Tralala");
+        put("tralalero", "Tralalelo Tralala");
         put("tuntuntunsahur", "Tuntuntun Sahur");
     }};
 

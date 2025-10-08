@@ -2,6 +2,7 @@
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="stylesheet" th:href="@{/resources/core/css/main.css}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Brainrot Trivia</title>
@@ -11,13 +12,6 @@
           crossorigin="anonymous">
 </head>
 <body>
-<div id="mensajeBrainrot" class="mensaje-oculto"></div>
-
-<h1>🎤 Detector de Brainrot</h1>
-<button onclick="iniciarReconocimiento()">Hablar</button>
-
-
-<div id="resultado"></div>
 
 
 
@@ -38,12 +32,14 @@
                  alt="¿Qué es esto?">
         </div>
         <div class="row g-3" id="opciones">
-            <h2>Decí la palabra: <strong>manzana</strong></h2>
+            <h2>Decí el nombre del brainrot</h2>
 
-            <button onclick="iniciarReconocimiento()">Hablar</button>
-
+            <div class="d-flex justify-content-center my-4">
+                <button id="btn-voz" onclick="iniciarReconocimiento()">🎙️</button>
+            </div>
+            <div id="mensajeBrainrot" class="mensaje-oculto"></div>
+            <div id="resultado"></div>
             <p>Lo que dijiste: <span id="textoReconocido">...</span></p>
-
         </div>
 
         <form id="formVoz" th:action="@{/adivinanza-por-voz/verificar2}" method="post">
