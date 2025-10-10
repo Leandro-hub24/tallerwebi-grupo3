@@ -131,16 +131,9 @@ public class ServicioRompecabezasImpl implements ServicioRompecabezas {
     }
 
     @Override
-    public Integer actualizarNivelEnUsuario(Long idUsuario, Integer idRompecabeza, Integer nivelActualUsuario) {
-        if(idRompecabeza == nivelActualUsuario){
-            Long ultimoNivel = repositorioRompecabeza.buscarUltimoNivelId();
-            Integer nivelNuevo = idRompecabeza + 1;
-
-            if (nivelNuevo <= ultimoNivel) {
-                return repositorioRompecabeza.modificarRompecabezaNivel(idUsuario);
-            }
-        }
-
-        return null;
+    public Long buscarUltimoNivelId() {
+        return repositorioRompecabeza.buscarUltimoNivelId();
     }
+
+
 }
