@@ -1,8 +1,6 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.Rompecabeza;
-import com.tallerwebi.dominio.RompecabezasRequest;
-import com.tallerwebi.dominio.ServicioRompecabezas;
+import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.excepcion.NivelesNoEncontradosException;
 import com.tallerwebi.dominio.excepcion.PiezaNoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +17,21 @@ import java.util.List;
 public class ControladorRompecabezas {
 
     private ServicioRompecabezas servicioRompecabezas;
+    private ServicioNivelJuego servicioNivelJuego;
 
     @Autowired
-    public ControladorRompecabezas(ServicioRompecabezas servicioRompecabezas) {
+    public ControladorRompecabezas(ServicioRompecabezas servicioRompecabezas, ServicioNivelJuego servicioNivelJuego) {
         this.servicioRompecabezas = servicioRompecabezas;
+        this.servicioNivelJuego = servicioNivelJuego;
     }
 
     @RequestMapping(value = "/rompecabezas", method = RequestMethod.GET)
     public ModelAndView irARompecabezasMain(HttpServletRequest request) {
 
-
-        if (request.getSession().getAttribute("id") != null) {
-            Integer rompecabezaNivel = (Integer) request.getSession().getAttribute("rompecabezaNivel");
+        Long idUsuario = (Long) request.getSession().getAttribute("id");
+        if (idUsuario != null) {
+            NivelJuego nivelJuego = servicioNivelJuego.buscarNivelJuegoPorIdUsuario(idUsuario);
+            Integer rompecabezaNivel = nivelJuego.getNivel().intValue();
             String url = "redirect:/rompecabezas/" + rompecabezaNivel;
             return new ModelAndView(url);
         }
@@ -48,7 +49,8 @@ public class ControladorRompecabezas {
         String idPiezaAMover = requestRompecabeza.getIdPieza();
         Integer idRompecabeza = requestRompecabeza.getIdRompecabeza();
         Long idUsuario = (Long) request.getSession().getAttribute("id");
-        Integer nivelActualUsuario = (Integer) request.getSession().getAttribute("rompecabezaNivel");
+        NivelJuego nivelJuego = servicioNivelJuego.buscarNivelJuegoPorIdUsuario(idUsuario);
+        Integer nivelActualUsuario = nivelJuego.getNivel().intValue();
         ModelMap model = new ModelMap();
         List<List<List<String>>> matrizConCambios;
 
@@ -59,8 +61,8 @@ public class ControladorRompecabezas {
             model.put("matrizConCambios", matrizConCambios);
             boolean gano = servicioRompecabezas.comprobarVictoria(matrizConCambios);
             if (gano) {
-
-                Integer nivelNuevo = servicioRompecabezas.actualizarNivelEnUsuario(idUsuario, idRompecabeza, nivelActualUsuario);
+                Long ultimoNivel = servicioRompecabezas.buscarUltimoNivelId();
+                Integer nivelNuevo = servicioNivelJuego.actualizarNivelJuego(idUsuario, idRompecabeza, nivelActualUsuario, ultimoNivel);
                 if (nivelNuevo != null) {
                     request.getSession().setAttribute("rompecabezaNivel", nivelNuevo );
                     model.put("nivelNuevo", nivelNuevo);
@@ -88,8 +90,11 @@ public class ControladorRompecabezas {
 
         ModelMap model = new ModelMap();
 
-        if (request.getSession().getAttribute("rompecabezaNivel") != null) {
-            Integer rompecabezaNivel = Integer.valueOf(request.getSession().getAttribute("rompecabezaNivel").toString());
+        Long idUsuario = (Long) request.getSession().getAttribute("id");
+        NivelJuego nivelJuego = servicioNivelJuego.buscarNivelJuegoPorIdUsuario(idUsuario);
+        Integer rompecabezaNivel = nivelJuego.getNivel().intValue();
+
+        if (rompecabezaNivel != null) {
             try {
                 List<Rompecabeza> niveles = servicioRompecabezas.consultarRompecabezasDelUsuario(rompecabezaNivel);
                 model.put("niveles", niveles);
@@ -110,9 +115,11 @@ public class ControladorRompecabezas {
 
         ModelMap model = new ModelMap();
 
-        Integer rompecabezaNivel = (Integer) request.getSession().getAttribute("rompecabezaNivel");
+        Long idUsuario = (Long) request.getSession().getAttribute("id");
+        NivelJuego nivelJuego = servicioNivelJuego.buscarNivelJuegoPorIdUsuario(idUsuario);
+        Integer rompecabezaNivel = nivelJuego.getNivel().intValue();
 
-        if (request.getSession().getAttribute("id") != null) {
+        if (idUsuario != null) {
             if ( idRompecabeza <= rompecabezaNivel) {
                 try {
                     Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(idRompecabeza);

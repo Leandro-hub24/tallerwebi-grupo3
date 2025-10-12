@@ -1,8 +1,5 @@
 package com.tallerwebi.presentacion;
-import com.tallerwebi.dominio.Rompecabeza;
-import com.tallerwebi.dominio.RompecabezasRequest;
-import com.tallerwebi.dominio.ServicioRompecabezas;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.excepcion.NivelesNoEncontradosException;
 import com.tallerwebi.dominio.excepcion.PiezaNoEncontradaException;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +38,8 @@ public class ControladorRompecabezasTest {
     private HttpSession sessionMock;
     private List<List<List<String>>> matriz;
     private RompecabezasRequest requestRompecabezaMock;
+    private ServicioNivelJuego servicioNivelJuegoMock;
+    private NivelJuego nivelJuegoMock;
 
     @BeforeEach
     public void init() {
@@ -51,6 +50,9 @@ public class ControladorRompecabezasTest {
         rompecabezasMock = new ArrayList<>();
         rompecabezasMock.add(rompecabezaMock);
         servicioRompecabezasMock = mock(ServicioRompecabezas.class);
+        servicioNivelJuegoMock = mock(ServicioNivelJuego.class);
+        nivelJuegoMock = mock(NivelJuego.class);
+
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
 
@@ -69,14 +71,17 @@ public class ControladorRompecabezasTest {
         when(requestRompecabezaMock.getIdRompecabeza()).thenReturn(2);
         when(requestRompecabezaMock.getIdPieza()).thenReturn("img_1-1");
         when(servicioRompecabezasMock.moverPieza(matriz, "img_1-1")).thenReturn(matriz);
-        when(servicioRompecabezasMock.actualizarNivelEnUsuario(1L, 2, 2)).thenReturn(3);
         when(servicioRompecabezasMock.comprobarVictoria(any())).thenReturn(true);
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("id")).thenReturn(1L);
         when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1L);
-        controladorRompecabezas = new ControladorRompecabezas(servicioRompecabezasMock);
+        controladorRompecabezas = new ControladorRompecabezas(servicioRompecabezasMock, servicioNivelJuegoMock);
         when(servicioRompecabezasMock.consultarRompecabeza(1L)).thenReturn(rompecabezaMock);
         when(servicioRompecabezasMock.consultarRompecabezasDelUsuario(1)).thenReturn(rompecabezasMock);
+        when(servicioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L)).thenReturn(nivelJuegoMock);
+        when(nivelJuegoMock.getNivel()).thenReturn(1L);
+        when(servicioRompecabezasMock.buscarUltimoNivelId()).thenReturn(2L);
+        when(servicioNivelJuegoMock.actualizarNivelJuego(1L, 2, 2, 2L)).thenReturn(3);
     }
 
     @Test
@@ -93,6 +98,22 @@ public class ControladorRompecabezasTest {
 
     }
 
+    private void givenExisteUsuario() {
+
+    }
+
+    private ModelMap whenUsuarioTocaSeleccionarNiveles() {
+        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1L);
+        return controladorRompecabezas.irARompecabezasNiveles(requestMock);
+
+    }
+
+    private void thenElUsuarioEsLlevadoAUnaVistaDeNiveles( ModelMap model) {
+
+        assertThat(model.get("niveles").toString(), equalToIgnoringCase(rompecabezasMock.toString()) );
+
+    }
+
     @Test
     public void siNoHayUsuarioSeLoLlevaALogin(){
         // preparacion --> given
@@ -103,6 +124,23 @@ public class ControladorRompecabezasTest {
 
         //comprobacion --> then
         thenSeLoLlevaALogin(modelAndView);
+    }
+
+    private void givenNoHayUsuario() {
+        when(sessionMock.getAttribute("id")).thenReturn(null);
+    }
+
+    private ModelAndView whenVerificoSiExisteUsuario() {
+
+        return controladorRompecabezas.irARompecabezasMain(requestMock);
+
+    }
+
+    private void thenSeLoLlevaALogin( ModelAndView modelAndView) {
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
+        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Inicie sesión para jugar"));
+
     }
 
     @Test
@@ -117,6 +155,18 @@ public class ControladorRompecabezasTest {
         thenSeLoLlevaAVistaRompecabezaDelUltimoRompecabezaJugado(modelAndView);
     }
 
+    private void givenHayUsuario() {
+    }
+
+    private ModelAndView whenIngresoAVistaRompecabezaConUsuario() {
+        when(nivelJuegoMock.getNivel()).thenReturn(3L);
+        return controladorRompecabezas.irARompecabezasMain(requestMock);
+    }
+
+    private void thenSeLoLlevaAVistaRompecabezaDelUltimoRompecabezaJugado(ModelAndView modelAndView) {
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas/3"));
+    }
+
     @Test
     public void siExisteUnUsuarioIdUnoYExisteUnNivelUnoValidoSeLoLlevaALaVistaRompecabezasYSeEnviaUnModelConUnRompecabeza(){
 
@@ -127,6 +177,17 @@ public class ControladorRompecabezasTest {
         thenSeLoLlevaAlNivelUno(modelAndView);
     }
 
+    private ModelAndView whenComprobarUsuarioYNivelValido(Long rompecabezaNivel, HttpServletRequest requestMock) {
+        return controladorRompecabezas.irARompecabezasJuego(rompecabezaNivel, requestMock);
+    }
+
+    private void thenSeLoLlevaAlNivelUno(ModelAndView modelAndView) {
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("rompecabezas"));
+        assertThat(modelAndView.getModel().get("rompecabeza").toString(), equalToIgnoringCase(rompecabezaMock.toString()) );
+
+    }
+
     @Test
     public void siExisteUnUsuarioIdUnoYExisteUnNivelTresNoValidoSeLoLlevaALaVistaRompecabezasYSeEnviaUnModelConUnRompecabeza(){
 
@@ -135,6 +196,12 @@ public class ControladorRompecabezasTest {
         ModelAndView model = whenComprobarUsuarioYNivelValido(3L, requestMock);
 
         thenSeLoLlevaAlUltimoRompecabezaJugado(model);
+
+    }
+
+    private void thenSeLoLlevaAlUltimoRompecabezaJugado(ModelAndView modelAndView) {
+
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas"));
 
     }
 
@@ -149,8 +216,25 @@ public class ControladorRompecabezasTest {
 
     }
 
+    private void givenExisteUnaMatrizResuelta() {
+        when(sessionMock.getAttribute("id")).thenReturn(1L);
+        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(2);
+    }
+
+    private ModelMap whenCompruebaVictoriaDevuelveTrueYUnNivelNuevo() {
+        when(nivelJuegoMock.getNivel()).thenReturn(2L);
+        return controladorRompecabezas.moverFichas(requestRompecabezaMock, requestMock);
+    }
+
+    private void thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(ModelMap model, Integer nivelNuevo, String mensaje) {
+
+        assertThat(model.get("nivelNuevo").toString(), equalToIgnoringCase(nivelNuevo.toString()));
+        assertThat(model.get("mensaje").toString(), equalToIgnoringCase(mensaje));
+
+    }
+
     @Test
-    public void SiAlMoverUnaFichaYComprobarVictoriaConUnaMatrizResueltaDevuelveTrueSeActualizaRompecabezaNivelDeLaSesionPeroElUnNivelNuevoEsNullRetornaElMensajeVictoriaYElIdRompecabezaMasUno(){
+    public void SiAlMoverUnaFichaYComprobarVictoriaConUnaMatrizResueltaDevuelveTrueSeActualizaRompecabezaNivelDeLaSesionPeroElNivelNuevoEsNullRetornaElMensajeVictoriaYElIdRompecabezaMasUno(){
 
         givenExisteUnaMatrizResueltaPeroNivelNuevoNull();
 
@@ -158,6 +242,10 @@ public class ControladorRompecabezasTest {
 
         thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(model, 3, "Victoria");
 
+    }
+
+    private void givenExisteUnaMatrizResueltaPeroNivelNuevoNull() {
+        when(sessionMock.getAttribute("id")).thenReturn(1L);
     }
 
     @Test
@@ -185,93 +273,25 @@ public class ControladorRompecabezasTest {
         assertThat(model.get("mensaje").toString(), equalToIgnoringCase("No resuelto"));
     }
 
-    private void givenExisteUnaMatrizResueltaPeroNivelNuevoNull() {
-        when(sessionMock.getAttribute("id")).thenReturn(1L);
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(2);
-        when(servicioRompecabezasMock.actualizarNivelEnUsuario(1L, 2, 2)).thenReturn(null);
-    }
-
-    private void givenExisteUnaMatrizResuelta() {
-        when(sessionMock.getAttribute("id")).thenReturn(1L);
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(2);
-    }
-
-    private ModelMap whenCompruebaVictoriaDevuelveTrueYUnNivelNuevo() {
-        return controladorRompecabezas.moverFichas(requestRompecabezaMock, requestMock);
-    }
-
-    private void thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(ModelMap model, Integer nivelNuevo, String mensaje) {
-
-        assertThat(model.get("nivelNuevo").toString(), equalToIgnoringCase(nivelNuevo.toString()));
-        assertThat(model.get("mensaje").toString(), equalToIgnoringCase(mensaje));
-
-    }
 
 
-    private void thenSeLoLlevaAlUltimoRompecabezaJugado(ModelAndView modelAndView) {
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas"));
-
-    }
-
-    private ModelAndView whenComprobarUsuarioYNivelValido(Long rompecabezaNivel, HttpServletRequest requestMock) {
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1);
-        return controladorRompecabezas.irARompecabezasJuego(rompecabezaNivel, requestMock);
-
-    }
-
-    private void thenSeLoLlevaAlNivelUno(ModelAndView modelAndView) {
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("rompecabezas"));
-        assertThat(modelAndView.getModel().get("rompecabeza").toString(), equalToIgnoringCase(rompecabezaMock.toString()) );
-
-    }
 
 
-    private void givenHayUsuario() {
-    }
 
-    private ModelAndView whenIngresoAVistaRompecabezaConUsuario() {
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(3);
-        return controladorRompecabezas.irARompecabezasMain(requestMock);
-    }
 
-    private void thenSeLoLlevaAVistaRompecabezaDelUltimoRompecabezaJugado(ModelAndView modelAndView) {
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas/3"));
-    }
 
-    private void givenNoHayUsuario() {
-        when(sessionMock.getAttribute("id")).thenReturn(null);
-    }
 
-    private ModelAndView whenVerificoSiExisteUsuario() {
 
-        return controladorRompecabezas.irARompecabezasMain(requestMock);
 
-    }
 
-    private void thenSeLoLlevaALogin( ModelAndView modelAndView) {
 
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/login"));
-        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Inicie sesión para jugar"));
 
-    }
 
-    private ModelMap whenUsuarioTocaSeleccionarNiveles() {
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1L);
-        return controladorRompecabezas.irARompecabezasNiveles(requestMock);
 
-    }
 
-    private void thenElUsuarioEsLlevadoAUnaVistaDeNiveles( ModelMap model) {
 
-        assertThat(model.get("niveles").toString(), equalToIgnoringCase(rompecabezasMock.toString()) );
 
-    }
 
-    private void givenExisteUsuario() {
-
-    }
 
 
 
