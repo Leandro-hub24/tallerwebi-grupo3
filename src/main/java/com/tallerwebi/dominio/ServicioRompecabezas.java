@@ -8,6 +8,5 @@ public interface ServicioRompecabezas {
     Rompecabeza consultarRompecabeza(Long idRompecabeza);
     List<List<List<String>>> moverPieza(List<List<List<String>>> matrizActual, String idPiezaAMover);
     boolean comprobarVictoria(List<List<List<String>>> matrizActual);
-
-    Integer actualizarNivelEnUsuario(Long idUsuario, Integer idRompecabeza, Integer nivelActualUsuario);
+    Long buscarUltimoNivelId();
 }
