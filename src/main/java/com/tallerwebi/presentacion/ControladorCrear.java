@@ -29,13 +29,7 @@ public class ControladorCrear {
     public ModelAndView irACrear() {
         ModelMap modelo = new ModelMap();
 
-        List<ImagenPrueba> imagenesDisponibles = List.of(
-                new ImagenPrueba(1, "Imagen 1", "/img/TralaleroTralala.jpg"),
-                new ImagenPrueba(2, "Imagen 2", "/img/TralaleroTralala.jpg"),
-                new ImagenPrueba(3, "Imagen 3", "/img/TralaleroTralala.jpg"),
-                new ImagenPrueba(4, "Imagen 4", "/img/TralaleroTralala.jpg"),
-                new ImagenPrueba(5, "Imagen 5", "/img/TralaleroTralala.jpg")
-        );
+        List<ImagenCrear> imagenesDisponibles = servicioCrear.getImagenesCrear();
 
         modelo.addAttribute("imagenesDisponibles", imagenesDisponibles);
         return new ModelAndView("crear", modelo);

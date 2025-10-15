@@ -3,6 +3,7 @@ package com.tallerwebi.dominio;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
+import com.tallerwebi.presentacion.ImagenCrear;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,6 +16,16 @@ public class ServicioCrearTest {
     RepositorioCrear repositorioFake = new RepositorioCrear() {
         @Override
         public void guardarBrainrotAUsuario() {}
+
+        @Override
+        public List<ImagenCrear> getImagenesCrear() {
+            return null;
+        }
+
+        @Override
+        public List<ImagenCrear> buscarPorIds(List<Integer> ids) {
+            return List.of();
+        }
     };
     ServicioCrear servicioCrear = new ServicioCrearImpl(repositorioFake);
 
