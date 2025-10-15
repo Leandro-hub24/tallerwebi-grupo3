@@ -64,7 +64,6 @@ public class ServicioRompecabezasTest {
 
         when(repositorioRompecabezaMock.buscarRompecabezas(1)).thenReturn((ArrayList<Rompecabeza>) rompecabezasMock);
         when(repositorioRompecabezaMock.buscarUltimoNivelId()).thenReturn(3L);
-        when(repositorioRompecabezaMock.modificarRompecabezaNivel(1L)).thenReturn(3);
         when(repositorioRompecabezaMock.buscarRompecabezas(2)).thenReturn(null);
         when(repositorioRompecabezaMock.buscarRompecabeza(1L)).thenReturn(rompecabezaMock);
         when(repositorioRompecabezaMock.buscarRompecabeza(2L)).thenReturn(null);

@@ -10,7 +10,6 @@ INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Brrbrrr-patapi', '/im
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Capiballero-cocosini', '/img/versus/pjpngs/capiballero-cocosini.png');
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Capuccino-assasno', '/img/versus/pjpngs/capuccino-assasno.png');
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Chimpancini-bananini', '/img/versus/pjpngs/chimpancini-bananini.png');
-INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Liriririlarila', '/img/versus/pjpngs/liriririlarila.png');
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Los-tralaleritos', '/img/versus/pjpngs/los-tralaleritos.png');
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Saturno-saturnita', '/img/versus/pjpngs/saturno-saturnita.png');
 INSERT INTO Rompecabeza(id, nombre, urlImg) VALUES (null, 'Tralalero', '/img/versus/pjpngs/tralalero.png');

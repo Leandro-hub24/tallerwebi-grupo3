@@ -35,20 +35,6 @@ public class RepositorioRompezabezaImpl implements RepositorioRompecabeza {
                 .list();
     }
 
-
-
-    @Override
-    public Integer modificarRompecabezaNivel(Long idUsuario) {
-
-        Usuario usuario = (Usuario) sessionFactory.getCurrentSession().get(Usuario.class, idUsuario);
-
-        usuario.setRompecabezaNivel(usuario.getRompecabezaNivel() + 1);
-        sessionFactory.getCurrentSession().update(usuario);
-
-        return usuario.getRompecabezaNivel();
-
-    }
-
     @Override
     public Long buscarUltimoNivelId() {
         return (Long) sessionFactory.getCurrentSession().createCriteria(Rompecabeza.class)

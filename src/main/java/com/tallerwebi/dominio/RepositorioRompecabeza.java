@@ -7,7 +7,6 @@ public interface RepositorioRompecabeza {
 
     Rompecabeza buscarRompecabeza(Long idRompecabeza);
     List<Rompecabeza> buscarRompecabezas(Integer rompecabezaNivel);
-    Integer modificarRompecabezaNivel(Long idUsuario);
     Long buscarUltimoNivelId();
 
 }
