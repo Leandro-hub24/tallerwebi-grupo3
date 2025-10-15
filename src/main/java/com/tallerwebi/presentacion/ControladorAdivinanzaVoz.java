@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 
@@ -21,17 +22,17 @@ public class ControladorAdivinanzaVoz {
 
     // Mapa de imágenes y sus nombres (sin extensión)
     private final Map<String, String> imagenes = new LinkedHashMap<>() {{
-        put("bellerina-cappuccina", "Ballerina Capuccina");
-        put("bombardino-crocodilo", "Bombardiro Cocodrilo");
-        put("brrbrrr-patapi", "Brr Brr Patapi");
-        put("capiballero-cocosini", "Capiballero Cocosini");
-        put("capuccino-assasno", "Capuccino Assasino");
-        put("chimpancini-bananini", "Chimpancini Bananini");
-        put("liriririlarila", "LiririLarila");
-        put("los-tralaleritos", "Los Tralaleritos");
-        put("saturno-saturnita", "Saturno Saturnita");
-        put("tralalero", "Tralalelo Tralala");
-        put("tuntuntunsahur", "Tuntuntun Sahur");
+//        put("bellerina-cappuccina", "Ballerina Capuccina");
+//        put("bombardino-crocodilo", "Bombardiro Cocodrilo");
+        put("Brr brr patapi", "Brr Brr Patapi");
+//        put("capiballero-cocosini", "Capiballero Cocosini");
+//        put("capuccino-assasno", "Capuccino Assasino");
+        put("Chimpancini bananini", "Chimpancini Bananini");
+//        put("liriririlarila", "LiririLarila");
+//        put("los-tralaleritos", "Los Tralaleritos");
+//        put("saturno-saturnita", "Saturno Saturnita");
+        put("Tralalero tralala", "Tralalelo Tralala");
+        put("Tung tung tung Sahur", "Tuntuntun Sahur");
     }};
 
     @Autowired
@@ -42,14 +43,18 @@ public class ControladorAdivinanzaVoz {
 
     // GET: muestra la vista con la imagen y formulario
     @GetMapping("")
-    public ModelAndView mostrarVoz() {
+    public ModelAndView mostrarVoz(HttpServletRequest request, HttpSession session) {
         List<String> nombresArchivos = new ArrayList<>(imagenes.keySet());
         String nombreArchivo = nombresArchivos.get(new Random().nextInt(nombresArchivos.size()));
         String respuestaCorrecta = imagenes.get(nombreArchivo);
+        // ✅ Tomar el valor real de la sesión
+        Integer intentos = (Integer) session.getAttribute("intentosFallidos");
+        if (intentos == null) intentos = 0;
 
         ModelMap model = new ModelMap();
-        model.put("imagen", "/img/versus/" + nombreArchivo + ".png");
+        model.addAttribute("intentos", intentos);
         model.put("imagenActual", nombreArchivo);
+
 
         return new ModelAndView("adivinanza-por-voz", model);
 
@@ -62,25 +67,39 @@ public class ControladorAdivinanzaVoz {
             @RequestParam String imagenActual,
             @RequestParam(required = false) String aliasDetectado,
             HttpSession session){
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        Usuario usuario = (Usuario) session.getAttribute("USUARIO");
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login"); // o a donde quieras redirigir si no hay sesión
+        }
         String respuestaCorrecta = imagenes.get(imagenActual);
         boolean esCorrecto = transcripcion.equalsIgnoreCase(respuestaCorrecta);
+        Integer intentos = (Integer) session.getAttribute("intentosFallidos");
+        if (intentos == null) intentos = 0;
         if (esCorrecto){
             servicioAdivinanza.opcionCorrecta( usuario);
+            session.setAttribute("intentosFallidos", 0);
         }else{
             servicioAdivinanza.opcionIncorrecta(usuario);
+            intentos++;
+            session.setAttribute("intentosFallidos", intentos);
+
         }
 
-        System.out.println("🧠 Transcripción recibida: " + transcripcion);
-        System.out.println("🎯 Alias detectado: " + aliasDetectado);
-        System.out.println("🖼️ Imagen actual: " + imagenActual);
-        ModelAndView model = new ModelAndView("verificar2");
-        model.addObject("esCorrecto", esCorrecto);
-        model.addObject("respuestaCorrecta", respuestaCorrecta);
-        model.addObject("transcripcion", transcripcion);
-        model.addObject("imagen", "/img/versus/" + imagenActual + ".png");
-        model.addObject("aliasDetectado", aliasDetectado); // si lo querés mostrar
-        return model;
+        // ✅ Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
+        if (intentos >= 3 || esCorrecto) {
+            session.setAttribute("intentosFallidos", 0);
+            ModelAndView model = new ModelAndView("verificar2");
+            model.addObject("esCorrecto", esCorrecto);
+            model.addObject("respuestaCorrecta", respuestaCorrecta);
+            model.addObject("transcripcion", transcripcion);
+            model.addObject("imagen", "/img/versus/" + imagenActual + ".png");
+            model.addObject("imagenActual", imagenActual);
+            model.addObject("aliasDetectado", aliasDetectado);
+            model.addObject("intentos", intentos);
+            return model;
+        }
 
+        // 🔁 Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
+        return new ModelAndView("redirect:/adivinanza-por-voz"); // ajustá el endpoint si es diferente
     }
 }

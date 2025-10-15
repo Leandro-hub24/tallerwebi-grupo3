@@ -60,3 +60,18 @@ h2{
         box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
     }
 }
+
+.cuadrado-intento {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.gray {
+    background-color: grey;
+}
+
+.danger {
+    background-color: red;
+}
