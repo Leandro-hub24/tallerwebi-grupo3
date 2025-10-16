@@ -66,5 +66,6 @@ public class ControladorAdivinanzaPorVozTest {
         // Verifica que se llamó a opcionCorrecta y se reseteó el contador
         verify(servicioAdivinanzaMock).opcionCorrecta(usuarioMock);
         verify(sessionMock).setAttribute("intentosFallidos", 0);
+        // comentario para comittear
     }
 }
