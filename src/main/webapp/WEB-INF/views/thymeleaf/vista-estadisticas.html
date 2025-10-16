@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+</head>
+<body>
+<h1>Estadisticas</h1>
+
+<table class="table table-bordered" >
+    <tr>
+        <th>Nombre</th>
+        <th>Puntaje</th>
+        <th>Tiempo Jugado</th>
+        <th>Creados</th>
+        <th>Adivinados</th>
+        <th>Armados</th>
+    </tr>
+
+    <tr th:each="datos : ${modelPerfil}">
+        <td th:text="${datos.getNombreJugador()}">NombreJugador</td>
+        <td th:text="${datos.getPuntosAcumulados()}">PuntosAcumulados</td>
+        <td th:text="${datos.getTiempoDejuego()}">TiempoDeJuego</td>
+        <td th:text="${datos.getCantidadBrainRotCreados()}">CantidadBrainRotCreados</td>
+        <td th:text="${datos.getCantidadBrainrotAdivinados()}">CantidadBrainrotAdivinados</td>
+        <td th:text="${datos.getCantidadRompecabezasCompletados()}">CantidadRompecabezasCompletados</td>
+    </tr>
+
+</table><br>
+
+</body>
+</html>

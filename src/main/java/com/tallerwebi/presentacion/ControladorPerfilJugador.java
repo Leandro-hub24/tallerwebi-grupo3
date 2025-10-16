@@ -17,17 +17,18 @@ public class ControladorPerfilJugador {
     public ControladorPerfilJugador(ServicioPerfilJugador servicioPerfilJugador){
         this.servicioPerfilJugador = servicioPerfilJugador;
     }
+
     @RequestMapping("/perfilJugador")
-    /*public ModelAndView irAPerfilJugador(){
-        List<DatosPerfil> perfiles = servicioPerfilJugador.mostrarPerfilDeJugador();
-        ModelMap model = new ModelMap();
-        model.put("modelperfil", perfiles);
-        return new ModelAndView("vista-perfil-jugador", model);
-    }
-    */
     public ModelAndView irAPerfilJugador(){
         ModelMap model = new ModelMap();
-        model.put("mensaje","Mi perfil");
+        model.put("mensaje","Perfil del jugador");
         return new ModelAndView("vista-perfil-jugador", model);
+    }
+    @RequestMapping("/estadisticas")
+    public ModelAndView irAEstadisticas(){
+        List<DatosPerfil> perfiles = servicioPerfilJugador.mostrarPerfilDeJugador();
+        ModelMap model = new ModelMap();
+        model.put("modelPerfil", perfiles);
+        return new ModelAndView("vista-estadisticas", model);
     }
 }
