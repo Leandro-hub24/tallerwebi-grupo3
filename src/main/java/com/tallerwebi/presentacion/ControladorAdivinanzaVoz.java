@@ -77,7 +77,7 @@ public class ControladorAdivinanzaVoz {
         if (intentos == null) intentos = 0;
         if (esCorrecto){
             servicioAdivinanza.opcionCorrecta( usuario);
-            session.setAttribute("intentosFallidos", 0);
+
         }else{
             servicioAdivinanza.opcionIncorrecta(usuario);
             intentos++;

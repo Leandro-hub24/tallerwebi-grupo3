@@ -5,7 +5,7 @@ const brainrots = [
     {alias: "tuntuntun", nombre: "Tuntuntun Sahur"},
 
 
-    {alias: "Tralalelotralala", nombre: "Tralalelo Tralala"},
+    {alias: "Tralalelo tralala", nombre: "Tralalelo Tralala"},
     {alias: "Trararerotrarara", nombre: "Tralalelo Tralala"},
     {alias: "Tratratelotarala", nombre: "Tralalelo Tralala"},
 
