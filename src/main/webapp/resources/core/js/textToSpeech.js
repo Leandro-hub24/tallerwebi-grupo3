@@ -5,7 +5,7 @@ const brainrots = [
     {alias: "tuntuntun", nombre: "Tuntuntun Sahur"},
 
 
-    {alias: "Tralalelotralala", nombre: "Tralalelo Tralala"},
+    {alias: "Tralalelo tralala", nombre: "Tralalelo Tralala"},
     {alias: "Trararerotrarara", nombre: "Tralalelo Tralala"},
     {alias: "Tratratelotarala", nombre: "Tralalelo Tralala"},
 
@@ -86,6 +86,7 @@ function iniciarReconocimiento() {
 
 
     recognition.onresult = function (event) {
+        let contador = 0;
         let textoOriginal = event.results[0][0].transcript;
         let texto = textoOriginal.toLowerCase().trim();
         let resultado = fuse.search(texto);
@@ -104,6 +105,7 @@ function iniciarReconocimiento() {
 
             mostrarMensaje("detectado", `✅ Se detectó: ${nombreDetectado}`);
         } else {
+            contador++;
 
             inputTranscripcion.value = textoOriginal;
             mostrarMensaje("no-detectado", `❌ No detectado. Se usará: ${textoOriginal}`);
