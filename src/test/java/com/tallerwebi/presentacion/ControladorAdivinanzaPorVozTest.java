@@ -69,6 +69,20 @@ public class ControladorAdivinanzaPorVozTest {
         thenSeReiniciaIntentosFallidos();
     }
 
+    @Test
+    void SiElTemporizadorLlevaA0SeLoLlevaAVerificar2() {
+        givenTemporizadorLlegaACero();
+        whenSeVerificaSiElTemporizadorLlegoA0();
+        thenSeLoLlevaALaDireccionCorrecta("verificar2");
+       
+    }
+
+    private void whenSeVerificaSiElTemporizadorLlegoA0() {
+    }
+
+    private void givenTemporizadorLlegaACero() {
+    }
+
 
     private void givenUsuarioMockEnSesionConDosFallosPrevios() {
         usuarioMock = mock(Usuario.class);

@@ -75,3 +75,7 @@ h2{
 .danger {
     background-color: red;
 }
+
+.progress-bar {
+     transition: width 0.05s linear;
+}
