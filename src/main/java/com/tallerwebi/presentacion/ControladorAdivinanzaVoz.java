@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioAdivinanza;
+import com.tallerwebi.dominio.ServicioAdivinanzaImpl;
 import com.tallerwebi.dominio.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +19,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/adivinanza-por-voz")
 public class ControladorAdivinanzaVoz {
-    private ServicioAdivinanza servicioAdivinanza;
+    private final ServicioAdivinanza servicio;
+
 
     // Mapa de imágenes y sus nombres (sin extensión)
     private final Map<String, String> imagenes = new LinkedHashMap<>() {{
@@ -36,18 +38,21 @@ public class ControladorAdivinanzaVoz {
     }};
 
     @Autowired
-    public ControladorAdivinanzaVoz(ServicioAdivinanza servicioAdivinanza) {
-        this.servicioAdivinanza = servicioAdivinanza;
-
+    public ControladorAdivinanzaVoz(ServicioAdivinanza servicio) {
+        this.servicio = servicio;
     }
+
 
     // GET: muestra la vista con la imagen y formulario
     @GetMapping("")
     public ModelAndView mostrarVoz(HttpServletRequest request, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("USUARIO");
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
+        }
         List<String> nombresArchivos = new ArrayList<>(imagenes.keySet());
         String nombreArchivo = nombresArchivos.get(new Random().nextInt(nombresArchivos.size()));
-        String respuestaCorrecta = imagenes.get(nombreArchivo);
-        // ✅ Tomar el valor real de la sesión
+
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
 
@@ -76,10 +81,10 @@ public class ControladorAdivinanzaVoz {
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
         if (esCorrecto){
-            servicioAdivinanza.opcionCorrecta( usuario);
+            servicio.opcionCorrecta( usuario);
 
         }else{
-            servicioAdivinanza.opcionIncorrecta(usuario);
+            servicio.opcionIncorrecta(usuario);
             intentos++;
             session.setAttribute("intentosFallidos", intentos);
 

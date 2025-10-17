@@ -1,20 +1,18 @@
 package com.tallerwebi.dominio;
 
-import com.mysql.cj.xdevapi.SessionFactory;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class ServicioAdivinanzaTest {
+public class ServicioAdivinanzaImplTest {
 
 
     Usuario usuario = new Usuario();
 
     RepositorioUsuario repositorioUsuario = mock(RepositorioUsuario.class);
-    ServicioAdivinanza servicio = new ServicioAdivinanza(repositorioUsuario);
+    ServicioAdivinanzaImpl servicio = new ServicioAdivinanzaImpl(repositorioUsuario);
 
 
 
