@@ -1,5 +1,7 @@
 package com.tallerwebi.integracion;
 
+import com.tallerwebi.dominio.ServicioImagen;
+import com.tallerwebi.dominio.ServicioImagenImpl;
 import com.tallerwebi.dominio.Usuario;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
@@ -19,7 +21,8 @@ import static org.mockito.Mockito.*;
 public class ControladorCrearTest {
 
     ServicioCrear servicioCrear = mock();
-    ControladorCrear controladorCrear = new ControladorCrear(servicioCrear);
+    ServicioImagen servicioImagen = mock();
+    ControladorCrear controladorCrear = new ControladorCrear(servicioCrear, servicioImagen );
 
 
     @Test
