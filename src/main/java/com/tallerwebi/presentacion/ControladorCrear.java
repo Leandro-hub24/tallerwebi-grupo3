@@ -1,8 +1,11 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.Imagen;
 import com.tallerwebi.dominio.ServicioCrear;
+import com.tallerwebi.dominio.ServicioImagen;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
+import com.tallerwebi.dominio.excepcion.NoSeEncontraronImagenesDelTipoCrearException;
 import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,16 +23,23 @@ import java.util.List;
 public class ControladorCrear {
 
     ServicioCrear servicioCrear;
+    ServicioImagen servicioImagen;
     @Autowired
-    public ControladorCrear(ServicioCrear servicioCrear) {
+    public ControladorCrear(ServicioCrear servicioCrear, ServicioImagen servicioImagen) {
         this.servicioCrear = servicioCrear;
+        this.servicioImagen = servicioImagen;
     }
 
     @RequestMapping("/crear")
     public ModelAndView irACrear() {
         ModelMap modelo = new ModelMap();
 
-        List<ImagenCrear> imagenesDisponibles = servicioCrear.getImagenesCrear();
+        List<Imagen> imagenesDisponibles = List.of();
+        try {
+            imagenesDisponibles = servicioImagen.getImagenesCrear();
+        } catch (NoSeEncontraronImagenesDelTipoCrearException e) {
+            modelo.addAttribute("error", "No se pudieron obtener las imagenes");
+        }
 
         modelo.addAttribute("imagenesDisponibles", imagenesDisponibles);
         return new ModelAndView("crear", modelo);
