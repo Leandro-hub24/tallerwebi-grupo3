@@ -1,30 +1,40 @@
-// ... (variables iniciales)
-const matrizRompecabezaResolucion = [];
+
 let matrizRompecabeza = [];
 
-// 💡 Data URL de 1x1 píxel transparente para la pieza vacía
 const dataURL_piezaVacia = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAwQYFqEAAAAASUVORK5CYII=';
 const btnComenzar = document.getElementById('btn-comenzar');
+
+const inicioTimer = {
+    _inicio: undefined,
+
+    set: function(nuevoValor) {
+        this._inicio = nuevoValor;
+    },
+
+    get: function() {
+        return this._inicio;
+    }
+};
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("modal_btn").click()
 });
 
 btnComenzar.addEventListener('click', (event) => {
-    // Obtener los elementos HTML
+
+    inicioTimer.set(Date.now());
+    console.log(inicioTimer.get());
+
     const imagenOriginal = document.getElementById('imagen-original');
     const contenedorPiezas = document.getElementById('contenedor-piezas');
 
-    //imagenOriginal.onload = function () {
-        // Dimensiones de la imagen original
+
         const anchoOriginal = imagenOriginal.width;
         const altoOriginal = imagenOriginal.height;
 
-        // Número de filas y columnas para el recorte
         const filas = 3;
         const columnas = 3;
 
-        // Dimensiones de cada pieza
         const anchoPieza = anchoOriginal / columnas;
         const altoPieza = altoOriginal / filas;
 
@@ -82,44 +92,34 @@ btnComenzar.addEventListener('click', (event) => {
         imagenOriginal.width = anchoContenedor;
 
 
-        // Limpiar el contenedor antes de añadir nuevas piezas
         contenedorPiezas.innerHTML = '';
         contenedorPiezas.style.width = `${anchoContenedor}px`
         contenedorPiezas.style.height = `${altoContenedor}px`
 
-        // Iterar sobre las filas y columnas para crear las 16 piezas
+
         for (let y = 0; y < filas; y++) {
-            matrizRompecabezaResolucion[y] = [];
             for (let x = 0; x < columnas; x++) {
-                // Crear un nuevo canvas para cada pieza
+
                 const canvas = document.createElement('canvas');
                 canvas.width = anchoPieza;
                 canvas.height = altoPieza;
                 const contexto = canvas.getContext('2d');
 
-                // Calcular la posición de la pieza en la imagen original
                 const sx = x * anchoPieza;
                 const sy = y * altoPieza;
 
-                // Dibujar la porción de la imagen original en el nuevo canvas
                 contexto.drawImage(
                     imagenOriginal,
                     sx, sy, anchoPieza, altoPieza,
                     0, 0, anchoPieza, altoPieza
                 );
 
-                // Crear un nuevo elemento img y asignarle la imagen recortada
-                // ** CREAR UN NUEVO ELEMENTO IMG EN AMBOS CASOS **
                 const piezaImg = document.createElement('img');
 
                 if (y == (filas - 1) && x == (columnas - 1)) {
-                    // 💡 Caso: Pieza Vacía. Almacena el Data URL blanco/transparente.
-                    matrizRompecabezaResolucion[y][x] = [`${y}-${x}`, dataURL_piezaVacia];
                     piezaImg.src = dataURL_piezaVacia;
-                    piezaImg.className = 'piezaImg piezaVacia'; // Añadir clase para estilos CSS
+                    piezaImg.className = 'piezaImg piezaVacia';
                 } else {
-                    // 💡 Caso: Pieza con Imagen.
-                    matrizRompecabezaResolucion[y][x] = [`${y}-${x}`, canvas.toDataURL('image/png')];
                     piezaImg.src = canvas.toDataURL('image/png');
                     piezaImg.className = 'piezaImg';
                 }
@@ -146,12 +146,10 @@ btnComenzar.addEventListener('click', (event) => {
             }
         }
 
-        // Crear la tabla
         const tabla = document.createElement('table');
         tabla.className = 'tabla';
         const tbody = document.createElement('tbody');
 
-        // Llenar la tabla con las piezas desordenadas
         let piezaIndex = 0;
         for (let y = 0; y < filas; y++) {
             const fila = document.createElement('tr');
@@ -161,7 +159,6 @@ btnComenzar.addEventListener('click', (event) => {
                 celda.className = 'td_celda';
                 const pieza = piezasDesordenadas[piezaIndex];
 
-                // **Verificación añadida aquí**
                 if (pieza) {
                     celda.appendChild(pieza);
                 }
@@ -182,17 +179,16 @@ btnComenzar.addEventListener('click', (event) => {
 
 
                 pieza.addEventListener('click', (event) => {
-                    // 1. Obtener el ID de la pieza clickeada
+
                     const idPiezaClickeada = event.target.id;
                     const idRompecabeza = document.getElementsByTagName('article').item(0).id.split('-')[1];
-                    // 2. Crear un OBJETO que contenga AMBOS datos (Matriz y ID)
+
                     const datosParaEnviar = {
-                        matriz: matrizRompecabeza, // La matriz actual
+                        matriz: matrizRompecabeza,
                         idRompecabeza: idRompecabeza,
-                        idPieza: idPiezaClickeada   // El ID de la pieza que se quiere mover
+                        idPieza: idPiezaClickeada
                     };
 
-                    // 3. Convertir el objeto COMPLETO a JSON para el cuerpo del POST
                     const postData = JSON.stringify(datosParaEnviar);
 
                     const url = '/spring/rompecabezas';
@@ -246,11 +242,9 @@ btnComenzar.addEventListener('click', (event) => {
                         }
                     };
 
-                    // 4. Configurar el Header para indicar que estás enviando JSON
                     xhttp.open("POST", url, true);
                     xhttp.setRequestHeader("Content-Type", "application/json");
 
-                    // 5. Enviar solo el JSON combinado
                     xhttp.send(postData);
 
                 })
@@ -329,13 +323,11 @@ function cargarNiveles() {
 function desordenarArray(array) {
     let currentIndex = array.length, randomIndex;
 
-    // Mientras queden elementos a mezclar...
     while (currentIndex != 0) {
-        // Seleccionar un elemento sin mezclar...
+
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
 
-        // E intercambiarlo con el elemento actual.
         [array[currentIndex], array[randomIndex]] = [
             array[randomIndex], array[currentIndex]];
     }

@@ -25,6 +25,4 @@ public class Usuario {
     private Integer puntajeAdivinanza;
     private Integer rompecabezaNivel;
 
-
-
 }

@@ -20,5 +20,4 @@ public class RompecabezasRequest {
     // --- Constructor sin argumentos (necesario) ---
     public RompecabezasRequest() {}
 
-
 }

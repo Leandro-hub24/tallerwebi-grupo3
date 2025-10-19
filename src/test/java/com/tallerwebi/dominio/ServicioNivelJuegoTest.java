@@ -1,7 +1,6 @@
 package com.tallerwebi.dominio;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
@@ -19,7 +18,7 @@ public class ServicioNivelJuegoTest {
         repositorioNivelJuegoMock = mock(RepositorioNivelJuego.class);
         nivelJuegoMock = mock(NivelJuego.class);
         servicioNivelJuego = new ServicioNivelJuegoImpl(repositorioNivelJuegoMock);
-        when(repositorioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L)).thenReturn(nivelJuegoMock);
+        when(repositorioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L, "Rompecabeza")).thenReturn(nivelJuegoMock);
         when(repositorioNivelJuegoMock.modificarNivelJuego(1L)).thenReturn(3L);
         when(nivelJuegoMock.getNivel()).thenReturn(2L);
     }
@@ -40,7 +39,7 @@ public class ServicioNivelJuegoTest {
 
     private NivelJuego whenBuscoNivelJuego(Long usuarioId) {
 
-        return servicioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId);
+        return servicioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId, "Rompecabeza");
 
     }
 

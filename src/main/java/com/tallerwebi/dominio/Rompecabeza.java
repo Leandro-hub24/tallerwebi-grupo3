@@ -19,4 +19,6 @@ public class Rompecabeza {
     private Long id;
     private String nombre;
     private String urlImg;
+    private Long nivel;
+
 }

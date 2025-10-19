@@ -39,7 +39,10 @@ public class ControladorRompecabezasTest {
     private List<List<List<String>>> matriz;
     private RompecabezasRequest requestRompecabezaMock;
     private ServicioNivelJuego servicioNivelJuegoMock;
+    private ServicioUsuario servicioUsuarioMock;
+    private ServicioPuntosJuego servicioPuntosJuegoMock;
     private NivelJuego nivelJuegoMock;
+    private Usuario usuarioMock;
 
     @BeforeEach
     public void init() {
@@ -47,10 +50,13 @@ public class ControladorRompecabezasTest {
         matriz = new ArrayList<>();
         requestRompecabezaMock = mock(RompecabezasRequest.class);
         rompecabezaMock = mock(Rompecabeza.class);
+        usuarioMock = mock(Usuario.class);
         rompecabezasMock = new ArrayList<>();
         rompecabezasMock.add(rompecabezaMock);
         servicioRompecabezasMock = mock(ServicioRompecabezas.class);
         servicioNivelJuegoMock = mock(ServicioNivelJuego.class);
+        servicioUsuarioMock = mock(ServicioUsuario.class);
+        servicioPuntosJuegoMock = mock(ServicioPuntosJuego.class);
         nivelJuegoMock = mock(NivelJuego.class);
 
         requestMock = mock(HttpServletRequest.class);
@@ -75,12 +81,14 @@ public class ControladorRompecabezasTest {
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("id")).thenReturn(1L);
         when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1L);
-        controladorRompecabezas = new ControladorRompecabezas(servicioRompecabezasMock, servicioNivelJuegoMock);
+        controladorRompecabezas = new ControladorRompecabezas(servicioRompecabezasMock, servicioNivelJuegoMock, servicioUsuarioMock, servicioPuntosJuegoMock);
         when(servicioRompecabezasMock.consultarRompecabeza(1L)).thenReturn(rompecabezaMock);
         when(servicioRompecabezasMock.consultarRompecabezasDelUsuario(1)).thenReturn(rompecabezasMock);
-        when(servicioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L)).thenReturn(nivelJuegoMock);
+        when(servicioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L, "Rompecabezas")).thenReturn(nivelJuegoMock);
         when(nivelJuegoMock.getNivel()).thenReturn(1L);
         when(servicioRompecabezasMock.buscarUltimoNivelId()).thenReturn(2L);
+        when(servicioUsuarioMock.buscarUsuarioPorId(1L)).thenReturn(usuarioMock);
+        when(servicioNivelJuegoMock.guardarNivelJuego(usuarioMock, "Rompecabezas", 1)).thenReturn(nivelJuegoMock);
         when(servicioNivelJuegoMock.actualizarNivelJuego(1L, 2, 2, 2L)).thenReturn(3);
     }
 
@@ -206,23 +214,22 @@ public class ControladorRompecabezasTest {
     }
 
     @Test
-    public void SiAlMoverUnaFichaYComprobarVictoriaConUnaMatrizResueltaDevuelveTrueSeActualizaRompecabezaNivelDeLaSesionYRetornaElNivelNuevoDistintoDeNullYElMensajeVictoria(){
+    public void siAlMoverUnaFichaYComprobarVictoriaConUnaMatrizResueltaDevuelveTrueSeActualizaRompecabezaNivelDeLaSesionYRetornaElNivelNuevoDistintoDeNullYElMensajeVictoria(){
 
     givenExisteUnaMatrizResuelta();
 
     ModelMap model = whenCompruebaVictoriaDevuelveTrueYUnNivelNuevo();
 
-    thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(model, 3, "Victoria");
+    thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(model, 2, "Victoria");
 
     }
 
     private void givenExisteUnaMatrizResuelta() {
         when(sessionMock.getAttribute("id")).thenReturn(1L);
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(2);
+        when(requestRompecabezaMock.getIdRompecabeza()).thenReturn(1);
     }
 
     private ModelMap whenCompruebaVictoriaDevuelveTrueYUnNivelNuevo() {
-        when(nivelJuegoMock.getNivel()).thenReturn(2L);
         return controladorRompecabezas.moverFichas(requestRompecabezaMock, requestMock);
     }
 
@@ -234,22 +241,7 @@ public class ControladorRompecabezasTest {
     }
 
     @Test
-    public void SiAlMoverUnaFichaYComprobarVictoriaConUnaMatrizResueltaDevuelveTrueSeActualizaRompecabezaNivelDeLaSesionPeroElNivelNuevoEsNullRetornaElMensajeVictoriaYElIdRompecabezaMasUno(){
-
-        givenExisteUnaMatrizResueltaPeroNivelNuevoNull();
-
-        ModelMap model = whenCompruebaVictoriaDevuelveTrueYUnNivelNuevo();
-
-        thenRetornaUnModelMapConElNivelNuevoYElMensajeVictoria(model, 3, "Victoria");
-
-    }
-
-    private void givenExisteUnaMatrizResueltaPeroNivelNuevoNull() {
-        when(sessionMock.getAttribute("id")).thenReturn(1L);
-    }
-
-    @Test
-    public void SiAlMoverUnaFichaYComprobarVictoriaConUnaMatrizNoResueltaDevuelveFalseRetornaElMensajeNoResuelto(){
+    public void siAlMoverUnaFichaYComprobarVictoriaConUnaMatrizNoResueltaDevuelveFalseRetornaElMensajeNoResuelto(){
 
         givenExisteUnaMatrizNoResuelta();
 
