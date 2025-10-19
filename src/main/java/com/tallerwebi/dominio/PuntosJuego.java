@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.Instant;
 import java.util.Date;
 
 @Getter
@@ -15,8 +16,8 @@ public class PuntosJuego {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer puntos;
-    private Date inicioPartida;
-    private Date finPartida;
+    private Instant inicioPartida;
+    private Instant finPartida;
     @ManyToOne
     @JoinColumn(name = "nivelJuego_id")
     private NivelJuego nivelJuego;

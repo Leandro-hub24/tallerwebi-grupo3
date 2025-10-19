@@ -20,20 +20,15 @@ public class ServicioPuntosJuegoImpl implements ServicioPuntosJuego{
     }
 
     @Override
-    public void guardarPuntosJuegoRompecabeza(NivelJuego nivelJuego, Date inicioPartida, Date finPartida) {
+    public void guardarPuntosJuegoRompecabeza(NivelJuego nivelJuego, Instant inicioPartida, Instant finPartida) {
 
         PuntosJuego puntosJuego = new PuntosJuego();
         puntosJuego.setInicioPartida(inicioPartida);
         puntosJuego.setFinPartida(finPartida);
         puntosJuego.setNivelJuego(nivelJuego);
 
-        Instant instantInicio = inicioPartida.toInstant();
-        Instant instantFin = finPartida.toInstant();
-
-        Duration duration = Duration.between(instantInicio, instantFin);
+        Duration duration = Duration.between(inicioPartida, finPartida);
         long tiempoEnSegundos = duration.getSeconds();
-        //Long minutos =  tiempo / 60;
-        //Long segundos = tiempo % 60;
 
         if ( tiempoEnSegundos <= 60) {
             puntosJuego.setPuntos(10);

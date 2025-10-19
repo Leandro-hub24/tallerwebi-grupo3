@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
+import java.time.Instant;
 import java.util.Date;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -88,8 +89,8 @@ public class RepositorioPuntosJuegoTest {
 
     private PuntosJuego givenTengoUnPuntosJuego(NivelJuego nivelJuego) {
         PuntosJuego puntosJuego = new PuntosJuego();
-        puntosJuego.setInicioPartida(new Date());
-        puntosJuego.setFinPartida(new Date());
+        puntosJuego.setInicioPartida(Instant.now());
+        puntosJuego.setFinPartida(Instant.now());
         puntosJuego.setNivelJuego(nivelJuego);
         return puntosJuego;
     }

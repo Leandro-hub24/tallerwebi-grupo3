@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -111,14 +112,14 @@ public class ControladorRompecabezasTest {
     }
 
     private ModelMap whenUsuarioTocaSeleccionarNiveles() {
-        when(sessionMock.getAttribute("rompecabezaNivel")).thenReturn(1L);
+        when(servicioRompecabezasMock.consultarRompecabezasDelUsuario(2)).thenReturn(rompecabezasMock);
         return controladorRompecabezas.irARompecabezasNiveles(requestMock);
 
     }
 
     private void thenElUsuarioEsLlevadoAUnaVistaDeNiveles( ModelMap model) {
 
-        assertThat(model.get("niveles").toString(), equalToIgnoringCase(rompecabezasMock.toString()) );
+        assertThat(model.get("niveles"), equalTo(rompecabezasMock) );
 
     }
 
@@ -172,7 +173,7 @@ public class ControladorRompecabezasTest {
     }
 
     private void thenSeLoLlevaAVistaRompecabezaDelUltimoRompecabezaJugado(ModelAndView modelAndView) {
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas/3"));
+        assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/rompecabezas/4"));
     }
 
     @Test

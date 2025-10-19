@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 
 @Controller
@@ -67,8 +67,8 @@ public class ControladorRompecabezas {
         Long usuarioId = (Long) request.getSession().getAttribute("id");
         ModelMap model = new ModelMap();
         List<List<List<String>>> matrizConCambios;
-        Date inicioPartida = new Date();
-        Date finPartida = new Date();
+        Instant inicioPartida = requestRompecabeza.getInicioTimer();
+        Instant finPartida = requestRompecabeza.getFinTimer();
 
 
         try {

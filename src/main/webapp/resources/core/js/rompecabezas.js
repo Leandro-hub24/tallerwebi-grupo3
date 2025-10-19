@@ -4,17 +4,36 @@ let matrizRompecabeza = [];
 const dataURL_piezaVacia = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAwQYFqEAAAAASUVORK5CYII=';
 const btnComenzar = document.getElementById('btn-comenzar');
 
-const inicioTimer = {
-    _inicio: undefined,
+let inicioTimer;
+let finTimer;
 
-    set: function(nuevoValor) {
-        this._inicio = nuevoValor;
-    },
+let temporizador;
 
-    get: function() {
-        return this._inicio;
-    }
-};
+function timerVista(){
+    const horas = document.getElementById('horas');
+    const minutos = document.getElementById('minutos');
+    const segundos = document.getElementById('segundos');
+    let tiempo = 0;
+
+    temporizador = setInterval(() => {
+        tiempo ++;
+
+        const hor = Math.floor(tiempo / 3600);
+        const min = Math.floor((tiempo % 3600) / 60);
+        const seg = tiempo % 60;
+
+        horas.innerHTML = String(hor).padStart(2, '0');
+        minutos.innerHTML = String(min).padStart(2, '0');
+        segundos.innerHTML = String(seg).padStart(2, '0');
+
+        }, 1000);
+
+}
+
+function detenerTimer() {
+    clearInterval(temporizador);
+    console.log("Temporizador detenido.");
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("modal_btn").click()
@@ -22,8 +41,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 btnComenzar.addEventListener('click', (event) => {
 
-    inicioTimer.set(Date.now());
-    console.log(inicioTimer.get());
+    timerVista()
+
+    inicioTimer = new Date().toISOString();
+    console.log(inicioTimer);
 
     const imagenOriginal = document.getElementById('imagen-original');
     const contenedorPiezas = document.getElementById('contenedor-piezas');
@@ -182,11 +203,15 @@ btnComenzar.addEventListener('click', (event) => {
 
                     const idPiezaClickeada = event.target.id;
                     const idRompecabeza = document.getElementsByTagName('article').item(0).id.split('-')[1];
+                    finTimer = new Date().toISOString();
+                    console.log(finTimer);
 
                     const datosParaEnviar = {
                         matriz: matrizRompecabeza,
                         idRompecabeza: idRompecabeza,
-                        idPieza: idPiezaClickeada
+                        idPieza: idPiezaClickeada,
+                        inicioTimer: inicioTimer,
+                        finTimer: finTimer,
                     };
 
                     const postData = JSON.stringify(datosParaEnviar);
@@ -217,6 +242,7 @@ btnComenzar.addEventListener('click', (event) => {
 
                                 if (mensaje === "Victoria"){
                                     const nivelNuevo = data.nivelNuevo
+                                    detenerTimer();
                                     document.getElementById('imagen-original').style.display = 'block';
                                     document.getElementById('contenedor-piezas').style.display = 'none';
                                     document.getElementById('modal-body').innerHTML = '';
