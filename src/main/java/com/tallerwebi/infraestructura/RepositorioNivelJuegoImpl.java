@@ -3,6 +3,7 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.NivelJuego;
 import com.tallerwebi.dominio.RepositorioNivelJuego;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,11 +21,14 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
 
 
     @Override
-    public NivelJuego buscarNivelJuegoPorIdUsuario(Long usuarioId) {
+    public NivelJuego buscarNivelJuegoPorIdUsuario(Long usuarioId, String juego) {
         return (NivelJuego) sessionFactory.getCurrentSession()
                 .createCriteria(NivelJuego.class)
                 .createAlias("usuario", "u")
                 .add(Restrictions.eq("u.id", usuarioId))
+                .add(Restrictions.eq("nombre", juego))
+                .addOrder(Order.desc("nivel"))
+                .setMaxResults(1)
                 .uniqueResult();
     }
 
@@ -39,5 +43,11 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
         nivelJuego.setNivel(nivelJuego.getNivel() + 1);
         sessionFactory.getCurrentSession().update(nivelJuego);
     return nivelJuego.getNivel();
+    }
+
+    @Override
+    public NivelJuego guardarNivelJuego(NivelJuego nivelJuego) {
+        sessionFactory.getCurrentSession().save(nivelJuego);
+        return nivelJuego;
     }
 }

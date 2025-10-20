@@ -49,7 +49,7 @@ import java.util.List;
         @Rollback
         public void buscarRompecabezaPorId() {
 
-            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png");
+            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png", 1L);
 
             Rompecabeza rompecabezaObtenido = whenBuscoRompecabezaPorIdUno(1L);
 
@@ -58,11 +58,12 @@ import java.util.List;
 
         }
 
-        private Rompecabeza givenTengoUnRompecabeza(String nombre, String urlImg) {
+        private Rompecabeza givenTengoUnRompecabeza(String nombre, String urlImg, Long nivel) {
 
             Rompecabeza rompecabeza = new Rompecabeza();
             rompecabeza.setNombre(nombre);
             rompecabeza.setUrlImg(urlImg);
+            rompecabeza.setNivel(nivel);
             sessionFactory.getCurrentSession().save(rompecabeza);
             return rompecabeza;
         }
@@ -84,10 +85,10 @@ import java.util.List;
         @Rollback
         public void buscarUltimoNivelId() {
 
-            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png");
-            Rompecabeza rompecabeza2 = givenTengoUnRompecabeza("Bombar", "/img/bombardino.png");
-            Rompecabeza rompecabeza3 = givenTengoUnRompecabeza("Bombardi", "/img/bombardino.png");
-            Rompecabeza rompecabeza4 = givenTengoUnRompecabeza("Bomb", "/img/bombardino.png");
+            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png", 1L);
+            Rompecabeza rompecabeza2 = givenTengoUnRompecabeza("Bombar", "/img/bombardino.png", 2L);
+            Rompecabeza rompecabeza3 = givenTengoUnRompecabeza("Bombardi", "/img/bombardino.png",3L);
+            Rompecabeza rompecabeza4 = givenTengoUnRompecabeza("Bomb", "/img/bombardino.png", 4L);
 
             Long rompecabezaIdObtenido = whenBuscoUltimoRompecabezaId();
 
@@ -111,10 +112,10 @@ import java.util.List;
         @Rollback
         public void buscarRompecabezasPorRompecabezaNivel() {
 
-            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png");
-            Rompecabeza rompecabeza2 = givenTengoUnRompecabeza("Bombar", "/img/bombardino.png");
-            Rompecabeza rompecabeza3 = givenTengoUnRompecabeza("Bombardi", "/img/bombardino.png");
-            Rompecabeza rompecabeza4 = givenTengoUnRompecabeza("Bomb", "/img/bombardino.png");
+            Rompecabeza rompecabeza1 = givenTengoUnRompecabeza("Bombardino", "/img/bombardino.png", 1L);
+            Rompecabeza rompecabeza2 = givenTengoUnRompecabeza("Bombar", "/img/bombardino.png", 2L);
+            Rompecabeza rompecabeza3 = givenTengoUnRompecabeza("Bombardi", "/img/bombardino.png", 3L);
+            Rompecabeza rompecabeza4 = givenTengoUnRompecabeza("Bomb", "/img/bombardino.png", 4L);
 
             List<Rompecabeza> rompecabezasObtenidos = whenBuscoRompecabezasPorRompecabezaNivel(3);
 
