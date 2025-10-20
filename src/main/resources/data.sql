@@ -14,3 +14,8 @@ INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Los-tralalerit
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Saturno-saturnita', '/img/versus/pjpngs/saturno-saturnita.png', 8);
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tralalero', '/img/versus/pjpngs/tralalero.png', 9);
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 10);
+
+-- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+-- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+-- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+-- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'adivinar');
