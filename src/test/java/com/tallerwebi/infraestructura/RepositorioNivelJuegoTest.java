@@ -24,7 +24,10 @@ import static org.hamcrest.Matchers.equalTo;
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
 @ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class})
+
 public class RepositorioNivelJuegoTest {
+
+    private static final String juego = "Rompecabeza";
 
     @Autowired
     private RepositorioNivelJuego repositorioNivelJuego;
@@ -82,7 +85,7 @@ public class RepositorioNivelJuegoTest {
     }
 
     private NivelJuego whenBuscoNivelJuego(Long usuarioId) {
-        return repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId);
+        return repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId, juego);
     }
 
     private void thenObtengoUnNivelJuego(NivelJuego nivelJuegoObtenido, Long nivelJuegoEsperado) {
@@ -113,6 +116,36 @@ public class RepositorioNivelJuegoTest {
 
         assertThat(nivelJuegoEsperado, equalTo(nivelJuegoObtenido));
 
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void guardarNivelJuego() {
+
+        Usuario usuario = givenTengoUnUsuario();
+        NivelJuego nivelJuego = givenTengoUnNivelJuegoNuevo(usuario);
+
+        NivelJuego nivelJuegoAgregado = whenAgregoNivelJuego(nivelJuego);
+
+        thenNivelJuegoAgregado(nivelJuegoAgregado);
+
+    }
+
+    private NivelJuego givenTengoUnNivelJuegoNuevo(Usuario usuario) {
+        NivelJuego nivelJuego = new NivelJuego();
+        nivelJuego.setNombre("Rompecabeza");
+        nivelJuego.setNivel(1L);
+        nivelJuego.setUsuario(usuario);
+        return nivelJuego;
+    }
+
+    private NivelJuego whenAgregoNivelJuego(NivelJuego nivelJuego){
+        return repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+    }
+
+    private void thenNivelJuegoAgregado(NivelJuego nivelJuegoAgregado) {
+        assertThat(nivelJuegoAgregado.getNivel(), equalTo(1L));
     }
 
 }
