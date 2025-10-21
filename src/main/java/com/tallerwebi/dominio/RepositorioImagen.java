@@ -3,5 +3,5 @@ package com.tallerwebi.dominio;
 import java.util.List;
 
 public interface RepositorioImagen {
-    List<Imagen>  getImagenesCrear();
+    List<Imagen>  getImagenesDeUnTipo(String tipo);
 }

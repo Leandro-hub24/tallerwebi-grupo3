@@ -21,10 +21,10 @@ public class RepositorioImagenImpl implements RepositorioImagen {
 
     @Override
     @Transactional
-    public List<Imagen> getImagenesCrear() {
+    public List<Imagen> getImagenesDeUnTipo(String tipo) {
         return (List<Imagen>) sessionFactory.getCurrentSession()
                 .createCriteria(Imagen.class)
-                .add(Restrictions.eq("tipo", "crear"))
+                .add(Restrictions.eq("tipo", tipo))
                 .list();
     }
 }
