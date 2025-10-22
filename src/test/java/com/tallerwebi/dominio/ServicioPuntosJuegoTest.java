@@ -4,7 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,14 +16,26 @@ public class ServicioPuntosJuegoTest {
     private ServicioPuntosJuego servicioPuntosJuego;
     private RepositorioPuntosJuego repositorioPuntosjuegoMock;
     private NivelJuego nivelJuegoMock;
+    private PuntosJuego puntosJuegoMock;
+    private PuntosJuego puntosJuegoMock1;
+    private List<PuntosJuego> puntosJuegoList;
+    private String juego;
 
     @BeforeEach
     public void init() {
 
+        juego = "Rompecabezas";
         repositorioPuntosjuegoMock = mock(RepositorioPuntosJuego.class);
         nivelJuegoMock = mock(NivelJuego.class);
+        puntosJuegoMock = mock(PuntosJuego.class);
+        puntosJuegoMock1 = mock(PuntosJuego.class);
+        puntosJuegoList = List.of(puntosJuegoMock, puntosJuegoMock);
         servicioPuntosJuego = new ServicioPuntosJuegoImpl(repositorioPuntosjuegoMock);
-
+        when(repositorioPuntosjuegoMock.buscarPuntosJuegoConMejorTiempoPorIdUsuario(1L, 1L, juego)).thenReturn(puntosJuegoList);
+        when(puntosJuegoMock.getInicioPartida()).thenReturn(Instant.now());
+        when(puntosJuegoMock.getFinPartida()).thenReturn(Instant.now().plusSeconds(60));
+        when(puntosJuegoMock1.getInicioPartida()).thenReturn(Instant.now());
+        when(puntosJuegoMock1.getFinPartida()).thenReturn(Instant.now().plusSeconds(90));
     }
 
     @Test
@@ -92,5 +107,46 @@ public class ServicioPuntosJuegoTest {
 
         thenLosPuntosSeGuardaron();
 
+    }
+
+    @Test
+    void buscoUnPuntosJuegoConMejorTiempo(){
+
+        NivelJuego nivelJuego = givenTengoUnNivelJuego();
+        Long usuarioId = givenTengoUnUsuarioId();
+
+        Integer tiempoObtenido = whenBuscoPuntosJuegoConMejorTiempo(1L, usuarioId, juego);
+
+        thenObtengoUnPuntosJuego(tiempoObtenido, 60);
+
+    }
+
+    private Long givenTengoUnUsuarioId() {
+        return 1L;
+    }
+
+    private Integer whenBuscoPuntosJuegoConMejorTiempo(Long idRompecabeza, Long usuarioId, String juego) {
+        return servicioPuntosJuego.buscarPuntosJuegoConMejorTiempo(idRompecabeza, usuarioId, juego);
+    }
+
+    private void thenObtengoUnPuntosJuego(Integer tiempoObtenido, Integer tiempoEsperado) {
+        assertThat(tiempoObtenido, equalTo(tiempoEsperado));
+    }
+
+    @Test
+    void buscoUnPuntosJuegoConMejorTiempoYNoEncuentro(){
+
+        NivelJuego nivelJuego = givenTengoUnNivelJuego();
+        Long usuarioId = givenTengoUnUsuarioId();
+        givenNoTengoPuntosJuego();
+
+        Integer tiempoObtenido = whenBuscoPuntosJuegoConMejorTiempo(1L, usuarioId, juego);
+
+        thenObtengoUnPuntosJuego(tiempoObtenido, 0);
+
+    }
+
+    private void givenNoTengoPuntosJuego() {
+        when(repositorioPuntosjuegoMock.buscarPuntosJuegoConMejorTiempoPorIdUsuario(1L, 1L, juego)).thenReturn(List.of());
     }
 }
