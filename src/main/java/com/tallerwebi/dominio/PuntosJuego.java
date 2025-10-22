@@ -2,6 +2,7 @@ package com.tallerwebi.dominio;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -21,6 +22,5 @@ public class PuntosJuego {
     @ManyToOne
     @JoinColumn(name = "nivelJuego_id")
     private NivelJuego nivelJuego;
-
 
 }

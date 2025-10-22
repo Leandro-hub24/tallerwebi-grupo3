@@ -61,4 +61,17 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
         sessionFactory.getCurrentSession().save(nivelJuego);
         return nivelJuego;
     }
+
+    @Override
+    public NivelJuego buscarNivelJuegoPoridUsuarioYIdRompecabeza(Long usuarioId, String juego, Long idRompecabeza) {
+
+        return (NivelJuego) sessionFactory.getCurrentSession()
+                .createCriteria(NivelJuego.class)
+                .createAlias("usuario", "u")
+                .add(Restrictions.eq("u.id", usuarioId))
+                .add(Restrictions.eq("nombre", juego))
+                .add(Restrictions.eq("nivel", idRompecabeza))
+                .uniqueResult();
+
+    }
 }

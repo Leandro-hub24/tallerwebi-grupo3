@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 @Service("servicioPuntosJuego")
 @Transactional
@@ -49,5 +51,24 @@ public class ServicioPuntosJuegoImpl implements ServicioPuntosJuego{
             puntosJuego.setPuntos(1);
             repositorioPuntosJuego.agregarPuntos(puntosJuego);
         }
+    }
+
+    @Override
+    public Integer buscarPuntosJuegoConMejorTiempo(Long idRompecabeza, Long usuarioId, String juego) {
+
+        List<PuntosJuego> puntosJuego = repositorioPuntosJuego.buscarPuntosJuegoConMejorTiempoPorIdUsuario(usuarioId, idRompecabeza, juego);
+
+        if (!puntosJuego.isEmpty()) {
+            Optional<PuntosJuego> mejorPuntaje = puntosJuego.stream()
+                    .min(Comparator.comparing(p ->
+                            Duration.between(p.getInicioPartida(), p.getFinPartida())
+                    ));
+            Duration duration = Duration.between(mejorPuntaje.get().getInicioPartida(), mejorPuntaje.get().getFinPartida());
+            Long tiempoEnSegundos = duration.getSeconds();
+
+            return tiempoEnSegundos.intValue();
+        }
+
+        return 0;
     }
 }

@@ -124,11 +124,16 @@ public class ControladorRompecabezas {
 
         Long idUsuario = (Long) request.getSession().getAttribute("id");
         NivelJuego nivelJuego = servicioNivelJuego.buscarNivelJuegoPorIdUsuario(idUsuario, juego);
+
+
         Integer rompecabezaNivel = nivelJuego.getNivel().intValue() + 1;
 
         if (idUsuario != null) {
+
             if ( idRompecabeza <= rompecabezaNivel && idRompecabeza <= 10) {
                 try {
+                    Integer mejorTiempo = servicioPuntosJuego.buscarPuntosJuegoConMejorTiempo(idRompecabeza, idUsuario, juego);
+                    model.put("mejorTiempo", mejorTiempo);
                     Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(idRompecabeza);
                     model.put("rompecabeza", rompecabeza);
                 } catch (NivelesNoEncontradosException e) {

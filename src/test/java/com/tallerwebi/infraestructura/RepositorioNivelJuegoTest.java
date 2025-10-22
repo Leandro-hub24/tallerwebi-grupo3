@@ -148,4 +148,29 @@ public class RepositorioNivelJuegoTest {
         assertThat(nivelJuegoAgregado.getNivel(), equalTo(1L));
     }
 
+    @Test
+    @Transactional
+    @Rollback
+    public void buscarNivelJuegoDeRompecabezaConIdUsuarioYIdRompecabeza() {
+
+        Usuario usuario = givenTengoUnUsuario();
+        NivelJuego nivelJuego = givenTengoUnNivelJuego(usuario);
+        Long idRompecabeza = givenTengoUnIdRompecabeza();
+
+        NivelJuego nivelJuegoObtenido = whenBuscoNivelJuegoConIdUsuarioYIdRompecabeza(1L, idRompecabeza);
+
+        thenObtengoUnNivelJuego(nivelJuegoObtenido, 1L);
+
+    }
+
+    private Long givenTengoUnIdRompecabeza() {
+        return 1L;
+    }
+
+    private NivelJuego whenBuscoNivelJuegoConIdUsuarioYIdRompecabeza(long usuarioId, Long idRompecabeza) {
+        return repositorioNivelJuego.buscarNivelJuegoPoridUsuarioYIdRompecabeza(usuarioId, juego,  idRompecabeza);
+    }
+
+
+
 }

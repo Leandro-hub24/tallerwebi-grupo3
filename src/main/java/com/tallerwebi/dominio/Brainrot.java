@@ -1,6 +1,20 @@
 package com.tallerwebi.dominio;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Getter
+@Setter
+@Entity
 public class Brainrot {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     private String imagenFondo;
     private String imagenPersonaje;
     private String audio;
@@ -14,44 +28,8 @@ public class Brainrot {
         this.imagenSombra = imagenSombra;
         this.imagenCompleta = imagenCompleta;
     }
-
-    public String getImagenFondo() {
-        return imagenFondo;
+    public Brainrot(){
     }
 
-    public void setImagenFondo(String imagenFondo) {
-        this.imagenFondo = imagenFondo;
-    }
 
-    public String getImagenPersonaje() {
-        return imagenPersonaje;
-    }
-
-    public void setImagenPersonaje(String imagenPersonaje) {
-        this.imagenPersonaje = imagenPersonaje;
-    }
-
-    public String getAudio() {
-        return audio;
-    }
-
-    public void setAudio(String audio) {
-        this.audio = audio;
-    }
-
-    public String getImagenSombra() {
-        return imagenSombra;
-    }
-
-    public void setImagenSombra(String imagenSombra) {
-        this.imagenSombra = imagenSombra;
-    }
-
-    public String getImagenCompleta() {
-        return imagenCompleta;
-    }
-
-    public void setImagenCompleta(String imagenCompleta) {
-        this.imagenCompleta = imagenCompleta;
-    }
 }

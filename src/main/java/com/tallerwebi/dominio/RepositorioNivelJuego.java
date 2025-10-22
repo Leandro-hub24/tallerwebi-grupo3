@@ -7,4 +7,5 @@ public interface RepositorioNivelJuego {
 
     Long modificarNivelJuego(Long idUsuario);
     NivelJuego guardarNivelJuego(NivelJuego nivelJuego);
+    NivelJuego buscarNivelJuegoPoridUsuarioYIdRompecabeza(Long idUsuario, String juego,Long idRompecabeza);
 }

@@ -6,20 +6,29 @@ import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 @ExtendWith(SpringExtension.class)
@@ -27,6 +36,13 @@ import static org.hamcrest.Matchers.equalTo;
 @ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class})
 public class RepositorioPuntosJuegoTest {
 
+    private String juego;
+
+    @BeforeEach
+    public void init() {
+
+        juego = "Rompecabezas";
+    }
     @Autowired
     private RepositorioPuntosJuego repositorioPuntosJuego;
 
@@ -54,7 +70,7 @@ public class RepositorioPuntosJuegoTest {
 
         Usuario usuario = givenTengoUnUsuario();
         NivelJuego nivelJuego = givenTengoUnNivelJuego(usuario);
-        PuntosJuego puntosJuego = givenTengoUnPuntosJuego(nivelJuego);
+        PuntosJuego puntosJuego = givenTengoUnPuntosJuego(nivelJuego, 300);
 
         Long filaInsertada = whenAgregoPuntos(puntosJuego);
 
@@ -80,17 +96,17 @@ public class RepositorioPuntosJuegoTest {
 
         NivelJuego nivelJuego = new NivelJuego();
         nivelJuego.setNivel(1L);
-        nivelJuego.setNombre("Rompecabeza");
+        nivelJuego.setNombre(juego);
         nivelJuego.setUsuario(usuario);
         sessionFactory.getCurrentSession().save(nivelJuego);
         return nivelJuego;
 
     }
 
-    private PuntosJuego givenTengoUnPuntosJuego(NivelJuego nivelJuego) {
+    private PuntosJuego givenTengoUnPuntosJuego(NivelJuego nivelJuego, Integer tiempoPartida) {
         PuntosJuego puntosJuego = new PuntosJuego();
         puntosJuego.setInicioPartida(Instant.now());
-        puntosJuego.setFinPartida(Instant.now());
+        puntosJuego.setFinPartida(Instant.now().plusSeconds(tiempoPartida));
         puntosJuego.setNivelJuego(nivelJuego);
         return puntosJuego;
     }
@@ -101,5 +117,36 @@ public class RepositorioPuntosJuegoTest {
 
     private void thenLosPuntosFueronAgregados(Long filaInsertada) {
         assertThat(filaInsertada, equalTo(1L));
+    }
+
+    @Test
+    @Transactional
+    @Rollback()
+    public void buscarPuntosJuegoConMejorTiempoPorIdUsuarioYIdRompecabeza() {
+
+        Usuario usuario = givenTengoUnUsuario();
+        NivelJuego nivelJuego = givenTengoUnNivelJuego(usuario);
+        PuntosJuego puntosJuego = givenTengoUnPuntosJuego(nivelJuego, 300);
+        PuntosJuego puntosJuego1 = givenTengoUnPuntosJuego(nivelJuego, 60);
+        PuntosJuego puntosJuego2 = givenTengoUnPuntosJuego(nivelJuego, 120);
+
+        Long filaInsertada = whenAgregoPuntos(puntosJuego);
+        Long filaInsertada1 = whenAgregoPuntos(puntosJuego1);
+        Long filaInsertada2 = whenAgregoPuntos(puntosJuego2);
+
+        List<PuntosJuego> puntosJuegoObtenido = whenBuscoPuntosJuegoConMejorTiempo(usuario.getId(), 1L);
+
+        thenObtengoUnPuntosJuego(puntosJuegoObtenido, 3);
+
+    }
+
+    private List<PuntosJuego> whenBuscoPuntosJuegoConMejorTiempo(Long usuarioId, Long idRompecabeza) {
+       return repositorioPuntosJuego.buscarPuntosJuegoConMejorTiempoPorIdUsuario(usuarioId, idRompecabeza, juego);
+    }
+
+    private void thenObtengoUnPuntosJuego(List<PuntosJuego> puntosJuegoObtenido, Integer cantidadEsperada) {
+
+        assertThat(puntosJuegoObtenido.size(), equalTo(cantidadEsperada));
+
     }
 }

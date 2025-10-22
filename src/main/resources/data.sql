@@ -15,6 +15,11 @@ INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Saturno-saturn
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tralalero', '/img/versus/pjpngs/tralalero.png', 9);
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 10);
 
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom');
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom');
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom');
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom');
+
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');

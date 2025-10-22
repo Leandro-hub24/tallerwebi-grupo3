@@ -112,15 +112,7 @@
             <form th:action="@{/versus/verificar}" method="post">
                 <input type="hidden" th:name="imagenActual" th:value="${imagenActual}">
                 <input type="hidden" th:name="imagenActualCompleta" th:value="${imagenActualCompleta}">
-<!--                <button th:each="opcion : ${opciones}"-->
-<!--                        type="submit"-->
-<!--                        name="respuesta"-->
-<!--                        th:value="${opcion}"-->
-<!--                        class="btn btn-outline-primary opcion-btn p-0 border-0 bg-transparent">-->
-<!--                    <img th:src="@{'/img/versus/' + ${opcion} + '.png'}"-->
-<!--                         th:alt="${opcion}"-->
-<!--                         style="width:200px;border-radius:10px;">-->
-<!--                </button>-->
+
                 <button th:each="opcion, i : ${opciones}"
                         type="submit"
                         name="respuesta"
