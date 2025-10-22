@@ -69,7 +69,7 @@ public class RepositorioNivelJuegoTest {
         usuario.setPassword("1234");
         usuario.setActivo(true);
         usuario.setRompecabezaNivel(1);
-        usuario.setPuntajeAdivinanza(0);
+//        usuario.setPuntajeAdivinanza(0);
         sessionFactory.getCurrentSession().save(usuario);
         return usuario;
     }

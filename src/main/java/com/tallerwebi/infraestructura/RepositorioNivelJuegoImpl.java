@@ -33,6 +33,17 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
     }
 
     @Override
+    public NivelJuego buscarNivelJuegoPorNombre(String nombre) {
+        return (NivelJuego) sessionFactory.getCurrentSession()
+                .createCriteria(NivelJuego.class)
+                .createAlias("usuario", "u")
+                .add(Restrictions.eq("nombre", nombre))
+                .addOrder(Order.desc("nivel"))
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    @Override
     public Long modificarNivelJuego(Long usuarioId) {
         NivelJuego nivelJuego = (NivelJuego) sessionFactory.getCurrentSession()
                 .createCriteria(NivelJuego.class)
