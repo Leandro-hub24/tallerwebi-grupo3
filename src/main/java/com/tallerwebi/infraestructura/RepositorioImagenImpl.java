@@ -15,9 +15,7 @@ public class RepositorioImagenImpl implements RepositorioImagen {
     private SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioImagenImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
-    }
+    public RepositorioImagenImpl(SessionFactory sessionFactory) {this.sessionFactory = sessionFactory;}
 
     @Override
     @Transactional
@@ -27,4 +25,16 @@ public class RepositorioImagenImpl implements RepositorioImagen {
                 .add(Restrictions.eq("tipo", tipo))
                 .list();
     }
+
+    @Override
+    @Transactional
+    public List<Imagen> getImagenesPorId(List<Integer> ids) {
+        return (List<Imagen>) sessionFactory.getCurrentSession()
+                .createCriteria(Imagen.class)
+                .add(Restrictions.in("id", ids))
+                .list();
+    }
+
+
+
 }

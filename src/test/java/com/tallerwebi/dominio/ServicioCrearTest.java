@@ -2,13 +2,15 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
+import com.tallerwebi.dominio.excepcion.NoSePudoCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
+import com.tallerwebi.infraestructura.RepositorioImagenImpl;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServicioCrearTest {
 
@@ -17,24 +19,27 @@ public class ServicioCrearTest {
         public void guardarBrainrotAUsuario() {}
 
     };
-    ServicioCrear servicioCrear = new ServicioCrearImpl(repositorioFake);
+    SessionFactory sessionFactory;
+
+    ServicioImagen servicioImagen;
+    ServicioCrear servicioCrear = new ServicioCrearImpl(repositorioFake, servicioImagen );
 
 
     @Test
-    public void siEnviaCrearLeDevuelveUnaImagen() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException {
+    public void siEnviaCrearLeDevuelveUnaImagen() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException {
         givenUsuarioExiste();
         List<Integer> imagenes = List.of(1, 2, 3);
-        byte[] imagenDevuelta = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso");
-        thenDevuelveUnaImagen(imagenDevuelta);
+        BrainrotCreado brainrot = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso");
+        thenDevuelveUnaImagen(brainrot);
     }
 
-    private void thenDevuelveUnaImagen(byte[] imagenDevuelta) {
-        assertTrue(imagenDevuelta.length > 0);
+    private void thenDevuelveUnaImagen(BrainrotCreado brainrot) {
+        assertNotNull(brainrot);
     }
 
-    private byte[] whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException {
-       byte[] imagenDevuelta = servicioCrear.crearBrainrot(estilo, imagenes);
-       return imagenDevuelta;
+    private BrainrotCreado whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException {
+       BrainrotCreado brainrot = servicioCrear.crearBrainrot(estilo, imagenes);
+       return brainrot;
     }
 
     private void givenUsuarioExiste() {

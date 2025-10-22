@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.ServicioImagenImpl;
 import com.tallerwebi.dominio.Usuario;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
+import com.tallerwebi.dominio.excepcion.NoSePudoCrearBrainrotException;
 import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
 import com.tallerwebi.presentacion.ControladorCrear;
 import com.tallerwebi.dominio.ServicioCrear;
@@ -26,7 +27,7 @@ public class ControladorCrearTest {
 
 
     @Test
-    void siEnviaMasDe4ImagenesMuestraError() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
+    void siEnviaMasDe4ImagenesMuestraError() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException {
         givenExisteUsuario();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
@@ -35,7 +36,7 @@ public class ControladorCrearTest {
         thenMuestraError(mav);
     }
 
-    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException {
+    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException {
         when(servicioCrear.crearBrainrot(estilo, imagenes)).thenThrow(new NoSePuedeCrearUnBrainrotConMasDe4ImagenesException("error"));
         return EnviaImagenesYEstilo(imagenes, estilo, redirectAttributes);
     }

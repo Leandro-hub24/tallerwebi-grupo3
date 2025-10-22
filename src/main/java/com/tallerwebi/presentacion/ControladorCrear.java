@@ -1,12 +1,10 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.BrainrotCreado;
 import com.tallerwebi.dominio.Imagen;
 import com.tallerwebi.dominio.ServicioCrear;
 import com.tallerwebi.dominio.ServicioImagen;
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.NoSeEncontraronImagenesDelTipoCrearException;
-import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
+import com.tallerwebi.dominio.excepcion.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,8 +34,8 @@ public class ControladorCrear {
 
         List<Imagen> imagenesDisponibles = List.of();
         try {
-            imagenesDisponibles = servicioImagen.getImagenesCrear();
-        } catch (NoSeEncontraronImagenesDelTipoCrearException e) {
+            imagenesDisponibles = servicioImagen.getImagenesPorTipo("crear");
+        } catch (NoSeEncontraronImagenesDelTipoEspecificadoException e) {
             modelo.addAttribute("error", "No se pudieron obtener las imagenes");
         }
 
@@ -52,7 +50,8 @@ public class ControladorCrear {
         ModelAndView mav = new ModelAndView("redirect:/crear");
 
         try {
-            byte[] brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes);
+
+            BrainrotCreado brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes);
             redirectAttributes.addFlashAttribute("brainrotCreado", brainrotCreado);
             mav.addObject("brainrotCreado", brainrotCreado);
         } catch (NoSePuedeCrearUnBrainrotConMasDe4ImagenesException e) {
@@ -64,6 +63,9 @@ public class ControladorCrear {
         } catch (FaltaSeleccionarEstiloParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Debes seleccionar un estilo para crear un Brainrot");
             mav.addObject("error", "Debes seleccionar un estilo para crear un Brainrot");
+        } catch (NoSePudoCrearBrainrotException e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo crear un Brainrot");
+            mav.addObject("error", "No se pudo crear un Brainrot");
         }
 
         return mav;

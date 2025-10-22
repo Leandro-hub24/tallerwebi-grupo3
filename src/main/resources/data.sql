@@ -20,7 +20,7 @@ INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imag
 INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom');
 INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta) VALUES (null, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom');
 
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'adivinar');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
