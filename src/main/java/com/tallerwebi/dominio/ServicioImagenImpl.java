@@ -18,10 +18,10 @@ public class ServicioImagenImpl implements ServicioImagen {
 
     @Override
     public List<Imagen> getImagenesCrear() throws NoSeEncontraronImagenesDelTipoCrearException {
-        List<Imagen> imagenes = repositorioImagen.getImagenesCrear();
+        List<Imagen> imagenes = repositorioImagen.getImagenesDeUnTipo("crear");
         if (imagenes.isEmpty()) {
             throw new NoSeEncontraronImagenesDelTipoCrearException("No se encontraron imagenes del tipo crear");
         }
-        return repositorioImagen.getImagenesCrear();
+        return imagenes;
     }
 }
