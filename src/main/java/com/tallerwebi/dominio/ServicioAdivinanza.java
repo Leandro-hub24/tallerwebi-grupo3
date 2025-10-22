@@ -1,6 +1,12 @@
 package com.tallerwebi.dominio;
 
+import javax.transaction.Transactional;
+
 public interface ServicioAdivinanza {
-     void opcionCorrecta(Usuario usuario);
-     void opcionIncorrecta(Usuario usuario);
+
+
+    @Transactional
+    void opcionIngresada(PuntosJuego nuevosPuntos, Usuario usuario);
+
+//    void opcionIncorrecta(Usuario usuario);
 }

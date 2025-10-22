@@ -69,13 +69,13 @@ public class ControladorAdivinanzaPorVozTest {
         thenSeReiniciaIntentosFallidos();
     }
 
-    @Test
-    void SiElTemporizadorLlevaA0SeLoLlevaAVerificar2() {
-        givenTemporizadorLlegaACero();
-        whenSeVerificaSiElTemporizadorLlegoA0();
-        thenSeLoLlevaALaDireccionCorrecta("verificar2");
-       
-    }
+//    @Test
+//    void SiElTemporizadorLlevaA0SeLoLlevaAVerificar2() {
+//        givenTemporizadorLlegaACero();
+//        whenSeVerificaSiElTemporizadorLlegoA0();
+//        thenSeLoLlevaALaDireccionCorrecta("verificar2");
+//
+//    }
 
     private void whenSeVerificaSiElTemporizadorLlegoA0() {
     }

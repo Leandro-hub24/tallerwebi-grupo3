@@ -65,12 +65,12 @@ public class RepositorioPuntosJuegoTest {
     private Usuario givenTengoUnUsuario() {
 
         Usuario usuario = new Usuario();
-        usuario.setRol("ADMIN");
-        usuario.setEmail("admin@example.com");
-        usuario.setPassword("1234");
+        usuario.setRol("testeo");
+        usuario.setEmail("a@example.com");
+        usuario.setPassword("12345");
         usuario.setActivo(true);
         usuario.setRompecabezaNivel(1);
-        usuario.setPuntajeAdivinanza(0);
+//        usuario.setPuntajeAdivinanza(0);
         sessionFactory.getCurrentSession().save(usuario);
         return usuario;
 

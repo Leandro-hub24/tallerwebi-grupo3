@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.PuntosJuego;
 import com.tallerwebi.dominio.ServicioAdivinanza;
 import com.tallerwebi.dominio.ServicioAdivinanzaImpl;
 import com.tallerwebi.dominio.Usuario;
@@ -73,24 +74,27 @@ public class ControladorAdivinanzaVoz {
             @RequestParam(required = false) String aliasDetectado,
             HttpSession session){
         Usuario usuario = (Usuario) session.getAttribute("USUARIO");
-        if (usuario == null) {
-            return new ModelAndView("redirect:/login"); // o a donde quieras redirigir si no hay sesión
-        }
+//        if (usuario == null) {
+//            return new ModelAndView("redirect:/login");
+//        }
+        PuntosJuego puntos = new PuntosJuego();
         String respuestaCorrecta = imagenes.get(imagenActual);
         boolean esCorrecto = transcripcion.equalsIgnoreCase(respuestaCorrecta);
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
         if (esCorrecto){
-            servicio.opcionCorrecta( usuario);
+            puntos.setPuntos(10);
+            servicio.opcionIngresada(puntos, usuario);
 
         }else{
-            servicio.opcionIncorrecta(usuario);
+            puntos.setPuntos(0);
+            servicio.opcionIngresada(puntos, usuario);
             intentos++;
             session.setAttribute("intentosFallidos", intentos);
 
         }
 
-        // ✅ Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
+        //  Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
         if (intentos >= 3 || esCorrecto) {
             session.setAttribute("intentosFallidos", 0);
             ModelAndView model = new ModelAndView("verificar2");
@@ -104,7 +108,7 @@ public class ControladorAdivinanzaVoz {
             return model;
         }
 
-        // 🔁 Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
+        //  Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
         return new ModelAndView("redirect:/adivinanza-por-voz"); // ajustá el endpoint si es diferente
     }
 }
