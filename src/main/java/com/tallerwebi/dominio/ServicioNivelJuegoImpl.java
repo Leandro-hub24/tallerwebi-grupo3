@@ -43,10 +43,16 @@ public class ServicioNivelJuegoImpl implements ServicioNivelJuego {
 
     @Override
     public NivelJuego guardarNivelJuego(Usuario usuario, String juego, Integer idRompecabeza) {
-        NivelJuego nivelJuego = new NivelJuego();
-        nivelJuego.setNivel(Long.valueOf(idRompecabeza));
-        nivelJuego.setUsuario(usuario);
-        nivelJuego.setNombre(juego);
-        return repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+        NivelJuego nivelJuegoObtenido = repositorioNivelJuego.buscarNivelJuegoPoridUsuarioYIdRompecabeza(usuario.getId(), juego, idRompecabeza.longValue());
+        if (nivelJuegoObtenido != null) {
+            return nivelJuegoObtenido;
+        } else {
+            NivelJuego nivelJuego = new NivelJuego();
+            nivelJuego.setNivel(idRompecabeza.longValue());
+            nivelJuego.setUsuario(usuario);
+            nivelJuego.setNombre(juego);
+            return repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+        }
+
     }
 }
