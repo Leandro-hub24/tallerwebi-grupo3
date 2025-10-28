@@ -67,6 +67,7 @@ function mostrarMensaje(tipo, texto) {
 
 function iniciarReconocimiento() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    iniciarTemporizador();
 
     if (!SpeechRecognition) {
         mostrarMensaje("no-detectado", "❌ Tu navegador no soporta reconocimiento de voz.");
@@ -106,7 +107,6 @@ function iniciarReconocimiento() {
             mostrarMensaje("detectado", `✅ Se detectó: ${nombreDetectado}`);
         } else {
             contador++;
-
             inputTranscripcion.value = textoOriginal;
             mostrarMensaje("no-detectado", `❌ No detectado. Se usará: ${textoOriginal}`);
         }

@@ -32,11 +32,22 @@ function timerVista(){
 
 function detenerTimer() {
     clearInterval(temporizador);
-    console.log("Temporizador detenido.");
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
     document.getElementById("modal_btn").click()
+
+    const horas = document.getElementById('horasRecord');
+    const minutos = document.getElementById('minutosRecord');
+    const segundos = document.getElementById('segundosRecord');
+    const record = document.getElementById("record").value;
+    const hor = Math.floor(record / 3600);
+    const min = Math.floor((record % 3600) / 60);
+    const seg = record % 60;
+
+    horas.innerHTML = String(hor).padStart(2, '0');
+    minutos.innerHTML = String(min).padStart(2, '0');
+    segundos.innerHTML = String(seg).padStart(2, '0');
 });
 
 btnComenzar.addEventListener('click', (event) => {

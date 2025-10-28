@@ -33,6 +33,17 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
     }
 
     @Override
+    public NivelJuego buscarNivelJuegoPorNombre(String nombre) {
+        return (NivelJuego) sessionFactory.getCurrentSession()
+                .createCriteria(NivelJuego.class)
+                .createAlias("usuario", "u")
+                .add(Restrictions.eq("nombre", nombre))
+                .addOrder(Order.desc("nivel"))
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    @Override
     public Long modificarNivelJuego(Long usuarioId) {
         NivelJuego nivelJuego = (NivelJuego) sessionFactory.getCurrentSession()
                 .createCriteria(NivelJuego.class)
@@ -49,5 +60,18 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
     public NivelJuego guardarNivelJuego(NivelJuego nivelJuego) {
         sessionFactory.getCurrentSession().save(nivelJuego);
         return nivelJuego;
+    }
+
+    @Override
+    public NivelJuego buscarNivelJuegoPoridUsuarioYIdRompecabeza(Long usuarioId, String juego, Long idRompecabeza) {
+
+        return (NivelJuego) sessionFactory.getCurrentSession()
+                .createCriteria(NivelJuego.class)
+                .createAlias("usuario", "u")
+                .add(Restrictions.eq("u.id", usuarioId))
+                .add(Restrictions.eq("nombre", juego))
+                .add(Restrictions.eq("nivel", idRompecabeza))
+                .uniqueResult();
+
     }
 }
