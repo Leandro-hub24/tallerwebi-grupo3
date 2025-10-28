@@ -91,7 +91,7 @@ public class ControladorAdivinanzaPorVozTest {
     }
     private void whenSeVerificaLaRespuestaIncorrecta() {
 
-        mav = controlador.verificarPorVoz(textoReconocido, nombreArchivo, "aliasDetectado", sessionMock);
+        mav = controlador.verificarPorVoz(textoReconocido, nombreArchivo, "aliasDetectado", sessionMock,0,1);
     }
     private void thenSeReiniciaIntentosFallidos() {
         verify(sessionMock).setAttribute("intentosFallidos", 0);
@@ -124,7 +124,7 @@ public class ControladorAdivinanzaPorVozTest {
     }
 
     private void whenSeComparanLosStrings() {
-        mav = controlador.verificarPorVoz(transcripcionCorrecta, imagenActual, aliasDetectado, sessionMock);
+        mav = controlador.verificarPorVoz(transcripcionCorrecta, imagenActual, aliasDetectado, sessionMock,0,1);
     }
 
     private void thenSeLoLlevaALaDireccionCorrecta(String direccion) {

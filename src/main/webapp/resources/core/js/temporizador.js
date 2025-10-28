@@ -17,6 +17,7 @@ function iniciarTemporizador() {
         const transcurrido = (now - tiempoInicio) / 1000;
         const restante = Math.max(0, tiempoMaximo - transcurrido);
         const porcentaje = (restante / tiempoMaximo) * 100;
+        let inputTiempo = document.getElementById("inputTiempo")
 
         // Actualizar barra
         barra.style.width = `${porcentaje}%`;
@@ -31,6 +32,7 @@ function iniciarTemporizador() {
         } else {
             barra.classList.add("bg-danger");
         }
+        inputTiempo.value = transcurrido;
 
         if (restante > 0) {
             rafID = requestAnimationFrame(animar);

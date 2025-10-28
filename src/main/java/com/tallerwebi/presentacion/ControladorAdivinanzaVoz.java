@@ -72,23 +72,21 @@ public class ControladorAdivinanzaVoz {
             @RequestParam String transcripcion,
             @RequestParam String imagenActual,
             @RequestParam(required = false) String aliasDetectado,
-            HttpSession session){
+            HttpSession session,
+            @RequestParam int cantidadIntentos,
+            @RequestParam double tiempo){
         Usuario usuario = (Usuario) session.getAttribute("USUARIO");
 //        if (usuario == null) {
 //            return new ModelAndView("redirect:/login");
 //        }
+
+//        boolean esCorrecto2 = servicio.verificarSiEsCorrecto(imagenes.get(imagenActual), transcripcion, cantidadIntentos,session  );
         PuntosJuego puntos = new PuntosJuego();
         String respuestaCorrecta = imagenes.get(imagenActual);
         boolean esCorrecto = transcripcion.equalsIgnoreCase(respuestaCorrecta);
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
-        if (esCorrecto){
-            puntos.setPuntos(10);
-            servicio.opcionIngresada(puntos, usuario);
-
-        }else{
-            puntos.setPuntos(0);
-            servicio.opcionIngresada(puntos, usuario);
+        if (!esCorrecto){
             intentos++;
             session.setAttribute("intentosFallidos", intentos);
 
@@ -96,6 +94,15 @@ public class ControladorAdivinanzaVoz {
 
         //  Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
         if (intentos >= 3 || esCorrecto) {
+            if (esCorrecto) {
+                puntos.setPuntos(10);
+                servicio.opcionIngresada(puntos, usuario,cantidadIntentos,tiempo);
+
+            }
+            if (intentos >=3){
+                puntos.setPuntos(0);
+                servicio.opcionIngresada(puntos, usuario,cantidadIntentos,tiempo);
+            }
             session.setAttribute("intentosFallidos", 0);
             ModelAndView model = new ModelAndView("verificar2");
             model.addObject("esCorrecto", esCorrecto);
@@ -109,6 +116,6 @@ public class ControladorAdivinanzaVoz {
         }
 
         //  Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
-        return new ModelAndView("redirect:/adivinanza-por-voz"); // ajustá el endpoint si es diferente
+        return new ModelAndView("redirect:/adivinanza-por-voz");
     }
 }

@@ -25,13 +25,16 @@ public class ServicioAdivinanzaImpl implements ServicioAdivinanza {
 
     @Transactional
     @Override
-    public void opcionIngresada(PuntosJuego nuevosPuntos, Usuario usuario) {
+    public void opcionIngresada(PuntosJuego nuevosPuntos, Usuario usuario, int cantidadIntentos, double cantidadTiempoEnSegundos) {
         NivelJuego nivelJuego = repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuario.getId(), "AdivinanzaRandom");
 
         if (nivelJuego == null) {
             nivelJuego = new NivelJuego();
             nivelJuego.setNombre("AdivinanzaRandom");
             nivelJuego.setUsuario(usuario);
+        }
+        if (nuevosPuntos.getPuntos() == 10) {
+            calcularPuntos(nuevosPuntos,cantidadIntentos,cantidadTiempoEnSegundos);
         }
         nuevosPuntos.setNivelJuego(nivelJuego);
 
@@ -41,6 +44,14 @@ public class ServicioAdivinanzaImpl implements ServicioAdivinanza {
 //        Integer puntajeActual = usuario.getPuntajeAdivinanza();
 //        usuario.setPuntajeAdivinanza(puntajeActual + 1);
 //        repositorioUsuario.modificar(usuario);
+    }
+
+    @Override
+    public void calcularPuntos(PuntosJuego puntos, int cantidadIntentos, double cantidadTiempoEnSegundos) {
+        double nuevosPuntos = (puntos.getPuntos() - (2*cantidadIntentos)) * (cantidadTiempoEnSegundos/10);
+
+        puntos.setPuntos((int) nuevosPuntos);
+
     }
 
 //    @Transactional
