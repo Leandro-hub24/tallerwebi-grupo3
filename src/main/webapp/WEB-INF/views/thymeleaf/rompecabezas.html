@@ -26,12 +26,13 @@
         </article>
 
         <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
-            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2">
+            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
+                <p>Tiempo:</p>
                 <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
             </div>
-            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2">
+            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
                 <input id="record" th:value="${mejorTiempo}" class="d-none" hidden="hidden">
-                <h3>Mi mejor tiempo: </h3>
+                <p>Mi mejor tiempo: </p>
                 <span id="horasRecord">00</span>:<span id="minutosRecord">00</span>:<span id="segundosRecord">00</span>
             </div>
         </aside>
