@@ -69,7 +69,7 @@ public class RepositorioNivelJuegoTest {
         usuario.setPassword("1234");
         usuario.setActivo(true);
         usuario.setRompecabezaNivel(1);
-        usuario.setPuntajeAdivinanza(0);
+//        usuario.setPuntajeAdivinanza(0);
         sessionFactory.getCurrentSession().save(usuario);
         return usuario;
     }
@@ -147,5 +147,30 @@ public class RepositorioNivelJuegoTest {
     private void thenNivelJuegoAgregado(NivelJuego nivelJuegoAgregado) {
         assertThat(nivelJuegoAgregado.getNivel(), equalTo(1L));
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void buscarNivelJuegoDeRompecabezaConIdUsuarioYIdRompecabeza() {
+
+        Usuario usuario = givenTengoUnUsuario();
+        NivelJuego nivelJuego = givenTengoUnNivelJuego(usuario);
+        Long idRompecabeza = givenTengoUnIdRompecabeza();
+
+        NivelJuego nivelJuegoObtenido = whenBuscoNivelJuegoConIdUsuarioYIdRompecabeza(1L, idRompecabeza);
+
+        thenObtengoUnNivelJuego(nivelJuegoObtenido, 1L);
+
+    }
+
+    private Long givenTengoUnIdRompecabeza() {
+        return 1L;
+    }
+
+    private NivelJuego whenBuscoNivelJuegoConIdUsuarioYIdRompecabeza(long usuarioId, Long idRompecabeza) {
+        return repositorioNivelJuego.buscarNivelJuegoPoridUsuarioYIdRompecabeza(usuarioId, juego,  idRompecabeza);
+    }
+
+
 
 }

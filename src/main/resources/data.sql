@@ -43,3 +43,7 @@ INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imag
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
 -- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'adivinar');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');

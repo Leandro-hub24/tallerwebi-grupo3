@@ -1,58 +1,74 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.NivelJuego;
-import com.tallerwebi.dominio.RepositorioNivelJuego;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository
-public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
+import javax.transaction.Transactional;
 
+@Service("servicioNivelJuego")
+@Transactional
+public class ServicioNivelJuegoImpl implements ServicioNivelJuego {
 
-    private SessionFactory sessionFactory;
+    private RepositorioNivelJuego repositorioNivelJuego;
 
     @Autowired
-    public RepositorioNivelJuegoImpl(SessionFactory sessionFactory){
-        this.sessionFactory = sessionFactory;
+    public ServicioNivelJuegoImpl(RepositorioNivelJuego repositorioNivelJuegoMock) {
+        this.repositorioNivelJuego = repositorioNivelJuegoMock;
     }
-
 
     @Override
     public NivelJuego buscarNivelJuegoPorIdUsuario(Long usuarioId, String juego) {
-        return (NivelJuego) sessionFactory.getCurrentSession()
-                .createCriteria(NivelJuego.class)
-                .createAlias("usuario", "u")
-                .add(Restrictions.eq("u.id", usuarioId))
-                .add(Restrictions.eq("nombre", juego))
-                .addOrder(Order.desc("nivel"))
-                .setMaxResults(1)
-                .uniqueResult();
+        NivelJuego nivelJuego = repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId, juego);
+        if (nivelJuego != null) {
+            return nivelJuego;
+        } else {
+            nivelJuego = new NivelJuego();
+            nivelJuego.setNivel(0L);
+            return nivelJuego;
+        }
     }
 
     @Override
-    public Long modificarNivelJuego(Long usuarioId) {
-        NivelJuego nivelJuego = (NivelJuego) sessionFactory.getCurrentSession()
-                .createCriteria(NivelJuego.class)
-                .createAlias("usuario", "u")
-                .add(Restrictions.eq("u.id", usuarioId))
-                .uniqueResult();
+    public Integer actualizarNivelJuego(Long idUsuario, Integer idRompecabeza, Integer nivelActualUsuario, Long ultimoNivel) {
+        if(idRompecabeza == nivelActualUsuario){
+            Integer nivelNuevo = idRompecabeza + 1;
 
-        nivelJuego.setNivel(nivelJuego.getNivel() + 1);
-        sessionFactory.getCurrentSession().update(nivelJuego);
-    return nivelJuego.getNivel();
+            if (nivelNuevo <= ultimoNivel) {
+                return repositorioNivelJuego.modificarNivelJuego(idUsuario).intValue();
+            }
+        }
+
+        return null;
     }
 
     @Override
-    public NivelJuego guardarNivelJuego(NivelJuego nivelJuego) {
-        sessionFactory.getCurrentSession().save(nivelJuego);
-        return nivelJuego;
+    public NivelJuego guardarNivelJuego(Usuario usuario, String juego, Integer idRompecabeza) {
+        NivelJuego nivelJuegoObtenido = repositorioNivelJuego.buscarNivelJuegoPoridUsuarioYIdRompecabeza(usuario.getId(), juego, idRompecabeza.longValue());
+        if (nivelJuegoObtenido != null) {
+            return nivelJuegoObtenido;
+        } else {
+            NivelJuego nivelJuego = new NivelJuego();
+            nivelJuego.setNivel(idRompecabeza.longValue());
+            nivelJuego.setUsuario(usuario);
+            nivelJuego.setNombre(juego);
+            return repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+        }
     }
-
+  
     @Override
-    public void actualizarNivelJuego(NivelJuego nivelJuego) {
-        sessionFactory.getCurrentSession().update(nivelJuego);
+    public void actualizarNivelVersus(Long usuarioId, Integer nuevoNivel) {
+        NivelJuego nivelJuego = repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId, "Versus");
+
+        if (nivelJuego == null) {
+            nivelJuego = new NivelJuego();
+            nivelJuego.setNombre("Versus");
+            nivelJuego.setNivel(Long.valueOf(nuevoNivel));
+            nivelJuego.setUsuario(new Usuario());
+            nivelJuego.getUsuario().setId(usuarioId);
+            repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+        } else {
+            nivelJuego.setNivel(Long.valueOf(nuevoNivel));
+            repositorioNivelJuego.actualizarNivelJuego(nivelJuego);
+        }
     }
 }

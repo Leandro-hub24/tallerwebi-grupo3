@@ -1,6 +1,8 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.PuntosJuego;
 import com.tallerwebi.dominio.ServicioAdivinanza;
+import com.tallerwebi.dominio.ServicioAdivinanzaImpl;
 import com.tallerwebi.dominio.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +20,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/adivinanza-por-voz")
 public class ControladorAdivinanzaVoz {
-    private ServicioAdivinanza servicioAdivinanza;
+    private final ServicioAdivinanza servicio;
+
 
     // Mapa de imágenes y sus nombres (sin extensión)
     private final Map<String, String> imagenes = new LinkedHashMap<>() {{
@@ -36,18 +39,21 @@ public class ControladorAdivinanzaVoz {
     }};
 
     @Autowired
-    public ControladorAdivinanzaVoz(ServicioAdivinanza servicioAdivinanza) {
-        this.servicioAdivinanza = servicioAdivinanza;
-
+    public ControladorAdivinanzaVoz(ServicioAdivinanza servicio) {
+        this.servicio = servicio;
     }
+
 
     // GET: muestra la vista con la imagen y formulario
     @GetMapping("")
     public ModelAndView mostrarVoz(HttpServletRequest request, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("USUARIO");
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
+        }
         List<String> nombresArchivos = new ArrayList<>(imagenes.keySet());
         String nombreArchivo = nombresArchivos.get(new Random().nextInt(nombresArchivos.size()));
-        String respuestaCorrecta = imagenes.get(nombreArchivo);
-        // ✅ Tomar el valor real de la sesión
+
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
 
@@ -68,24 +74,27 @@ public class ControladorAdivinanzaVoz {
             @RequestParam(required = false) String aliasDetectado,
             HttpSession session){
         Usuario usuario = (Usuario) session.getAttribute("USUARIO");
-        if (usuario == null) {
-            return new ModelAndView("redirect:/login"); // o a donde quieras redirigir si no hay sesión
-        }
+//        if (usuario == null) {
+//            return new ModelAndView("redirect:/login");
+//        }
+        PuntosJuego puntos = new PuntosJuego();
         String respuestaCorrecta = imagenes.get(imagenActual);
         boolean esCorrecto = transcripcion.equalsIgnoreCase(respuestaCorrecta);
         Integer intentos = (Integer) session.getAttribute("intentosFallidos");
         if (intentos == null) intentos = 0;
         if (esCorrecto){
-            servicioAdivinanza.opcionCorrecta( usuario);
+            puntos.setPuntos(10);
+            servicio.opcionIngresada(puntos, usuario);
 
         }else{
-            servicioAdivinanza.opcionIncorrecta(usuario);
+            puntos.setPuntos(0);
+            servicio.opcionIngresada(puntos, usuario);
             intentos++;
             session.setAttribute("intentosFallidos", intentos);
 
         }
 
-        // ✅ Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
+        //  Solo mostrar la vista "verificar2" si es el 3er intento (fallido o no)
         if (intentos >= 3 || esCorrecto) {
             session.setAttribute("intentosFallidos", 0);
             ModelAndView model = new ModelAndView("verificar2");
@@ -99,7 +108,7 @@ public class ControladorAdivinanzaVoz {
             return model;
         }
 
-        // 🔁 Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
+        //  Si es un intento < 3, redirigir a la pantalla de adivinanza para seguir jugando
         return new ModelAndView("redirect:/adivinanza-por-voz"); // ajustá el endpoint si es diferente
     }
 }
