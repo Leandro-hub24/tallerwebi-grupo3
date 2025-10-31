@@ -49,4 +49,20 @@ public class ServicioNivelJuegoImpl implements ServicioNivelJuego {
         nivelJuego.setNombre(juego);
         return repositorioNivelJuego.guardarNivelJuego(nivelJuego);
     }
+    @Override
+    public void actualizarNivelVersus(Long usuarioId, Integer nuevoNivel) {
+        NivelJuego nivelJuego = repositorioNivelJuego.buscarNivelJuegoPorIdUsuario(usuarioId, "Versus");
+
+        if (nivelJuego == null) {
+            nivelJuego = new NivelJuego();
+            nivelJuego.setNombre("Versus");
+            nivelJuego.setNivel(Long.valueOf(nuevoNivel));
+            nivelJuego.setUsuario(new Usuario());
+            nivelJuego.getUsuario().setId(usuarioId);
+            repositorioNivelJuego.guardarNivelJuego(nivelJuego);
+        } else {
+            nivelJuego.setNivel(Long.valueOf(nuevoNivel));
+            repositorioNivelJuego.actualizarNivelJuego(nivelJuego);
+        }
+    }
 }

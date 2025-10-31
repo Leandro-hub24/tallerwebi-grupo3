@@ -20,13 +20,15 @@ public class Brainrot {
     private String audio;
     private String imagenSombra;
     private String imagenCompleta;
+    private Integer nivel;
 
-    public Brainrot(String imagenFondo,String imagenPersonaje,String audio,String imagenSombra,String imagenCompleta){
+    public Brainrot(String imagenFondo,String imagenPersonaje,String audio,String imagenSombra,String imagenCompleta,Integer nivel){
         this.imagenFondo = imagenFondo;
         this.imagenPersonaje = imagenPersonaje;
         this.audio = audio;
         this.imagenSombra = imagenSombra;
         this.imagenCompleta = imagenCompleta;
+        this.nivel = nivel;
     }
     public Brainrot(){
     }

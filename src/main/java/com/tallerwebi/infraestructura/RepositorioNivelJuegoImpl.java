@@ -50,4 +50,9 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
         sessionFactory.getCurrentSession().save(nivelJuego);
         return nivelJuego;
     }
+
+    @Override
+    public void actualizarNivelJuego(NivelJuego nivelJuego) {
+        sessionFactory.getCurrentSession().update(nivelJuego);
+    }
 }
