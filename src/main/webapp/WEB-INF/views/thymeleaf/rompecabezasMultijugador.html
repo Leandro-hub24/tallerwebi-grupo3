@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${partida.nombre}"></title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/rompecabezas.css}"/>
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <style>
+        #modalVista {
+            display: block;
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+
+        #esperando-oponente {
+            padding: 20px; background: #eee; border: 1px solid #ccc;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            z-index: 9;
+        }
+
+        .deshabilitado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+
+</head>
+<body style="background-color: #f8fef6; width: 100%; height: 85vh;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 10vh">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Rompezabezas</a>
+    </div>
+
+</nav>
+
+<div id="esperando-oponente"
+     th:style="${estadoInicial == 'ESPERANDO_OPONENTE'} ? 'display:flex' : 'display:none'">
+    Esperando a que se una el oponente...
+</div>
+
+<main class="h-100 w-100 d-flex flex-column align-items-center" style="height: 90vh">
+
+    <section class="d-flex w-100 h-100" id="tablero-de-juego">
+
+        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
+            <img id="imagen-original" th:src="@{${rompecabeza.urlImg}}" alt="Imagen Original" style="display: none;">
+            <div id="contenedor-piezas"></div>
+        </article>
+
+        <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
+            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
+                <h1 th:text="${partida.nombre}">Nombre de la Partida</h1>
+                <p>
+                    <b>Jugador 1:</b>
+                    <span th:text="${partida.jugador1}">Jugador 1</span>
+                    <span th:if="${miUsuario == partida.jugador1}">(¡Eres tú!)</span>
+                    <br>
+
+                    <b>Jugador 2:</b>
+                    <span id="nombre-j2" th:text="${partida.jugador2} ? ${partida.jugador2} : '...'"></span>
+                    <span th:if="${partida.jugador2 != null and miUsuario == partida.jugador2}">(¡Eres tú!)</span>
+                </p>
+                <p>Tiempo:</p>
+                <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
+            </div>
+        </aside>
+    </section>
+
+
+</main>
+
+
+<!-- Button trigger modal -->
+<button type="button" id="modal_btn" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    Launch demo modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modal-title" th:text="${'Nivel: ' + rompecabeza.id}"></h1>
+        </div>
+        <div id="modal-body" class="modal-body text-center" style="max-height: 500px">
+            <h3 class="text-center" th:text="${rompecabeza.nombre}"></h3>
+            <img th:src="@{${rompecabeza.urlImg}}" alt="Imagen Rompecabeza" style="height: 200px;">
+        </div>
+        <div id="modal-footer" class="modal-footer">
+            <button type="button" class="btn btn-primary" id="btn-volver" data-bs-dismiss="modal">Comenzar</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<footer class="footer mt-auto py-3 bg-dark" style="height: 10vh; width: 100%;">
+
+</footer>
+
+<script type="text/javascript" th:src="@{/js/rompecabezasMultijugador.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Inyecta los valores del Modelo de Spring en variables de JavaScript
+    const idPartida = /*[[${idPartida}]]*/ 'default-partida-id';
+    const miId = /*[[${miUsuario}]]*/ 0;
+    var estadoActual = /*[[${estadoInicial}]]*/ 'ESPERANDO_OPONENTE';
+    const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
+    /*]]>*/
+</script>
+
+<script type="text/javascript">
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // La UI inicial ya fue configurada por Thymeleaf
+        console.log("Estado inicial:", estadoActual);
+
+        actualizarUIInicial(estadoActual);
+        // Conectar al WebSocket
+        conectarAPartida();
+    });
+
+    function actualizarUIInicial(estado) {
+
+        if (estado === "ESPERANDO_OPONENTE") {
+            divEsperando.style.display = 'flex';
+            divTablero.classList.remove('d-flex');
+            divTablero.style.display = 'none';
+            divTablero.classList.add('deshabilitado');
+        } else if (estado === "EN_CURSO") {
+            divEsperando.style.display = 'none';
+            divTablero.style.display = 'block';
+            divTablero.classList.add('d-flex');
+            divTablero.classList.remove('deshabilitado');
+            iniciarPartida()
+
+        }
+    }
+
+    var juegoIniciado = false;
+    var stompClient = null;
+
+    // Elementos del DOM
+    const divEsperando = document.getElementById('esperando-oponente');
+    const divTablero = document.getElementById('tablero-de-juego');
+    const spanNombreJ2 = document.getElementById('nombre-j2');
+    const modal = document.getElementById('modalVista');
+
+    function conectarAPartida() {
+        // Usa la URL inyectada por Thymeleaf
+        var socket = new SockJS(wsConnectUrl);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Conectado a la partida: ' + frame);
+            const destino = '/topic/partida/' + idPartida;
+
+            stompClient.subscribe(destino, function (mensaje) {
+                const datos = JSON.parse(mensaje.body);
+
+                if (datos.estado) {
+                    // Es un mensaje de ESTADO (Partida)
+                    console.log("¡Actualización de estado!", datos.estado);
+                    estadoActual = datos.estado;
+                    actualizarUI(estadoActual, datos.ganador);
+
+                    if(datos.jugador2) {
+                        spanNombreJ2.innerText = datos.jugador2;
+                    }
+                } else if (datos.x !== undefined) {
+                    // Es un mensaje de MOVIMIENTO
+                    console.log("Movimiento recibido:", datos);
+                    // ... (Lógica para dibujar el movimiento) ...
+                }
+            });
+        });
+    }
+
+    function actualizarUI(estado, ganador) {
+        if (estado === "ESPERANDO_OPONENTE") {
+            divEsperando.style.display = 'flex';
+            divTablero.classList.remove('d-flex');
+            divTablero.style.display = 'none';
+            divTablero.classList.add('deshabilitado');
+        } else if (estado === "EN_CURSO") {
+            divEsperando.style.display = 'none';
+            divTablero.style.display = 'block';
+            divTablero.classList.add('d-flex');
+            divTablero.classList.remove('deshabilitado');
+            iniciarPartida()
+
+        } else if (estado === "TERMINADA") {
+            detenerTimer();
+            document.getElementById('imagen-original').style.display = 'block';
+            document.getElementById('contenedor-piezas').style.display = 'none';
+            document.getElementById('modal-body').innerHTML = '';
+            document.getElementById('modal-body').innerHTML = '' +
+                 `<h3 class="text-center">Victoria de ${ganador}</h3>`;
+            document.getElementById('modal-footer').innerHTML = '';
+            document.getElementById('modal-footer').innerHTML = '' +
+                `<a href='/spring/rompecabezas/lobby'><button type="button" class="btn btn-primary" id="btn-next" data-bs-dismiss="modal">Volver</button></a>\n`;
+            document.getElementById("modal_btn").click()
+        }
+    }
+
+</script>
+
+</body>
+</html>

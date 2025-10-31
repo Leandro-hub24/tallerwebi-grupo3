@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lobby Multijugador</title>
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <style>
+        body { font-family: sans-serif; }
+        #listaDePartidas li { padding: 5px; border-bottom: 1px solid #ccc; }
+        #listaDePartidas a { margin-left: 20px; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+
+<h2>Lobby de Partidas</h2>
+
+<p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
+
+<form th:action="@{/partida}" method="POST">
+    <input type="text" name="nombrePartida" placeholder="Nombre de tu partida" required>
+    <button type="submit">Crear Partida</button>
+</form>
+
+<hr>
+<h3>Partidas Disponibles:</h3>
+
+<ul id="listaDePartidas">
+    <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
+
+            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1} + ')'">
+                Nombre de la partida (Creada por: Jugador)
+            </span>
+
+        <a th:href="@{/partida/{id}(id=${partida.id})}">Unirse</a>
+    </li>
+</ul>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Pasa las URLs generadas por Thymeleaf a constantes de JS
+    const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
+    const contextPath = /*[[@{/}]]*/ '/'; // Ej: /tallerwebi-base/
+    const partidaBaseUrl = /*[[@{/partida/}]]*/ '/partida/';
+    /*]]>*/
+</script>
+
+<script type="text/javascript">
+    var stompClient = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        conectarAlLobby();
+    });
+
+    function conectarAlLobby() {
+        // Usamos la URL inyectada por Thymeleaf
+        var socket = new SockJS(wsConnectUrl);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Conectado al Lobby: ' + frame);
+
+            stompClient.subscribe('/topic/lobby/nueva', function (mensaje) {
+                const partida = JSON.parse(mensaje.body);
+                agregarPartidaALista(partida);
+            });
+
+            stompClient.subscribe('/topic/lobby/removida', function (mensaje) {
+                const partida = JSON.parse(mensaje.body);
+                removerPartidaDeLista(partida);
+            });
+        });
+    }
+
+    function agregarPartidaALista(partida) {
+        const lista = document.getElementById("listaDePartidas");
+        const item = document.createElement("li");
+        item.id = "partida-" + partida.id;
+
+        // Usamos la URL base inyectada por Thymeleaf
+        item.innerHTML = `
+                <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
+                <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
+            `;
+        lista.appendChild(item);
+    }
+
+    function removerPartidaDeLista(partida) {
+        const item = document.getElementById("partida-" + partida.id);
+        if (item) {
+            item.remove();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+package com.tallerwebi.presentacion;
+
+import com.tallerwebi.dominio.*;
+import com.tallerwebi.dominio.excepcion.PartidaLlenaException;
+import com.tallerwebi.dominio.excepcion.PartidaNoEncontradaException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+
+@Controller
+public class ControladorPartida {
+
+    private ServicioPartida servicioPartida;
+    private ServicioRompecabezas servicioRompecabezas;
+
+    @Autowired
+    public ControladorPartida(ServicioPartida servicioPartida, ServicioRompecabezas servicioRompecabezas) {
+        this.servicioPartida = servicioPartida;
+        this.servicioRompecabezas = servicioRompecabezas;
+    }
+
+    /**
+     * Muestra la página del Lobby con las partidas abiertas.
+     */
+    @RequestMapping(value = "/rompecabezas/lobby", method = RequestMethod.GET)
+    public ModelAndView irAlLobby(HttpServletRequest request) {
+
+        if(request.getSession().getAttribute("id") == null){
+           return redirectLogin();
+        }
+
+        ModelAndView mav = new ModelAndView("lobbyRompecabezas");
+        mav.addObject("partidas", servicioPartida.getPartidasAbiertas());
+        return mav;
+    }
+
+    private ModelAndView redirectLogin() {
+        ModelMap model = new ModelMap();
+        model.put("error", "Inicie sesión para jugar");
+        return new ModelAndView("redirect:/login", model);
+    }
+
+    /**
+     * Endpoint para CREAR (HTTP POST) o UNIRSE (HTTP GET) a una partida.
+     */
+    @RequestMapping(value = "/partida", method = RequestMethod.POST)
+    public ModelAndView crearPartida(String nombrePartida, HttpServletRequest request) {
+
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
+
+        Long creador = (Long) request.getSession().getAttribute("id");
+        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue());
+        // Redirigir al jugador a la página de la partida
+        return new ModelAndView("redirect:/partida/" + partida.getId());
+    }
+
+    @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
+    public ModelAndView unirseAPartidaHTTP(
+            @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
+
+
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
+
+        Long jugador = (Long) request.getSession().getAttribute("id");
+
+        try {
+            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue());
+
+            Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(1L);
+            request.getSession().setAttribute("partidaId", partida.getId());
+            ModelAndView mav = new ModelAndView("rompecabezasMultijugador"); // Carga partida.jsp
+            mav.addObject("partida", partida);
+            mav.addObject("idPartida", partida.getId());
+            mav.addObject("rompecabeza", rompecabeza);
+            // ¡PASA EL ESTADO INICIAL A LA VISTA!
+            mav.addObject("estadoInicial", partida.getEstado());
+            mav.addObject("miUsuario", jugador.intValue()); // Para saber quién soy
+
+            return mav;
+
+        } catch (PartidaLlenaException | PartidaNoEncontradaException e) {
+            ModelAndView mav = new ModelAndView("redirect:/rompecabezas/lobby");
+            mav.addObject("error", e.getMessage());
+            return mav;
+        }
+    }
+
+    @RequestMapping(value = "/partida/finalizar", method = RequestMethod.POST)
+    @ResponseBody
+    public void finalizarPartida(HttpServletRequest request) {
+
+        Long usuarioId = (Long) request.getSession().getAttribute("id");
+        String partidaId = (String) request.getSession().getAttribute("partidaId");
+        servicioPartida.terminarPartida(partidaId, usuarioId.intValue());
+
+    }
+
+
+}
