@@ -2,7 +2,6 @@
 let matrizRompecabeza = [];
 
 const dataURL_piezaVacia = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAwQYFqEAAAAASUVORK5CYII=';
-const btnComenzar = document.getElementById('btn-comenzar');
 
 let inicioTimer;
 let finTimer;
@@ -235,9 +234,9 @@ function iniciarPartida(){
                                 }
 
                                 if (mensaje === "Victoria"){
-                                    const nivelNuevo = data.nivelNuevo
 
                                     finalizarPartida();
+
                                 }
 
                             } catch (error) {

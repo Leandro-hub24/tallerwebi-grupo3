@@ -8,13 +8,6 @@
     <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
     <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
     <style>
-        #modalVista {
-            display: block;
-            position: fixed;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-        }
-
         #esperando-oponente {
             padding: 20px; background: #eee; border: 1px solid #ccc;
             font-size: 1.2em;
@@ -111,7 +104,6 @@
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // Inyecta los valores del Modelo de Spring en variables de JavaScript
     const idPartida = /*[[${idPartida}]]*/ 'default-partida-id';
     const miId = /*[[${miUsuario}]]*/ 0;
     var estadoActual = /*[[${estadoInicial}]]*/ 'ESPERANDO_OPONENTE';
@@ -122,11 +114,11 @@
 <script type="text/javascript">
 
     document.addEventListener("DOMContentLoaded", function() {
-        // La UI inicial ya fue configurada por Thymeleaf
+
         console.log("Estado inicial:", estadoActual);
 
         actualizarUIInicial(estadoActual);
-        // Conectar al WebSocket
+
         conectarAPartida();
     });
 
@@ -147,17 +139,14 @@
         }
     }
 
-    var juegoIniciado = false;
     var stompClient = null;
 
-    // Elementos del DOM
     const divEsperando = document.getElementById('esperando-oponente');
     const divTablero = document.getElementById('tablero-de-juego');
     const spanNombreJ2 = document.getElementById('nombre-j2');
-    const modal = document.getElementById('modalVista');
 
     function conectarAPartida() {
-        // Usa la URL inyectada por Thymeleaf
+
         var socket = new SockJS(wsConnectUrl);
         stompClient = Stomp.over(socket);
 
@@ -169,7 +158,7 @@
                 const datos = JSON.parse(mensaje.body);
 
                 if (datos.estado) {
-                    // Es un mensaje de ESTADO (Partida)
+
                     console.log("¡Actualización de estado!", datos.estado);
                     estadoActual = datos.estado;
                     actualizarUI(estadoActual, datos.ganador);
@@ -177,10 +166,6 @@
                     if(datos.jugador2) {
                         spanNombreJ2.innerText = datos.jugador2;
                     }
-                } else if (datos.x !== undefined) {
-                    // Es un mensaje de MOVIMIENTO
-                    console.log("Movimiento recibido:", datos);
-                    // ... (Lógica para dibujar el movimiento) ...
                 }
             });
         });

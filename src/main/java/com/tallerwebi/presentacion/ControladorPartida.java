@@ -26,9 +26,7 @@ public class ControladorPartida {
         this.servicioRompecabezas = servicioRompecabezas;
     }
 
-    /**
-     * Muestra la página del Lobby con las partidas abiertas.
-     */
+
     @RequestMapping(value = "/rompecabezas/lobby", method = RequestMethod.GET)
     public ModelAndView irAlLobby(HttpServletRequest request) {
 
@@ -41,15 +39,7 @@ public class ControladorPartida {
         return mav;
     }
 
-    private ModelAndView redirectLogin() {
-        ModelMap model = new ModelMap();
-        model.put("error", "Inicie sesión para jugar");
-        return new ModelAndView("redirect:/login", model);
-    }
 
-    /**
-     * Endpoint para CREAR (HTTP POST) o UNIRSE (HTTP GET) a una partida.
-     */
     @RequestMapping(value = "/partida", method = RequestMethod.POST)
     public ModelAndView crearPartida(String nombrePartida, HttpServletRequest request) {
 
@@ -59,9 +49,10 @@ public class ControladorPartida {
 
         Long creador = (Long) request.getSession().getAttribute("id");
         Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue());
-        // Redirigir al jugador a la página de la partida
+
         return new ModelAndView("redirect:/partida/" + partida.getId());
     }
+
 
     @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
     public ModelAndView unirseAPartidaHTTP(
@@ -96,6 +87,7 @@ public class ControladorPartida {
         }
     }
 
+
     @RequestMapping(value = "/partida/finalizar", method = RequestMethod.POST)
     @ResponseBody
     public void finalizarPartida(HttpServletRequest request) {
@@ -104,6 +96,13 @@ public class ControladorPartida {
         String partidaId = (String) request.getSession().getAttribute("partidaId");
         servicioPartida.terminarPartida(partidaId, usuarioId.intValue());
 
+    }
+
+
+    private ModelAndView redirectLogin() {
+        ModelMap model = new ModelMap();
+        model.put("error", "Inicie sesión para jugar");
+        return new ModelAndView("redirect:/login", model);
     }
 
 
