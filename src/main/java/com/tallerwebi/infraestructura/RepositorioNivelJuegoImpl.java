@@ -2,6 +2,7 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.NivelJuego;
 import com.tallerwebi.dominio.RepositorioNivelJuego;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
-
 
     private SessionFactory sessionFactory;
 
@@ -53,7 +53,7 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
 
         nivelJuego.setNivel(nivelJuego.getNivel() + 1);
         sessionFactory.getCurrentSession().update(nivelJuego);
-    return nivelJuego.getNivel();
+        return nivelJuego.getNivel();
     }
 
     @Override
@@ -73,5 +73,10 @@ public class RepositorioNivelJuegoImpl implements RepositorioNivelJuego {
                 .add(Restrictions.eq("nivel", idRompecabeza))
                 .uniqueResult();
 
+    }
+
+    @Override
+    public void actualizarNivelJuego(NivelJuego nivelJuego) {
+        sessionFactory.getCurrentSession().update(nivelJuego);
     }
 }

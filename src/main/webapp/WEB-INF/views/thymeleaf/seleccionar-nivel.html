@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" class="modo-oscuro">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Selección de Nivel – Brainrot</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <style>
+        :root{
+            --color-primario: #7b5cff;
+            --color-primario-oscuro:#6447ff;
+            --color-acento: #00e5a8;
+            --fondo-claro:#f6f6f8;
+            --fondo-oscuro:#111121;
+            --texto-claro:#0f172a;
+            --texto-oscuro:#ffffff;
+            --suave-claro:#e9e9ef;
+            --suave-oscuro:#1b1b31;
+            --radio: 12px;
+            --sombra: 0 10px 24px rgba(0,0,0,.20);
+            --sombra-neon: 0 0 0 2px var(--color-primario), 0 0 24px rgba(123,92,255,.35);
+        }
+
+        html{ color-scheme: light dark; }
+        body{
+            margin:0;
+            font-family: "Space Grotesk", system-ui, sans-serif;
+            background: var(--fondo-claro);
+            color: var(--texto-claro);
+            min-height: 100dvh;
+        }
+        .modo-oscuro body{
+            background: radial-gradient(1200px 800px at 85% -20%, rgba(123,92,255,.12), transparent 60%),
+            radial-gradient(1000px 700px at -10% 120%, rgba(0,229,168,.10), transparent 60%),
+            var(--fondo-oscuro);
+            color: var(--texto-oscuro);
+        }
+
+        .contenedor-pagina{
+            display:flex;
+            min-height: 100dvh;
+            padding: 40px 16px;
+            box-sizing: border-box;
+            justify-content: center;
+        }
+        .columna-centro{
+            width: 100%;
+            max-width: 900px;
+            display:flex;
+            flex-direction: column;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .titulo-principal{
+            margin:0;
+            text-align:center;
+            font-size: clamp(28px, 3vw, 42px);
+            font-weight: 700;
+            letter-spacing: -0.015em;
+            text-shadow: 0 1px 0 rgba(0,0,0,.15);
+        }
+
+        .rejilla-niveles{
+            width: 100%;
+            display:grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 640px){
+            .rejilla-niveles{
+                grid-template-columns: repeat(2, 1fr);
+                gap: 32px;
+            }
+        }
+
+        .tarjeta-nivel-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .tarjeta-nivel{
+            background: var(--suave-claro);
+            border-radius: var(--radio);
+            padding: 28px;
+            display:flex;
+            flex-direction: column;
+            gap: 20px;
+            min-height: 150px;
+            transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+        }
+        .modo-oscuro .tarjeta-nivel{ background: color-mix(in srgb, var(--suave-oscuro) 80%, transparent); }
+        .tarjeta-nivel-link:hover .tarjeta-nivel{ transform: translateY(-3px); }
+        .tarjeta-nivel-link:focus-visible{ outline: none; }
+        .tarjeta-nivel-link:focus-visible .tarjeta-nivel{ box-shadow: var(--sombra-neon); }
+
+        .icono-nivel{
+            width: 72px; height: 72px;
+            border-radius: 14px;
+            display:flex; align-items:center; justify-content:center;
+            background: color-mix(in srgb, var(--color-primario) 20%, transparent);
+            color: var(--color-primario);
+        }
+        .icono-nivel .material-symbols-outlined{ font-size: 44px; }
+
+        .titulo-nivel{
+            margin:0 0 8px 0;
+            font-weight: 700;
+            font-size: 22px;
+        }
+        .texto-nivel{
+            margin:0;
+            font-size: 15px;
+            opacity:.8;
+            line-height: 1.4;
+        }
+
+        .zona-boton{ display:flex; justify-content:center; width:100%; padding-top: 8px; }
+        .boton-principal{
+            display:inline-flex; align-items:center; gap:10px; justify-content:center;
+            height: 48px; min-width: 220px; padding: 0 28px;
+            border: none; border-radius: 14px;
+            background: var(--color-primario); color: #fff;
+            font-weight: 700; letter-spacing: .06em;
+            cursor: pointer;
+            transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+            box-shadow: var(--sombra);
+        }
+        .boton-principal:hover{ transform: scale(1.03); background: var(--color-primario-oscuro); }
+        .boton-principal:focus-visible{ outline: none; box-shadow: var(--sombra-neon); }
+        .boton-principal .material-symbols-outlined{ font-size: 22px; }
+
+        .solo-teclado .tarjeta-nivel-link:focus,
+        .solo-teclado .tarjeta-nivel-link:focus .tarjeta-nivel,
+        .solo-teclado .boton-principal:focus {
+            box-shadow: var(--sombra-neon);
+        }
+        .tarjeta-nivel-link.bloqueado {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+<div class="contenedor-pagina">
+    <main class="columna-centro">
+        <h1 class="titulo-principal">Niveles</h1>
+
+        <section class="rejilla-niveles" role="list">
+            <a th:href="@{/versus?nivel=1}" class="tarjeta-nivel-link">
+                <article class="tarjeta-nivel" role="listitem" aria-label="Nivel 1: Introducción">
+                    <div class="icono-nivel">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <div>
+                        <h3 class="titulo-nivel">Nivel 1</h3>
+                        <p class="texto-nivel">Los brainrots mas conocidos ¡Exelente para comenzar!</p>
+                    </div>
+                </article>
+            </a>
+
+            <a th:href="@{/versus?nivel=2}"
+               th:classappend="${usuario.versusNivel < 2} ? 'bloqueado' : ''"
+               class="tarjeta-nivel-link">
+                <article class="tarjeta-nivel" role="listitem" aria-label="Nivel 2: Intermedio">
+                    <div class="icono-nivel">
+                        <span class="material-symbols-outlined">bar_chart</span>
+                    </div>
+                    <div>
+                        <h3 class="titulo-nivel">Nivel 2</h3>
+                        <p class="texto-nivel">Brainrot medianamente conocidos ¡Perfecto para seguir avanzando!</p>
+                    </div>
+                </article>
+            </a>
+
+            <a th:href="@{/versus?nivel=3}"
+               th:classappend="${usuario.versusNivel < 3} ? 'bloqueado' : ''"
+               class="tarjeta-nivel-link">
+                <article class="tarjeta-nivel" role="listitem" aria-label="Nivel 3: Avanzado">
+                    <div class="icono-nivel">
+                        <span class="material-symbols-outlined">psychology</span>
+                    </div>
+                    <div>
+                        <h3 class="titulo-nivel">Nivel 3</h3>
+                        <p class="texto-nivel">Brainrots poco conocidos ¿Podrás con estos? ¡Pone tus conocimientos a prueba!</p>
+                    </div>
+                </article>
+            </a>
+
+            <a th:href="@{/versus?nivel=4}"
+               th:classappend="${usuario.versusNivel < 4} ? 'bloqueado' : ''"
+               class="tarjeta-nivel-link">
+                <article class="tarjeta-nivel" role="listitem" aria-label="Nivel 4: Maestría">
+                    <div class="icono-nivel">
+                        <span class="material-symbols-outlined">emoji_events</span>
+                    </div>
+                    <div>
+                        <h3 class="titulo-nivel">Nivel 4</h3>
+                        <p class="texto-nivel">Estos brainrots son los más desafiantes ¡Solo para expertos!</p>
+                    </div>
+                </article>
+            </a>
+        </section>
+
+
+    </main>
+</div>
+</body>
+</html>
