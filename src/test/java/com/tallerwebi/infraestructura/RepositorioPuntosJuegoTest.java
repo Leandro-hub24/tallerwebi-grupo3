@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -37,6 +39,9 @@ import static org.mockito.Mockito.when;
 public class RepositorioPuntosJuegoTest {
 
     private String juego;
+
+    @MockBean
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @BeforeEach
     public void init() {
