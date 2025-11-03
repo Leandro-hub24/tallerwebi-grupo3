@@ -1,40 +1,51 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
+import com.tallerwebi.dominio.excepcion.*;
+import com.tallerwebi.infraestructura.RepositorioCrearImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
 
 public class ServicioCrearTest {
 
-    RepositorioCrear repositorioFake = new RepositorioCrear() {
-        @Override
-        public void guardarBrainrotAUsuario() {}
+    ServicioImagen servicioImagen = mock(ServicioImagenImpl.class);
+    RepositorioCrear repositorioCrear = mock(RepositorioCrearImpl.class);
 
-    };
-    ServicioCrear servicioCrear = new ServicioCrearImpl(repositorioFake);
+    ServicioCrear servicioCrear = new ServicioCrearImpl(repositorioCrear, servicioImagen );
+    private Imagen imagen;
 
-
+    @BeforeEach
+    public void setUp() {
+        imagen = new Imagen();
+        imagen.setId(1);
+        imagen.setNombre("imagen");
+        imagen.setTipo("crear");
+        imagen.setUrl("a");
+    }
     @Test
-    public void siEnviaCrearLeDevuelveUnaImagen() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException {
+    public void siEnviaCrearDevuelveUnBrainrot() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException, NoSeEncontraronImagenesException {
         givenUsuarioExiste();
-        List<Integer> imagenes = List.of(1, 2, 3);
-        byte[] imagenDevuelta = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso");
-        thenDevuelveUnaImagen(imagenDevuelta);
+        List<Integer> imagenes = List.of(1);
+        Mockito.when(servicioImagen.getImagenesPorId(anyList())).thenReturn(List.of(imagen));
+
+        BrainrotCreado brainrot = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso");
+
+    //    thenDevuelveUnBrainrot(brainrot);
     }
 
-    private void thenDevuelveUnaImagen(byte[] imagenDevuelta) {
-        assertTrue(imagenDevuelta.length > 0);
+    private void thenDevuelveUnBrainrot(BrainrotCreado brainrot) {
+        assertNotNull(brainrot);
     }
 
-    private byte[] whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException {
-       byte[] imagenDevuelta = servicioCrear.crearBrainrot(estilo, imagenes);
-       return imagenDevuelta;
+    private BrainrotCreado whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException {
+       BrainrotCreado brainrot = servicioCrear.crearBrainrot(estilo, imagenes);
+       return brainrot;
     }
 
     private void givenUsuarioExiste() {

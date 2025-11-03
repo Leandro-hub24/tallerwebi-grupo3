@@ -6,7 +6,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.Random;
 import java.util.List;
 
 @Repository("repositorioVersus")
@@ -18,14 +17,10 @@ public class RepositorioVersusImpl implements RepositorioVersus {
         this.sessionFactory = sessionFactory;
     }
     @Override
-    public List<Brainrot> obtenerTodos() {
+    public List<Brainrot> obtenerTodosPorNivel(Integer nivel) {
         final Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(Brainrot.class).list();
-    }
-    @Override
-    public Brainrot obtenerAleatorio(){
-        final Session session = sessionFactory.getCurrentSession();
-        List<Brainrot> todos = obtenerTodos();
-        return todos.get(new Random().nextInt(todos.size()));
+        return session.createCriteria(Brainrot.class)
+                .add(org.hibernate.criterion.Restrictions.eq("nivel", nivel))
+                .list(); //esto es este codigo sql pero con criteria SELECT * FROM Brainrot WHERE nivel = 1 lo devuelve como lista,
     }
 }

@@ -9,15 +9,18 @@
             border-radius: 5px;
             margin: 20px 0;
         }
-
     </style>
 </head>
 <body class="bg-light">
 <div class="container text-center py-5">
     <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body">
-            <h2 th:if="${esCorrecto}" class="text-success">¡Correcto! 🎉</h2>
-            <h2 th:unless="${esCorrecto}" class="text-danger">Incorrecto ❌</h2>
+            <h2 th:if="${esTimeOut}" class="text-danger">Se acabó el tiempo <br>
+                Puntos Sumados = 0</h2>
+            <h2 th:if="${esCorrecto and !esTimeOut}" class="text-success">¡Correcto! 🎉<br>
+                Puntos Sumados = [[${puntos}]]</h2>
+            <h2 th:if="${!esCorrecto and !esTimeOut}" class="text-danger">Incorrecto ❌<br>
+                Puntos Sumados = [[${puntos}]]</h2>
 
             <div class="my-4">
                 <img th:src="@{${imagen}}"
@@ -33,7 +36,7 @@
             </p>
 
             <div class="mt-4">
-                <a th:href="@{/versus}" class="btn btn-primary btn-lg">Jugar otra vez</a>
+                <a th:href="@{/versus(nivel=${nivelActual})}" class="btn btn-primary btn-lg">Continuar</a>
             </div>
         </div>
     </div>

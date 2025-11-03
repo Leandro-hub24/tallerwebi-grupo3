@@ -3,7 +3,8 @@ package com.tallerwebi.dominio;
 import java.util.List;
 
 public interface ServicioVersus {
-    Brainrot obtenerBrainrotAleatorio();
-    List<String> obtenerOpcionesAleatorias();
+    List<Brainrot> obtenerTodosPorNivel(Integer nivel);
+    List<String> obtenerOpcionesAleatoriasParaPregunta(Integer nivel, String imagenCorrecta);
     boolean verificarRespuesta(String respuesta, String respuestaCorrecta);
+    boolean esTimeOut(String timeout);
 }
