@@ -55,13 +55,13 @@
                 <h1 th:text="${partida.nombre}">Nombre de la Partida</h1>
                 <p>
                     <b>Jugador 1:</b>
-                    <span th:text="${partida.jugador1}">Jugador 1</span>
-                    <span th:if="${miUsuario == partida.jugador1}">(¡Eres tú!)</span>
+                    <span th:text="${partida.jugador1Nombre}">Jugador 1</span>
+                    <span th:if="${miUsuarioId == partida.jugador1Id}">(¡Eres tú!)</span>
                     <br>
 
                     <b>Jugador 2:</b>
-                    <span id="nombre-j2" th:text="${partida.jugador2} ? ${partida.jugador2} : '...'"></span>
-                    <span th:if="${partida.jugador2 != null and miUsuario == partida.jugador2}">(¡Eres tú!)</span>
+                    <span id="nombre-j2" th:text="${partida.jugador2Id} ? ${partida.jugador2Nombre} : '...'"></span>
+                    <span th:if="${partida.jugador2Id != null and miUsuarioId == partida.jugador2Id}">(¡Eres tú!)</span>
                 </p>
                 <p>Tiempo:</p>
                 <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
@@ -101,104 +101,18 @@
 </footer>
 
 <script type="text/javascript" th:src="@{/js/rompecabezasMultijugador.js}"></script>
+<script type="text/javascript" th:src="@{/js/rompecabezasMultijugadorWebSocket.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script th:inline="javascript">
     /*<![CDATA[*/
     const idPartida = /*[[${idPartida}]]*/ 'default-partida-id';
-    const miId = /*[[${miUsuario}]]*/ 0;
+    const miId = /*[[${miUsuarioId}]]*/ 0;
     var estadoActual = /*[[${estadoInicial}]]*/ 'ESPERANDO_OPONENTE';
+    var timer = /*[[${tiempo}]]*/ 0;
     const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
     /*]]>*/
 </script>
 
-<script type="text/javascript">
-
-    document.addEventListener("DOMContentLoaded", function() {
-
-        console.log("Estado inicial:", estadoActual);
-
-        actualizarUIInicial(estadoActual);
-
-        conectarAPartida();
-    });
-
-    function actualizarUIInicial(estado) {
-
-        if (estado === "ESPERANDO_OPONENTE") {
-            divEsperando.style.display = 'flex';
-            divTablero.classList.remove('d-flex');
-            divTablero.style.display = 'none';
-            divTablero.classList.add('deshabilitado');
-        } else if (estado === "EN_CURSO") {
-            divEsperando.style.display = 'none';
-            divTablero.style.display = 'block';
-            divTablero.classList.add('d-flex');
-            divTablero.classList.remove('deshabilitado');
-            iniciarPartida()
-
-        }
-    }
-
-    var stompClient = null;
-
-    const divEsperando = document.getElementById('esperando-oponente');
-    const divTablero = document.getElementById('tablero-de-juego');
-    const spanNombreJ2 = document.getElementById('nombre-j2');
-
-    function conectarAPartida() {
-
-        var socket = new SockJS(wsConnectUrl);
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, function (frame) {
-            console.log('Conectado a la partida: ' + frame);
-            const destino = '/topic/partida/' + idPartida;
-
-            stompClient.subscribe(destino, function (mensaje) {
-                const datos = JSON.parse(mensaje.body);
-
-                if (datos.estado) {
-
-                    console.log("¡Actualización de estado!", datos.estado);
-                    estadoActual = datos.estado;
-                    actualizarUI(estadoActual, datos.ganador);
-
-                    if(datos.jugador2) {
-                        spanNombreJ2.innerText = datos.jugador2;
-                    }
-                }
-            });
-        });
-    }
-
-    function actualizarUI(estado, ganador) {
-        if (estado === "ESPERANDO_OPONENTE") {
-            divEsperando.style.display = 'flex';
-            divTablero.classList.remove('d-flex');
-            divTablero.style.display = 'none';
-            divTablero.classList.add('deshabilitado');
-        } else if (estado === "EN_CURSO") {
-            divEsperando.style.display = 'none';
-            divTablero.style.display = 'block';
-            divTablero.classList.add('d-flex');
-            divTablero.classList.remove('deshabilitado');
-            iniciarPartida()
-
-        } else if (estado === "TERMINADA") {
-            detenerTimer();
-            document.getElementById('imagen-original').style.display = 'block';
-            document.getElementById('contenedor-piezas').style.display = 'none';
-            document.getElementById('modal-body').innerHTML = '';
-            document.getElementById('modal-body').innerHTML = '' +
-                 `<h3 class="text-center">Victoria de ${ganador}</h3>`;
-            document.getElementById('modal-footer').innerHTML = '';
-            document.getElementById('modal-footer').innerHTML = '' +
-                `<a href='/spring/rompecabezas/lobby'><button type="button" class="btn btn-primary" id="btn-next" data-bs-dismiss="modal">Volver</button></a>\n`;
-            document.getElementById("modal_btn").click()
-        }
-    }
-
-</script>
 
 </body>
 </html>

@@ -3,15 +3,20 @@ package com.tallerwebi.dominio;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Instant;
+
 @Getter
 @Setter
 public class Partida {
     private String id;
     private String nombre;
-    private Integer jugador1;
-    private Integer jugador2;
+    private Integer jugador1Id;
+    private String jugador1Nombre;
+    private Integer jugador2Id;
+    private String jugador2Nombre;
     private String estado;
     private Integer ganador;
+    private Instant fechaInicio;
 
     public Partida() {
     }

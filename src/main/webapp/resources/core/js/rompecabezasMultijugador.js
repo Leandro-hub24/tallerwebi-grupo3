@@ -8,11 +8,16 @@ let finTimer;
 
 let temporizador;
 
+
+
 function timerVista(){
+    console.log(timer);
+    let tiempoInicio =  new Date(timer).getTime()
+    let tiempo = Math.floor((Date.now() - tiempoInicio) / 1000 );
     const horas = document.getElementById('horas');
     const minutos = document.getElementById('minutos');
     const segundos = document.getElementById('segundos');
-    let tiempo = 0;
+    //let tiempo = 0;
 
     temporizador = setInterval(() => {
         tiempo ++;

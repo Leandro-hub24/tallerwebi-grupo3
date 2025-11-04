@@ -28,7 +28,7 @@
 <ul id="listaDePartidas">
     <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
 
-            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1} + ')'">
+            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1Nombre} + ')'">
                 Nombre de la partida (Creada por: Jugador)
             </span>
 
@@ -38,59 +38,11 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // Pasa las URLs generadas por Thymeleaf a constantes de JS
     const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
     const contextPath = /*[[@{/}]]*/ '/'; // Ej: /tallerwebi-base/
     const partidaBaseUrl = /*[[@{/partida/}]]*/ '/partida/';
     /*]]>*/
 </script>
-
-<script type="text/javascript">
-    var stompClient = null;
-
-    document.addEventListener("DOMContentLoaded", function() {
-        conectarAlLobby();
-    });
-
-    function conectarAlLobby() {
-        // Usamos la URL inyectada por Thymeleaf
-        var socket = new SockJS(wsConnectUrl);
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, function (frame) {
-            console.log('Conectado al Lobby: ' + frame);
-
-            stompClient.subscribe('/topic/lobby/nueva', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                agregarPartidaALista(partida);
-            });
-
-            stompClient.subscribe('/topic/lobby/removida', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                removerPartidaDeLista(partida);
-            });
-        });
-    }
-
-    function agregarPartidaALista(partida) {
-        const lista = document.getElementById("listaDePartidas");
-        const item = document.createElement("li");
-        item.id = "partida-" + partida.id;
-
-        // Usamos la URL base inyectada por Thymeleaf
-        item.innerHTML = `
-                <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-                <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
-            `;
-        lista.appendChild(item);
-    }
-
-    function removerPartidaDeLista(partida) {
-        const item = document.getElementById("partida-" + partida.id);
-        if (item) {
-            item.remove();
-        }
-    }
-</script>
+<script type="text/javascript" th:src="@{/js/lobbyRompecabezas.js}"></script>
 </body>
 </html>
