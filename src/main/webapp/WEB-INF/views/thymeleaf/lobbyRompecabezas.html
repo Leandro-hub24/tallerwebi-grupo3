@@ -17,7 +17,8 @@
 
 <p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
 
-<form th:action="@{/partida}" method="POST">
+<form th:action="@{/{tipoJuego}/partida(tipoJuego=${tipoJuego})}" method="post">
+
     <input type="text" name="nombrePartida" placeholder="Nombre de tu partida" required>
     <button type="submit">Crear Partida</button>
 </form>
@@ -31,8 +32,10 @@
             <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1} + ')'">
                 Nombre de la partida (Creada por: Jugador)
             </span>
-
-        <a th:href="@{/partida/{id}(id=${partida.id})}">Unirse</a>
+        <a th:href="@{|/${tipoJuego}/partida/${partida.id}|}">Unirse</a>
+<!--        <a th:href="@{|/spring/${tipoJuego}/partida/${partida.id}|}">Unirse</a>-->
+<!--        <a th:href="@{/${tipoJuego}/partida/{id}(id=${partida.id})}">Unirse</a>-->
+<!--        <a th:href="@{/partida/{id}(id=${partida.id})}">Unirse</a>-->
     </li>
 </ul>
 
@@ -53,7 +56,7 @@
     });
 
     function conectarAlLobby() {
-        // Usamos la URL inyectada por Thymeleaf
+        const tipoJuego = /*[[${tipoJuego}]]*/ 'rompecabezas';// Usamos la URL inyectada por Thymeleaf
         var socket = new SockJS(wsConnectUrl);
         stompClient = Stomp.over(socket);
 
@@ -79,9 +82,13 @@
 
         // Usamos la URL base inyectada por Thymeleaf
         item.innerHTML = `
-                <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-                <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
+         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
+         <a href="/${tipoJuego}/partida/${partida.id}">Unirse</a>
             `;
+        // item.innerHTML = `
+        //         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
+        //         <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
+        //     `;
         lista.appendChild(item);
     }
 
