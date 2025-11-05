@@ -25,6 +25,18 @@ public class ServicioPartidaImpl implements ServicioPartida {
         return partidasAbiertas.values();
     }
 
+    public Partida crearPartida(String nombrePartida, Integer creadorId, String username) {
+        String idPartida = UUID.randomUUID().toString().substring(0, 8);
+        Partida nuevaPartida = new Partida(idPartida, nombrePartida);
+        nuevaPartida.setJugador1Id(creadorId);
+        nuevaPartida.setJugador1Nombre(username);
+
+        partidasAbiertas.put(idPartida, nuevaPartida);
+
+        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
+        return nuevaPartida;
+    }
+
     public Partida unirJugador(String idPartida, Integer jugador, String username)
             throws PartidaNoEncontradaException, PartidaLlenaException {
 
@@ -79,19 +91,6 @@ public class ServicioPartidaImpl implements ServicioPartida {
         }
 
         throw new PartidaNoEncontradaException("La partida no existe.");
-    }
-
-
-    public Partida crearPartida(String nombrePartida, Integer creadorId, String username) {
-        String idPartida = UUID.randomUUID().toString().substring(0, 8);
-        Partida nuevaPartida = new Partida(idPartida, nombrePartida);
-        nuevaPartida.setJugador1Id(creadorId);
-        nuevaPartida.setJugador1Nombre(username);
-
-        partidasAbiertas.put(idPartida, nuevaPartida);
-
-        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
-        return nuevaPartida;
     }
 
     public void terminarPartida(String idPartida, Integer usuarioId) {

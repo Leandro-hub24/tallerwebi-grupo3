@@ -56,7 +56,7 @@ public class ControladorPartida {
 
 
     @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
-    public ModelAndView unirseAPartidaHTTP(
+    public ModelAndView unirseAPartida(
             @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
 
 

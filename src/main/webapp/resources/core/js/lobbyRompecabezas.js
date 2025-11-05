@@ -30,7 +30,7 @@ function agregarPartidaALista(partida) {
 
     item.innerHTML = `
                 <span>${partida.nombre} (Creada por: ${partida.jugador1Nombre})</span>
-                <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
+                <a class="btn btn-info text-white" href="${partidaBaseUrl}${partida.id}">Unirse</a>
             `;
     lista.appendChild(item);
 }
