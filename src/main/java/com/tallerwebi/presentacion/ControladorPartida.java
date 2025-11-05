@@ -48,14 +48,15 @@ public class ControladorPartida {
         }
 
         Long creador = (Long) request.getSession().getAttribute("id");
-        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue());
+        String username = (String) request.getSession().getAttribute("username");
+        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue(), username);
 
         return new ModelAndView("redirect:/partida/" + partida.getId());
     }
 
 
     @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
-    public ModelAndView unirseAPartidaHTTP(
+    public ModelAndView unirseAPartida(
             @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
 
 
@@ -64,19 +65,25 @@ public class ControladorPartida {
         }
 
         Long jugador = (Long) request.getSession().getAttribute("id");
-
+        String username = (String) request.getSession().getAttribute("username");
         try {
-            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue());
+
+            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue(), username);
+
+            if(partida.getEstado().equals("TERMINADA")){
+                return new ModelAndView("redirect:/rompecabezas/lobby");
+            }
 
             Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(1L);
             request.getSession().setAttribute("partidaId", partida.getId());
-            ModelAndView mav = new ModelAndView("rompecabezasMultijugador"); // Carga partida.jsp
+            ModelAndView mav = new ModelAndView("rompecabezasMultijugador");
             mav.addObject("partida", partida);
             mav.addObject("idPartida", partida.getId());
             mav.addObject("rompecabeza", rompecabeza);
-            // ¡PASA EL ESTADO INICIAL A LA VISTA!
             mav.addObject("estadoInicial", partida.getEstado());
-            mav.addObject("miUsuario", jugador.intValue()); // Para saber quién soy
+            mav.addObject("miUsuarioId", jugador.intValue());
+            mav.addObject("miNombreUsuario", username);
+            mav.addObject("tiempo", partida.getFechaInicio());
 
             return mav;
 

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
@@ -24,7 +25,19 @@ public class ServicioPartidaImpl implements ServicioPartida {
         return partidasAbiertas.values();
     }
 
-    public Partida unirJugador(String idPartida, Integer jugador)
+    public Partida crearPartida(String nombrePartida, Integer creadorId, String username) {
+        String idPartida = UUID.randomUUID().toString().substring(0, 8);
+        Partida nuevaPartida = new Partida(idPartida, nombrePartida);
+        nuevaPartida.setJugador1Id(creadorId);
+        nuevaPartida.setJugador1Nombre(username);
+
+        partidasAbiertas.put(idPartida, nuevaPartida);
+
+        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
+        return nuevaPartida;
+    }
+
+    public Partida unirJugador(String idPartida, Integer jugador, String username)
             throws PartidaNoEncontradaException, PartidaLlenaException {
 
 
@@ -32,14 +45,15 @@ public class ServicioPartidaImpl implements ServicioPartida {
 
         if (partida != null) {
 
-            if (partida.getJugador1().equals(jugador)) {
+            if (partida.getJugador1Id().equals(jugador)) {
                 return partida;
             }
 
-            if (partida.getJugador2() == null) {
-                partida.setJugador2(jugador);
+            if (partida.getJugador2Id() == null) {
+                partida.setJugador2Id(jugador);
+                partida.setJugador2Nombre(username);
                 partida.setEstado("EN_CURSO");
-
+                partida.setFechaInicio(Instant.now());
                 partidasAbiertas.remove(idPartida);
                 partidasEnCurso.put(idPartida, partida);
 
@@ -59,8 +73,8 @@ public class ServicioPartidaImpl implements ServicioPartida {
         partida = partidasEnCurso.get(idPartida);
         if (partida != null) {
 
-            if (partida.getJugador1().equals(jugador) ||
-                    (partida.getJugador2() != null && partida.getJugador2().equals(jugador))) {
+            if (partida.getJugador1Id().equals(jugador) ||
+                    (partida.getJugador2Id() != null && partida.getJugador2Id().equals(jugador))) {
                 return partida;
             }
 
@@ -70,25 +84,13 @@ public class ServicioPartidaImpl implements ServicioPartida {
         partida = partidasTerminadas.get(idPartida);
 
         if (partida != null) {
-            if (partida.getJugador1().equals(jugador) || partida.getJugador2().equals(jugador)) {
+            if (partida.getJugador1Id().equals(jugador) || partida.getJugador2Id().equals(jugador)) {
                 return partida;
             }
             throw new PartidaLlenaException("La partida ya terminó.");
         }
 
         throw new PartidaNoEncontradaException("La partida no existe.");
-    }
-
-
-    public Partida crearPartida(String nombrePartida, Integer creadorId) {
-        String idPartida = UUID.randomUUID().toString().substring(0, 8);
-        Partida nuevaPartida = new Partida(idPartida, nombrePartida);
-        nuevaPartida.setJugador1(creadorId);
-
-        partidasAbiertas.put(idPartida, nuevaPartida);
-
-        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
-        return nuevaPartida;
     }
 
     public void terminarPartida(String idPartida, Integer usuarioId) {
