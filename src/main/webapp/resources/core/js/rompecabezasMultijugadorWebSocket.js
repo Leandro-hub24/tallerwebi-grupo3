@@ -63,7 +63,7 @@ function actualizarUI(estado, datos) {
         divTablero.style.display = 'block';
         divTablero.classList.add('d-flex');
         divTablero.classList.remove('deshabilitado');
-        timer = datos.tiempo;
+        timer = new Date(datos.fechaInicio*1000);
         iniciarPartida()
 
     } else if (estado === "TERMINADA") {

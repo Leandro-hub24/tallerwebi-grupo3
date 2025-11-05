@@ -12,14 +12,10 @@ let temporizador;
 
 function timerVista(){
     console.log(timer);
-    let tiempoInicio;
-    if(timer == null){
-        tiempoInicio = 0;
-    } else  {
-        tiempoInicio = new Date(timer).getTime()
-    }
-
+    let tiempoInicio = new Date(timer).getTime();
+    console.log(tiempoInicio);
     let tiempo = Math.floor((Date.now() - tiempoInicio) / 1000 );
+    console.log(tiempo);
     const horas = document.getElementById('horas');
     const minutos = document.getElementById('minutos');
     const segundos = document.getElementById('segundos');
