@@ -19,23 +19,34 @@ public class ServicioVersusImpl implements ServicioVersus{
     }
 
     @Override
-    public Brainrot obtenerBrainrotAleatorio() {
-        return repositorioVersus.obtenerAleatorio();
+    public List<Brainrot> obtenerTodosPorNivel(Integer nivel) {
+        List<Brainrot> brainrots = repositorioVersus.obtenerTodosPorNivel(nivel);
+
+        Collections.shuffle(brainrots);
+
+        return brainrots;
     }
 
     @Override
-    public List<String> obtenerOpcionesAleatorias() {
-        List<Brainrot> brainrots = repositorioVersus.obtenerTodos();
-        List<String> opciones = new ArrayList<>();
-        for (Brainrot brainrot : brainrots) {
-            opciones.add(brainrot.getImagenPersonaje());//[Tralalero tralala, Tung tung tung Sahur, ...]
+    public List<String> obtenerOpcionesAleatoriasParaPregunta(Integer nivel, String imagenCorrecta) {
+        List<Brainrot> brainrotsDelNivel = repositorioVersus.obtenerTodosPorNivel(nivel);
+
+        List<String> todasLasOpciones = new ArrayList<>();
+        for (Brainrot br : brainrotsDelNivel) {
+            todasLasOpciones.add(br.getImagenPersonaje());
         }
-        Collections.shuffle(opciones);
-        return opciones.subList(0, 4);
+
+        Collections.shuffle(todasLasOpciones);
+        return todasLasOpciones; //por ahora funciona poque hay solo 4 opciones si en el futuro agrego mas opciones hacer alguna validacion
     }
 
     @Override
     public boolean verificarRespuesta(String respuesta, String respuestaCorrecta) {
         return respuesta.equals(respuestaCorrecta);
+    }
+
+    @Override
+    public boolean esTimeOut(String timeout){
+        return "true".equals(timeout);
     }
 }

@@ -25,5 +25,6 @@ public class Usuario {
 
 
     private Integer rompecabezaNivel;
+    private Integer versusNivel;
 
 }
