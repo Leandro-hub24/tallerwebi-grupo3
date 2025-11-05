@@ -45,7 +45,7 @@
 
     <section class="d-flex w-100 h-100" id="tablero-de-juego">
 
-        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
+        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="imgOriginal w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
             <img id="imagen-original" th:src="@{${rompecabeza.urlImg}}" alt="Imagen Original" style="display: none;">
             <div id="contenedor-piezas"></div>
         </article>

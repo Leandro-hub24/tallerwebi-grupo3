@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", function() {
     conectarAPartida();
 });
 
+const divEsperando = document.getElementById('esperando-oponente');
+const divTablero = document.getElementById('tablero-de-juego');
+const spanNombreJ2 = document.getElementById('nombre-j2');
+
 function actualizarUIInicial(estado) {
 
     if (estado === "ESPERANDO_OPONENTE") {
@@ -26,10 +30,6 @@ function actualizarUIInicial(estado) {
 }
 
 var stompClient = null;
-
-const divEsperando = document.getElementById('esperando-oponente');
-const divTablero = document.getElementById('tablero-de-juego');
-const spanNombreJ2 = document.getElementById('nombre-j2');
 
 function conectarAPartida() {
 
@@ -58,16 +58,12 @@ function conectarAPartida() {
 }
 
 function actualizarUI(estado, datos) {
-    if (estado === "ESPERANDO_OPONENTE") {
-        divEsperando.style.display = 'flex';
-        divTablero.classList.remove('d-flex');
-        divTablero.style.display = 'none';
-        divTablero.classList.add('deshabilitado');
-    } else if (estado === "EN_CURSO") {
+    if (estado === "EN_CURSO") {
         divEsperando.style.display = 'none';
         divTablero.style.display = 'block';
         divTablero.classList.add('d-flex');
         divTablero.classList.remove('deshabilitado');
+        timer = datos.tiempo;
         iniciarPartida()
 
     } else if (estado === "TERMINADA") {

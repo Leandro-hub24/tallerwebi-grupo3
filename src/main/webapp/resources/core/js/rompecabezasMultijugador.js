@@ -12,7 +12,13 @@ let temporizador;
 
 function timerVista(){
     console.log(timer);
-    let tiempoInicio =  new Date(timer).getTime()
+    let tiempoInicio;
+    if(timer == null){
+        tiempoInicio = 0;
+    } else  {
+        tiempoInicio = new Date(timer).getTime()
+    }
+
     let tiempo = Math.floor((Date.now() - tiempoInicio) / 1000 );
     const horas = document.getElementById('horas');
     const minutos = document.getElementById('minutos');
@@ -107,9 +113,9 @@ function iniciarPartida(){
         }
 
 
-        imagenOriginal.height = altoContenedor;
-        imagenOriginal.width = anchoContenedor;
 
+        imagenOriginal.style.height = `${altoContenedor}px`
+        imagenOriginal.style.width = `${anchoContenedor}px`
 
         contenedorPiezas.innerHTML = '';
         contenedorPiezas.style.width = `${anchoContenedor}px`
