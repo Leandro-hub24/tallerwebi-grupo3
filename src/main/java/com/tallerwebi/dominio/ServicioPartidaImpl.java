@@ -33,6 +33,10 @@ public class ServicioPartidaImpl implements ServicioPartida {
         partidasAbiertas.put(idPartida, partida);
     }
 
+    public void setPartidasTerminadas(String idPartida, Partida partida) {
+        partidasTerminadas.put(idPartida, partida);
+    }
+
     public Partida crearPartida(String nombrePartida, Integer creadorId, String username,String juego) {
         String idPartida = UUID.randomUUID().toString().substring(0, 8);
         Partida nuevaPartida = new Partida(idPartida, nombrePartida);
@@ -46,7 +50,7 @@ public class ServicioPartidaImpl implements ServicioPartida {
         } else if (juego == "adivinanza"){
             template.convertAndSend("/topic/lobbyAdivinanza/nueva", nuevaPartida);
         }
-//        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
+
         return nuevaPartida;
     }
 
@@ -82,11 +86,6 @@ public class ServicioPartidaImpl implements ServicioPartida {
                     template.convertAndSend(destinoPartida, partida);
 
                 }
-//                template.convertAndSend("/topic/lobby/removida", partida);
-//
-//
-//                String destinoPartida = "/topic/partida/" + idPartida;
-//                template.convertAndSend(destinoPartida, partida);
                 return partida;
 
             }
@@ -134,10 +133,6 @@ public class ServicioPartidaImpl implements ServicioPartida {
                 String destinoPartida = "/topic/partidaAdivinanza/" + idPartida;
                 template.convertAndSend(destinoPartida, partida);
             }
-
-//            String destinoPartida = "/topic/partida/" + idPartida;
-//
-//            template.convertAndSend(destinoPartida, partida);
 
         }
 
