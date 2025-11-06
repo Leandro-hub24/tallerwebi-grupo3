@@ -39,6 +39,18 @@ public class ControladorPartida {
         return mav;
     }
 
+    @RequestMapping(value = "/adivinanzaPorVoz/lobby", method = RequestMethod.GET)
+    public ModelAndView irAlLobbyAdivinanza(HttpServletRequest request) {
+
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
+
+        ModelAndView mav = new ModelAndView("lobbyAdivinanza");
+        mav.addObject("partidas", servicioPartida.getPartidasAbiertas());
+        return mav;
+    }
+
 
     @RequestMapping(value = "/partida", method = RequestMethod.POST)
     public ModelAndView crearPartida(String nombrePartida, HttpServletRequest request) {
@@ -49,11 +61,24 @@ public class ControladorPartida {
 
         Long creador = (Long) request.getSession().getAttribute("id");
         String username = (String) request.getSession().getAttribute("username");
-        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue(), username);
+        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue(), username, "rompecabezas");
 
         return new ModelAndView("redirect:/partida/" + partida.getId());
     }
 
+    @RequestMapping(value = "/adivinanza/partida", method = RequestMethod.POST)
+    public ModelAndView crearPartidaAdivinanza(String nombrePartida, HttpServletRequest request) {
+
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
+
+        Long creador = (Long) request.getSession().getAttribute("id");
+        String username = (String) request.getSession().getAttribute("username");
+        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue(), username, "adivinanza");
+
+        return new ModelAndView("redirect:/adivinanza/partida/" + partida.getId());
+    }
 
     @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
     public ModelAndView unirseAPartida(
@@ -68,7 +93,7 @@ public class ControladorPartida {
         String username = (String) request.getSession().getAttribute("username");
         try {
 
-            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue(), username);
+            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue(), username, "rompecabezas");
 
             if(partida.getEstado().equals("TERMINADA")){
                 return new ModelAndView("redirect:/rompecabezas/lobby");
@@ -94,6 +119,48 @@ public class ControladorPartida {
         }
     }
 
+    @RequestMapping(value = "/adivinanza/partida/{idPartida}", method = RequestMethod.GET)
+    public ModelAndView unirseAPartidaAdivinanza(
+            @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
+
+
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
+
+        Long jugador = (Long) request.getSession().getAttribute("id");
+        String username = (String) request.getSession().getAttribute("username");
+        try {
+
+            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue(), username, "adivinanza");
+
+            if(partida.getEstado().equals("TERMINADA")){
+                return new ModelAndView("redirect:/rompecabezas/lobby");
+            }
+
+//            Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(1L);
+            request.getSession().setAttribute("partidaId", partida.getId());
+            ModelAndView mav = new ModelAndView("adivinanza-por-voz-multijugador.html");
+            mav.addObject("partida", partida);
+            mav.addObject("idPartida", partida.getId());
+//            mav.addObject("rompecabeza", rompecabeza);
+            mav.addObject("estadoInicial", partida.getEstado());
+            mav.addObject("miUsuarioId", jugador.intValue());
+            mav.addObject("miNombreUsuario", username);
+//            mav.addObject("tiempo", partida.getFechaInicio());
+            mav.addObject("imagenActual", "Tralalero tralala");
+            mav.addObject("intentos", "2");
+
+
+            return mav;
+
+        } catch (PartidaLlenaException | PartidaNoEncontradaException e) {
+            ModelAndView mav = new ModelAndView("redirect:/adivinanza/lobby");
+            mav.addObject("error", e.getMessage());
+            return mav;
+        }
+    }
+
 
     @RequestMapping(value = "/partida/finalizar", method = RequestMethod.POST)
     @ResponseBody
@@ -101,7 +168,17 @@ public class ControladorPartida {
 
         Long usuarioId = (Long) request.getSession().getAttribute("id");
         String partidaId = (String) request.getSession().getAttribute("partidaId");
-        servicioPartida.terminarPartida(partidaId, usuarioId.intValue());
+        servicioPartida.terminarPartida(partidaId, usuarioId.intValue(), "rompecabezas");
+
+    }
+
+    @RequestMapping(value = "/partidaAdivinanza/finalizar", method = RequestMethod.POST)
+    @ResponseBody
+    public void finalizarPartidaAdivinanza(HttpServletRequest request) {
+
+        Long usuarioId = (Long) request.getSession().getAttribute("id");
+        String partidaId = (String) request.getSession().getAttribute("partidaId");
+        servicioPartida.terminarPartida(partidaId, usuarioId.intValue(), "adivinanza");
 
     }
 
