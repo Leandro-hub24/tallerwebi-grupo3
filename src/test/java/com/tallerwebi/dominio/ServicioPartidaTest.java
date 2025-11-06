@@ -83,7 +83,7 @@ public class ServicioPartidaTest {
     }
 
     private Partida whenCreoUnaPartida(String nombrePartida, Integer usuarioId, String username) {
-        return servicioPartida.crearPartida(nombrePartida, usuarioId, username);
+        return servicioPartida.crearPartida(nombrePartida, usuarioId, username, "rompecabezas");
     }
 
     private void thenDevuelvoLaPartidaCreada(Partida partida) {
@@ -106,7 +106,7 @@ public class ServicioPartidaTest {
     }
 
     private Partida whenTerminoLaPartida() {
-        servicioPartida.terminarPartida(idPartida2, 1);
+        servicioPartida.terminarPartida(idPartida2, 1, "rompecabezas");
         verify(simpMessagingTemplate, times(1)).convertAndSend(
                 eq("/topic/partida/" + idPartida2),
                 partidaCaptor.capture()
@@ -140,7 +140,7 @@ public class ServicioPartidaTest {
 
     private Partida whenIntentoUnirmeALaPartida(String idPartida, Integer idUsuario, String nombreUsuario) throws PartidaNoEncontradaException, PartidaLlenaException {
 
-        return servicioPartida.unirJugador(idPartida, idUsuario, nombreUsuario);
+        return servicioPartida.unirJugador(idPartida, idUsuario, nombreUsuario, "rompecabezas");
 
     }
 

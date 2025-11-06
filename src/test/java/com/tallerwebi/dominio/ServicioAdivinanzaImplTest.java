@@ -42,7 +42,7 @@ public class ServicioAdivinanzaImplTest {
     @Transactional
     public void limpiarBaseDeDatos() {
         Session session = sessionFactory.getCurrentSession();
-        session.clear(); // <- esto es clave para evitar el error de Hibernate
+        session.clear();
 
         session.createNativeQuery("TRUNCATE TABLE PuntosJuego RESTART IDENTITY ").executeUpdate();
         session.createNativeQuery("TRUNCATE TABLE NivelJuego RESTART IDENTITY ").executeUpdate();
@@ -58,10 +58,11 @@ public class ServicioAdivinanzaImplTest {
     void debeSumar2AlPuntajeYGuardarEnDbSiLaOpcionEsCorrecta() {
 
         Usuario usuario = givenUsuarioExiste();
-        PuntosJuego puntos = givenPuntosInstanciadoCon2( );
+        PuntosJuego puntos = givenPuntosInstanciadoCon(2 );
+        int intentos = 0;
+        double tiempo = 1;
 
-
-        whenSeLlamaALaOpcionIngresada(puntos, usuario);
+        whenSeLlamaALaOpcionIngresada(puntos, usuario,intentos,tiempo);
 
         thenSeVerificaSiSeGuardoEnElRepositorioPuntosJuego();
 
@@ -76,13 +77,31 @@ public class ServicioAdivinanzaImplTest {
     @Test
     void debeCrearYGuardarNivelJuegoSiNoExiste() {
         Usuario usuario = givenUsuarioExiste();
-
-        PuntosJuego puntos = givenPuntosInstanciadoCon2();
+        int intentos = 0;
+        double tiempo = 1;
+        PuntosJuego puntos = givenPuntosInstanciadoCon(2);
         givenNoExisteNivelJuego();
 
-        whenSeLlamaALaOpcionIngresada(puntos, usuario);
+        whenSeLlamaALaOpcionIngresada(puntos, usuario,intentos, tiempo);
         thenSeVerificaQueSeCreoUnNivelJuegoEn(usuario);
         thenSeVerificaSiSeGuardoEnElRepositorioPuntosJuego();
+    }
+    
+    @Transactional
+    @Rollback
+    @Test
+    void siSeRecibeUnPuntajeDe10AlPasarPorElMetodoCalcularPuntajeSeConvierteEn30(){
+        Usuario usuario = givenUsuarioExiste();
+        PuntosJuego puntos = givenPuntosInstanciadoCon(10);
+        int cantidadIntentos = 0;
+        double tiempoEnSegundos = 30;
+        thenSeCalculanLosPuntos(puntos, cantidadIntentos, tiempoEnSegundos);
+        assertEquals( 30, puntos.getPuntos());
+
+    }
+
+    private void thenSeCalculanLosPuntos(PuntosJuego puntos, int cantidadIntentos, double tiempoEnSegundos) {
+        servicio.calcularPuntos(puntos, cantidadIntentos, tiempoEnSegundos);
     }
 
     private void thenSeVerificaQueSeCreoUnNivelJuegoEn(Usuario usuario) {
@@ -97,6 +116,8 @@ public class ServicioAdivinanzaImplTest {
                 .thenReturn(null);
 
     }
+
+
 
 
 //    @Test
@@ -132,19 +153,21 @@ public class ServicioAdivinanzaImplTest {
     }
 
 
-    private PuntosJuego givenPuntosInstanciadoCon2( ) {
+    private PuntosJuego givenPuntosInstanciadoCon(Integer num ) {
         PuntosJuego puntos = new PuntosJuego();
 
-        puntos.setPuntos(2);
+        puntos.setPuntos(num);
         sessionFactory.getCurrentSession().save(puntos);
         return puntos;
     }
 
-    private void whenSeLlamaALaOpcionIngresada(PuntosJuego puntos, Usuario usuario) {
-        servicio.opcionIngresada(puntos, usuario);
+    private void whenSeLlamaALaOpcionIngresada(PuntosJuego puntos, Usuario usuario, int intentos, double tiempo) {
+        servicio.opcionIngresada(puntos, usuario, intentos, tiempo);
     }
 
     private void thenSeVerificaSiSeGuardoEnElRepositorioPuntosJuego() {
+        // verify verifica si x metodo fue llamado
+        // argThat es parecido a equals, verifica que PuntosJuego p tenga esos valores
         Mockito.verify(repositorioPuntosJuego).agregarPuntos(Mockito.argThat(p ->
                 p.getPuntos() == 2 &&
                         p.getNivelJuego() != null &&

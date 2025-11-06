@@ -14,12 +14,6 @@
 <body>
 
 
-<div id="esperando-oponente"
-     th:style="${estadoInicial == 'ESPERANDO_OPONENTE'} ? 'display:flex' : 'display:none'">
-    Esperando a que se una el oponente...
-</div>
-
-
 
 <ul class="nav nav-pills nav-fill">
     <li class="nav-item">
@@ -49,7 +43,7 @@
             <div class="d-flex justify-content-center my-4">
                 <button id="btn-voz" onclick="iniciarReconocimiento()">🎙️</button>
             </div>
-<!--             // temporizador-->
+            <!--             // temporizador-->
             <div class="container my-4">
                 <div class="progress" style="height: 30px;">
                     <div id="barraTiempo"

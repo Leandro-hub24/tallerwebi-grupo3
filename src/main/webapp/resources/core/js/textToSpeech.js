@@ -94,6 +94,8 @@ function iniciarReconocimiento() {
         let inputTranscripcion = document.getElementById("inputTranscripcion");
         let form = document.getElementById("formVoz");
         let inputAliasDetectado = document.getElementById("inputAliasDetectado");
+        let inputCantidadIntentos = document.getElementById("inputCantidadIntentos");
+
 
         let nombreDetectado;
 
@@ -103,6 +105,8 @@ function iniciarReconocimiento() {
             let aliasDetectado = resultado[0].item.alias;
             inputTranscripcion.value = nombreDetectado;
             inputAliasDetectado.value = aliasDetectado;
+            inputCantidadIntentos.value = contador;
+
 
             mostrarMensaje("detectado", `✅ Se detectó: ${nombreDetectado}`);
         } else {

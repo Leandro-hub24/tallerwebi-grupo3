@@ -33,19 +33,26 @@ public class ServicioPartidaImpl implements ServicioPartida {
         partidasAbiertas.put(idPartida, partida);
     }
 
-    public Partida crearPartida(String nombrePartida, Integer creadorId, String username) {
+    public Partida crearPartida(String nombrePartida, Integer creadorId, String username,String juego) {
         String idPartida = UUID.randomUUID().toString().substring(0, 8);
         Partida nuevaPartida = new Partida(idPartida, nombrePartida);
         nuevaPartida.setJugador1Id(creadorId);
         nuevaPartida.setJugador1Nombre(username);
 
         partidasAbiertas.put(idPartida, nuevaPartida);
+        if (juego == "rompecabezas"){
+            template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
 
-        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
+        } else if (juego == "adivinanza"){
+            template.convertAndSend("/topic/lobbyAdivinanza/nueva", nuevaPartida);
+        }
+//        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
         return nuevaPartida;
     }
 
-    public Partida unirJugador(String idPartida, Integer jugador, String username)
+
+
+    public Partida unirJugador(String idPartida, Integer jugador, String username, String juego)
             throws PartidaNoEncontradaException, PartidaLlenaException {
 
 
@@ -64,14 +71,24 @@ public class ServicioPartidaImpl implements ServicioPartida {
                 partida.setFechaInicio(Instant.now());
                 partidasAbiertas.remove(idPartida);
                 partidasEnCurso.put(idPartida, partida);
+                if ( juego == "rompecabezas"){
+                    template.convertAndSend("/topic/lobby/removida", partida);
+                    String destinoPartida = "/topic/partida/" + idPartida;
+                    template.convertAndSend(destinoPartida, partida);
 
-                template.convertAndSend("/topic/lobby/removida", partida);
+                }  else if (juego == "adivinanza"){
+                    template.convertAndSend("/topic/lobbyAdivinanza/removida", partida);
+                    String destinoPartida = "/topic/partidaAdivinanza/" + idPartida;
+                    template.convertAndSend(destinoPartida, partida);
 
-
-                String destinoPartida = "/topic/partida/" + idPartida;
-                template.convertAndSend(destinoPartida, partida);
-
+                }
+//                template.convertAndSend("/topic/lobby/removida", partida);
+//
+//
+//                String destinoPartida = "/topic/partida/" + idPartida;
+//                template.convertAndSend(destinoPartida, partida);
                 return partida;
+
             }
 
             throw new PartidaLlenaException("La partida se llenó.");
@@ -101,7 +118,7 @@ public class ServicioPartidaImpl implements ServicioPartida {
         throw new PartidaNoEncontradaException("La partida no existe.");
     }
 
-    public void terminarPartida(String idPartida, Integer usuarioId) {
+    public void terminarPartida(String idPartida, Integer usuarioId, String juego) {
         Partida partida = partidasEnCurso.get(idPartida);
 
         if (partida != null) {
@@ -109,9 +126,18 @@ public class ServicioPartidaImpl implements ServicioPartida {
             partidasTerminadas.put(idPartida, partida);
             partida.setEstado("TERMINADA");
             partida.setGanador(usuarioId);
-            String destinoPartida = "/topic/partida/" + idPartida;
+            if ( juego == "rompecabezas"){
+                String destinoPartida = "/topic/partida/" + idPartida;
+                template.convertAndSend(destinoPartida, partida);
 
-            template.convertAndSend(destinoPartida, partida);
+            }  else if (juego == "adivinanza"){
+                String destinoPartida = "/topic/partidaAdivinanza/" + idPartida;
+                template.convertAndSend(destinoPartida, partida);
+            }
+
+//            String destinoPartida = "/topic/partida/" + idPartida;
+//
+//            template.convertAndSend(destinoPartida, partida);
 
         }
 
