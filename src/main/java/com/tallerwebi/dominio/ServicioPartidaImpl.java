@@ -25,6 +25,14 @@ public class ServicioPartidaImpl implements ServicioPartida {
         return partidasAbiertas.values();
     }
 
+    public void setPartidasEnCurso(String idPartida, Partida partida) {
+        partidasEnCurso.put(idPartida, partida);
+    }
+
+    public void setPartidasAbiertas(String idPartida, Partida partida) {
+        partidasAbiertas.put(idPartida, partida);
+    }
+
     public Partida crearPartida(String nombrePartida, Integer creadorId, String username) {
         String idPartida = UUID.randomUUID().toString().substring(0, 8);
         Partida nuevaPartida = new Partida(idPartida, nombrePartida);
