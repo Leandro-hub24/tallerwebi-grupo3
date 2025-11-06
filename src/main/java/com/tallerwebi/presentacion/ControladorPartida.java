@@ -27,24 +27,20 @@ public class ControladorPartida {
     }
 
 
-    @RequestMapping(value = {"/rompecabezas/lobby", "/adivinanzaPorVoz/lobby"}, method = RequestMethod.GET)
+    @RequestMapping(value = "/rompecabezas/lobby", method = RequestMethod.GET)
     public ModelAndView irAlLobby(HttpServletRequest request) {
 
         if(request.getSession().getAttribute("id") == null){
            return redirectLogin();
         }
 
-
         ModelAndView mav = new ModelAndView("lobbyRompecabezas");
-        String uri = request.getRequestURI();
-        String tipoJuego = uri.contains("adivinanzaPorVoz") ? "adivinanzaPorVoz" : "rompecabezas";
-        mav.addObject("tipoJuego", tipoJuego);
         mav.addObject("partidas", servicioPartida.getPartidasAbiertas());
         return mav;
     }
 
 
-    @RequestMapping(value = {"/rompecabezas/partida", "/adivinanzaPorVoz/partida"}, method = RequestMethod.POST)
+    @RequestMapping(value = "/partida", method = RequestMethod.POST)
     public ModelAndView crearPartida(String nombrePartida, HttpServletRequest request) {
 
         if(request.getSession().getAttribute("id") == null){
@@ -52,28 +48,15 @@ public class ControladorPartida {
         }
 
         Long creador = (Long) request.getSession().getAttribute("id");
-        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue());
+        String username = (String) request.getSession().getAttribute("username");
+        Partida partida = servicioPartida.crearPartida(nombrePartida, creador.intValue(), username);
 
-        String uri = request.getRequestURI();
-        String tipoJuego;
-
-        if (uri.contains("/rompecabezas/")) {
-            tipoJuego = "rompecabezas";
-        } else if (uri.contains("/adivinanzaPorVoz/")) {
-            tipoJuego = "adivinanzaPorVoz";
-        } else {
-            tipoJuego = "rompecabezas"; // fallback
-        }
-
-//        return new ModelAndView("redirect:/partida/" + partida.getId());
-        return new ModelAndView("redirect:/" + tipoJuego + "/partida/" + partida.getId());
-
+        return new ModelAndView("redirect:/partida/" + partida.getId());
     }
 
 
-    @RequestMapping(value = "/{tipo}/partida/{idPartida}", method = RequestMethod.GET)
-    public ModelAndView unirseAPartidaHTTP(
-            @PathVariable("tipo") String tipo,
+    @RequestMapping(value = "/partida/{idPartida}", method = RequestMethod.GET)
+    public ModelAndView unirseAPartida(
             @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
 
 
@@ -82,33 +65,25 @@ public class ControladorPartida {
         }
 
         Long jugador = (Long) request.getSession().getAttribute("id");
-
+        String username = (String) request.getSession().getAttribute("username");
         try {
-            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue());
+
+            Partida partida = servicioPartida.unirJugador(idPartida, jugador.intValue(), username);
+
+            if(partida.getEstado().equals("TERMINADA")){
+                return new ModelAndView("redirect:/rompecabezas/lobby");
+            }
 
             Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(1L);
             request.getSession().setAttribute("partidaId", partida.getId());
-            ModelAndView mav;
-            if ("rompecabezas".equalsIgnoreCase(tipo)) {
-
-                mav = new ModelAndView("rompecabezasMultijugador");
-                mav.addObject("rompecabeza", rompecabeza);
-            } else if ("adivinanzaPorVoz".equalsIgnoreCase(tipo)) {
-                mav = new ModelAndView("adivinanza-por-voz-multijugador.html");
-            } else {
-                // Si llega un tipo no esperado
-                mav = new ModelAndView("redirect:/login");
-                mav.addObject("error", "Tipo de juego desconocido");
-                return mav;
-            }
-
-//                    new ModelAndView("rompecabezasMultijugador"); // Carga partida.jsp
+            ModelAndView mav = new ModelAndView("rompecabezasMultijugador");
             mav.addObject("partida", partida);
             mav.addObject("idPartida", partida.getId());
-//            mav.addObject("rompecabeza", rompecabeza);
-            // ¡PASA EL ESTADO INICIAL A LA VISTA!
+            mav.addObject("rompecabeza", rompecabeza);
             mav.addObject("estadoInicial", partida.getEstado());
-            mav.addObject("miUsuario", jugador.intValue()); // Para saber quién soy
+            mav.addObject("miUsuarioId", jugador.intValue());
+            mav.addObject("miNombreUsuario", username);
+            mav.addObject("tiempo", partida.getFechaInicio());
 
             return mav;
 

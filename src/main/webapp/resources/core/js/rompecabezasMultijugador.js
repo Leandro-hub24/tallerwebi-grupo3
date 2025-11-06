@@ -8,11 +8,18 @@ let finTimer;
 
 let temporizador;
 
+
+
 function timerVista(){
+    console.log(timer);
+    let tiempoInicio = new Date(timer).getTime();
+    console.log(tiempoInicio);
+    let tiempo = Math.floor((Date.now() - tiempoInicio) / 1000 );
+    console.log(tiempo);
     const horas = document.getElementById('horas');
     const minutos = document.getElementById('minutos');
     const segundos = document.getElementById('segundos');
-    let tiempo = 0;
+    //let tiempo = 0;
 
     temporizador = setInterval(() => {
         tiempo ++;
@@ -102,9 +109,9 @@ function iniciarPartida(){
         }
 
 
-        imagenOriginal.height = altoContenedor;
-        imagenOriginal.width = anchoContenedor;
 
+        imagenOriginal.style.height = `${altoContenedor}px`
+        imagenOriginal.style.width = `${anchoContenedor}px`
 
         contenedorPiezas.innerHTML = '';
         contenedorPiezas.style.width = `${anchoContenedor}px`

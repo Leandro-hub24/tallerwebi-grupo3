@@ -4,6 +4,8 @@
     <title>Lobby Multijugador</title>
     <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
     <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/rompecabezas.css}"/>
     <style>
         body { font-family: sans-serif; }
         #listaDePartidas li { padding: 5px; border-bottom: 1px solid #ccc; }
@@ -11,93 +13,53 @@
         .error { color: red; }
     </style>
 </head>
-<body>
 
-<h2>Lobby de Partidas</h2>
+<body style="background-color: #f8fef6; width: 100%; height: 85vh;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 10vh">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Rompezabezas</a>
+    </div>
 
-<p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
+</nav>
 
-<form th:action="@{/{tipoJuego}/partida(tipoJuego=${tipoJuego})}" method="post">
+<main class="container d-flex flex-column">
+    <section class="d-flex flex-column mt-3">
+        <h2>Lobby de Partidas</h2>
 
-    <input type="text" name="nombrePartida" placeholder="Nombre de tu partida" required>
-    <button type="submit">Crear Partida</button>
-</form>
+        <p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
 
-<hr>
-<h3>Partidas Disponibles:</h3>
+        <form th:action="@{/partida}" method="POST">
+            <input type="text" name="nombrePartida" style="outline: none" class="rounded-2 p-1" placeholder="Nombre de tu partida" required>
+            <button class="btn btn-info text-white" type="submit">Crear Partida</button>
+        </form>
+    </section>
 
-<ul id="listaDePartidas">
-    <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
+    <section class="d-flex flex-column mt-5">
+        <h3>Partidas Disponibles:</h3>
 
-            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1} + ')'">
+        <ul id="listaDePartidas">
+            <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
+
+            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1Nombre} + ')'">
                 Nombre de la partida (Creada por: Jugador)
             </span>
-        <a th:href="@{|/${tipoJuego}/partida/${partida.id}|}">Unirse</a>
-<!--        <a th:href="@{|/spring/${tipoJuego}/partida/${partida.id}|}">Unirse</a>-->
-<!--        <a th:href="@{/${tipoJuego}/partida/{id}(id=${partida.id})}">Unirse</a>-->
-<!--        <a th:href="@{/partida/{id}(id=${partida.id})}">Unirse</a>-->
-    </li>
-</ul>
+
+                <a class="btn btn-info text-white" th:href="@{/partida/{id}(id=${partida.id})}">Unirse</a>
+            </li>
+        </ul>
+    </section>
+
+</main>
+
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // Pasa las URLs generadas por Thymeleaf a constantes de JS
     const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
     const contextPath = /*[[@{/}]]*/ '/'; // Ej: /tallerwebi-base/
     const partidaBaseUrl = /*[[@{/partida/}]]*/ '/partida/';
     /*]]>*/
 </script>
-
-<script type="text/javascript">
-    var stompClient = null;
-
-    document.addEventListener("DOMContentLoaded", function() {
-        conectarAlLobby();
-    });
-
-    function conectarAlLobby() {
-        const tipoJuego = /*[[${tipoJuego}]]*/ 'rompecabezas';// Usamos la URL inyectada por Thymeleaf
-        var socket = new SockJS(wsConnectUrl);
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, function (frame) {
-            console.log('Conectado al Lobby: ' + frame);
-
-            stompClient.subscribe('/topic/lobby/nueva', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                agregarPartidaALista(partida);
-            });
-
-            stompClient.subscribe('/topic/lobby/removida', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                removerPartidaDeLista(partida);
-            });
-        });
-    }
-
-    function agregarPartidaALista(partida) {
-        const lista = document.getElementById("listaDePartidas");
-        const item = document.createElement("li");
-        item.id = "partida-" + partida.id;
-
-        // Usamos la URL base inyectada por Thymeleaf
-        item.innerHTML = `
-         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-         <a href="/${tipoJuego}/partida/${partida.id}">Unirse</a>
-            `;
-        // item.innerHTML = `
-        //         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-        //         <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
-        //     `;
-        lista.appendChild(item);
-    }
-
-    function removerPartidaDeLista(partida) {
-        const item = document.getElementById("partida-" + partida.id);
-        if (item) {
-            item.remove();
-        }
-    }
-</script>
+<script type="text/javascript" th:src="@{/js/lobbyRompecabezas.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

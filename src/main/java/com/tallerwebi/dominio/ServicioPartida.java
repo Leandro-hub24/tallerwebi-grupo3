@@ -8,8 +8,8 @@ import java.util.Collection;
 
 public interface ServicioPartida {
 
-        Partida crearPartida(String nombrePartida, Integer usuario1Id);
+        Partida crearPartida(String nombrePartida, Integer usuario1Id, String username);
         Collection<Partida> getPartidasAbiertas();
-        Partida unirJugador(String partidaId, Integer usuario2Id) throws PartidaNoEncontradaException, PartidaLlenaException;
+        Partida unirJugador(String partidaId, Integer usuario2Id, String username) throws PartidaNoEncontradaException, PartidaLlenaException;
         void terminarPartida(String partidaId, Integer usuarioId);
 }
