@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioAdivinanza;
 import com.tallerwebi.dominio.ServicioAdivinanzaImpl;
+import com.tallerwebi.dominio.ServicioPartida;
 import com.tallerwebi.dominio.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,8 @@ public class ControladorAdivinanzaPorVozTest {
     @BeforeEach
     void init() {
         servicioAdivinanzaMock = mock(ServicioAdivinanza.class);
-        controlador = new ControladorAdivinanzaVoz(servicioAdivinanzaMock); // ✅ usás el que sí existe
+        ServicioPartida servicioPartidaMock = mock(ServicioPartida.class);
+        controlador = new ControladorAdivinanzaVoz(servicioAdivinanzaMock, servicioPartidaMock); // ✅ usás el que sí existe
 
         sessionMock = mock(HttpSession.class);
         usuarioMock = mock(Usuario.class);

@@ -40,10 +40,10 @@ public class ServicioPartidaImpl implements ServicioPartida {
         nuevaPartida.setJugador1Nombre(username);
 
         partidasAbiertas.put(idPartida, nuevaPartida);
-        if (juego == "rompecabezas"){
+        if ("rompecabezas".equals(juego)){
             template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
 
-        } else if (juego == "adivinanza"){
+        } else if ("adivinanza".equals(juego)){
             template.convertAndSend("/topic/lobbyAdivinanza/nueva", nuevaPartida);
         }
 //        template.convertAndSend("/topic/lobby/nueva", nuevaPartida);
@@ -71,12 +71,12 @@ public class ServicioPartidaImpl implements ServicioPartida {
                 partida.setFechaInicio(Instant.now());
                 partidasAbiertas.remove(idPartida);
                 partidasEnCurso.put(idPartida, partida);
-                if ( juego == "rompecabezas"){
+                if ( "rompecabezas".equals(juego)){
                     template.convertAndSend("/topic/lobby/removida", partida);
                     String destinoPartida = "/topic/partida/" + idPartida;
                     template.convertAndSend(destinoPartida, partida);
 
-                }  else if (juego == "adivinanza"){
+                }  else if ("adivinanza".equals(juego)){
                     template.convertAndSend("/topic/lobbyAdivinanza/removida", partida);
                     String destinoPartida = "/topic/partidaAdivinanza/" + idPartida;
                     template.convertAndSend(destinoPartida, partida);
@@ -122,18 +122,49 @@ public class ServicioPartidaImpl implements ServicioPartida {
         Partida partida = partidasEnCurso.get(idPartida);
 
         if (partida != null) {
+            Integer jugador1Id = partida.getJugador1Id();
+            Integer jugador2Id = partida.getJugador2Id();
+
+            int intentosJugador1 = partida.getIntentosPorJugador().getOrDefault(jugador1Id, 0);
+            int intentosJugador2 = partida.getIntentosPorJugador().getOrDefault(jugador2Id, 0);
+
+
+
+            if(juego.equalsIgnoreCase("adivinanza")) {
+                boolean jugadorActualPerdio = partida.getIntentosPorJugador()
+                        .getOrDefault(usuarioId, 0) >= 3;
+
+
+                if (jugadorActualPerdio) {
+
+                    Integer ganador = usuarioId.equals(jugador1Id) ? jugador2Id : jugador1Id;
+                    partida.setGanador(ganador);
+                } else {
+
+                    partida.setGanador(usuarioId);
+                }
+            }
+
+            if (juego.equalsIgnoreCase("rompecabezas")) {
+                partida.setGanador(usuarioId);
+            }
+
+            partida.setEstado("TERMINADA");
+
             partidasEnCurso.remove(idPartida);
             partidasTerminadas.put(idPartida, partida);
             partida.setEstado("TERMINADA");
-            partida.setGanador(usuarioId);
-            if ( juego == "rompecabezas"){
+
+            if (  "rompecabezas".equals(juego)){
                 String destinoPartida = "/topic/partida/" + idPartida;
                 template.convertAndSend(destinoPartida, partida);
 
-            }  else if (juego == "adivinanza"){
+            }  else if ("adivinanza".equals(juego)){
                 String destinoPartida = "/topic/partidaAdivinanza/" + idPartida;
                 template.convertAndSend(destinoPartida, partida);
             }
+
+
 
 //            String destinoPartida = "/topic/partida/" + idPartida;
 //
@@ -141,6 +172,15 @@ public class ServicioPartidaImpl implements ServicioPartida {
 
         }
 
+    }
+
+    @Override
+    public void registrarIntento(String idPartida, Integer usuarioId) {
+        Partida partida = partidasEnCurso.get(idPartida);
+        if (partida != null) {
+            int intentosJugador = partida.getIntentosPorJugador().getOrDefault(usuarioId, 0);
+            partida.getIntentosPorJugador().put(usuarioId, intentosJugador + 1);
+        }
     }
 
 }

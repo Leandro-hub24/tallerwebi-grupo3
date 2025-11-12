@@ -10,21 +10,41 @@
           rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
           crossorigin="anonymous">
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <style>
+        #esperando-oponente {
+            padding: 20px; background: #eee; border: 1px solid #ccc;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            z-index: 9;
+        }
+
+        .deshabilitado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body>
 
 
 
-<ul class="nav nav-pills nav-fill">
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Iniciar sesion</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Registrarse</a>
-    </li>
-</ul>
+
 
 <div id="main">
+
+    <div id="esperando-oponente"
+         th:style="${estadoInicial == 'ESPERANDO_OPONENTE'} ? 'display:flex' : 'display:none'">
+        Esperando a que se una el oponente...
+    </div>
+
     <div id="Adivinanza" class=" container-xl pt-2">
         <div id="BrainrotAAdivinar" class="d-flex justify-content-center pb-3">
             <img th:src="@{'/img/versus/' + ${imagenActual} + '.png'}"
@@ -62,15 +82,55 @@
             <p>Lo que dijiste: <span id="textoReconocido">...</span></p>
         </div>
 
-        <form id="formVoz" th:action="@{/adivinanza-por-voz/verificar2}" method="post">
+        <form id="formVoz" th:action="@{/adivinanza-por-voz/verificarMultijugador}" method="post">
             <input  type="hidden" name="transcripcion" id="inputTranscripcion">
             <input  type="hidden"  id="inputImagenActual" name="imagenActual" th:value="${imagenActual}">
             <input  type="hidden" name="aliasDetectado" id="inputAliasDetectado">
             <input  type="hidden" name="cantidadIntentos" id="inputCantidadIntentos">
             <input  type="hidden" name="tiempo" id="inputTiempo">
+            <input type="hidden" name="idPartida" th:value="${idPartida}">
+            <input type="hidden" name="usuarioId" th:value="${miUsuarioId}">
+            <input type="hidden" name="jugador2" th:value="${partida.jugador2Id}">
         </form>
         <p th:text="'Intentos actuales: ' + ${intentos}"></p>
+        <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
+            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
+                <h1 th:text="${partida.nombre}">Nombre de la Partida</h1>
+                <p>
+                    <b>Jugador 1:</b>
+                    <span th:text="${partida.jugador1Nombre}">Jugador 1</span>
+                    <span th:if="${miUsuarioId == partida.jugador1Id}">(¡Eres tú!)</span>
+                    <br>
+
+                    <b>Jugador 2:</b>
+                    <span id="nombre-j2" th:text="${partida.jugador2Id} ? ${partida.jugador2Nombre} : '...'"></span>
+                    <span th:if="${partida.jugador2Id != null and miUsuarioId == partida.jugador2Id}">(¡Eres tú!)</span>
+                </p>
+                <p>Tiempo:</p>
+                <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
+            </div>
+        </aside>
     </div>
+
+    <div class="modal fade" id="exampleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+<!--                    <h1 class="modal-title fs-5" id="modal-title" th:text="${'Nivel: ' + adivinanza.id}"></h1>-->
+                </div>
+                <div id="modal-body" class="modal-body text-center" style="max-height: 500px">
+<!--                    <h3 class="text-center" th:text="${rompecabeza.nombre}"></h3>-->
+<!--                    <img th:src="@{${rompecabeza.urlImg}}" alt="Imagen Rompecabeza" style="height: 200px;">-->
+                </div>
+                <div id="modal-footer" class="modal-footer">
+                    <a th:href="@{/home}" >
+                    <button type="button" class="btn btn-primary" id="btn-volver" data-bs-dismiss="modal">volver</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 
@@ -80,6 +140,108 @@
         crossorigin="anonymous"></script>
 <script th:src="@{/resources/core/js/temporizador.js}"></script>
 <script th:src="@{/resources/core/js/textToSpeech.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const idPartida = /*[[${idPartida}]]*/ 'default-partida-id';
+    const miId = /*[[${miUsuarioId}]]*/ 0;
+    var estadoActual = /*[[${estadoInicial}]]*/ 'ESPERANDO_OPONENTE';
+    // var timer = /*[[${tiempo}]]*/ 0;
+    const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
+    /*]]>*/
+</script>
+<script>
+
+    window.addEventListener("load", function() {
+
+        console.log("Estado inicial:", estadoActual);
+
+        actualizarUIInicial(estadoActual);
+
+        conectarAPartida();
+    });
+
+    const divEsperando = document.getElementById('esperando-oponente');
+    const divTablero = document.getElementById('Adivinanza');
+    const spanNombreJ2 = document.getElementById('nombre-j2');
+
+    function actualizarUIInicial(estado) {
+
+        if (estado === "ESPERANDO_OPONENTE") {
+            divEsperando.style.display = 'flex';
+            divTablero.classList.remove('d-flex');
+            divTablero.style.display = 'none';
+            divTablero.classList.add('deshabilitado');
+        } else if (estado === "EN_CURSO") {
+            divEsperando.style.display = 'none';
+            divTablero.style.display = 'block';
+            divTablero.classList.add('d-flex');
+            divTablero.classList.remove('deshabilitado');
+            // iniciarPartida()
+
+        }
+    }
+
+    var stompClient = null;
+
+    function conectarAPartida() {
+
+        var socket = new SockJS(wsConnectUrl);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            console.log('Conectado a la partida: ' + frame);
+            const destino = '/topic/partidaAdivinanza/' + idPartida;
+
+            stompClient.subscribe(destino, function (mensaje) {
+                const datos = JSON.parse(mensaje.body);
+
+                if (datos.estado) {
+
+                    console.log("¡Actualización de estado!", datos.estado);
+                    estadoActual = datos.estado;
+                    actualizarUI(estadoActual, datos);
+
+                    if(datos.jugador2Id) {
+                        spanNombreJ2.innerText = datos.jugador2Nombre;
+                    }
+                }
+            });
+        });
+    }
+
+    function actualizarUI(estado, datos) {
+        if (estado === "EN_CURSO") {
+            divEsperando.style.display = 'none';
+            divTablero.style.display = 'block';
+            divTablero.classList.add('d-flex');
+            divTablero.classList.remove('deshabilitado');
+            // timer = new Date(datos.fechaInicio*1000);
+            // iniciarPartida()
+
+        } else if (estado === "TERMINADA") {
+            // detenerTimer();
+            // document.getElementById('imagen-original').style.display = 'block';
+            // document.getElementById('contenedor-piezas').style.display = 'none';
+            document.getElementById('modal-body').innerHTML = '';
+            if (datos.ganador == datos.jugador1Id) {
+                document.getElementById('modal-body').innerHTML = '' +
+                    `<h3 class="text-center">Victoria de ${datos.jugador1Nombre}</h3>`;
+            }
+
+            if (datos.ganador == datos.jugador2Id) {
+                document.getElementById('modal-body').innerHTML = '' +
+                    `<h3 class="text-center">Victoria de ${datos.jugador2Nombre}</h3>`;
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('exampleModal'));
+            modal.show();
+            // document.getElementById('modal-footer').innerHTML = '';
+            // document.getElementById('modal-footer').innerHTML = '' +
+            //     `<a href='/spring/Adivinanza/lobby'><button type="button" class="btn btn-primary" id="btn-next" data-bs-dismiss="modal">Volver</button></a>\n`;
+            // // document.getElementById("modal_btn").click()
+        }
+    }
+</script>
 </body>
 
 

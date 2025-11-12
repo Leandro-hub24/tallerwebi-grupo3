@@ -13,12 +13,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 @Controller
 public class ControladorPartida {
 
     private ServicioPartida servicioPartida;
     private ServicioRompecabezas servicioRompecabezas;
+
+    private final Map<String, String> imagenes = new LinkedHashMap<>() {{
+//        put("bellerina-cappuccina", "Ballerina Capuccina");
+//        put("bombardino-crocodilo", "Bombardiro Cocodrilo");
+        put("Brr brr patapi", "Brr Brr Patapi");
+//        put("capiballero-cocosini", "Capiballero Cocosini");
+//        put("capuccino-assasno", "Capuccino Assasino");
+        put("Chimpancini bananini", "Chimpancini Bananini");
+//        put("liriririlarila", "LiririLarila");
+//        put("los-tralaleritos", "Los Tralaleritos");
+//        put("saturno-saturnita", "Saturno Saturnita");
+        put("Tralalero tralala", "Tralalelo Tralala");
+        put("Tung tung tung Sahur", "Tuntuntun Sahur");
+    }};
 
     @Autowired
     public ControladorPartida(ServicioPartida servicioPartida, ServicioRompecabezas servicioRompecabezas) {
@@ -121,7 +137,13 @@ public class ControladorPartida {
 
     @RequestMapping(value = "/adivinanza/partida/{idPartida}", method = RequestMethod.GET)
     public ModelAndView unirseAPartidaAdivinanza(
-            @PathVariable("idPartida") String idPartida, HttpServletRequest request) {
+            @PathVariable("idPartida") String idPartida, HttpServletRequest request, HttpSession session) {
+
+        List<String> nombresArchivos = new ArrayList<>(imagenes.keySet());
+        String nombreArchivo = nombresArchivos.get(new Random().nextInt(nombresArchivos.size()));
+        Integer intentos = (Integer) session.getAttribute("intentosFallidos");
+        if (intentos == null) intentos = 0;
+
 
 
         if(request.getSession().getAttribute("id") == null){
@@ -138,18 +160,18 @@ public class ControladorPartida {
                 return new ModelAndView("redirect:/rompecabezas/lobby");
             }
 
-//            Rompecabeza rompecabeza = servicioRompecabezas.consultarRompecabeza(1L);
+
             request.getSession().setAttribute("partidaId", partida.getId());
             ModelAndView mav = new ModelAndView("adivinanza-por-voz-multijugador.html");
             mav.addObject("partida", partida);
             mav.addObject("idPartida", partida.getId());
-//            mav.addObject("rompecabeza", rompecabeza);
+
             mav.addObject("estadoInicial", partida.getEstado());
             mav.addObject("miUsuarioId", jugador.intValue());
             mav.addObject("miNombreUsuario", username);
-//            mav.addObject("tiempo", partida.getFechaInicio());
-            mav.addObject("imagenActual", "Tralalero tralala");
-            mav.addObject("intentos", "2");
+
+            mav.addObject("imagenActual", nombreArchivo);
+            mav.addObject("intentos", intentos);
 
 
             return mav;
