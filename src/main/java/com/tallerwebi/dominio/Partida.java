@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -17,6 +19,7 @@ public class Partida {
     private String estado;
     private Integer ganador;
     private Instant fechaInicio;
+    private Map<Integer, Integer> intentosPorJugador = new HashMap<>();
 
     public Partida() {
     }
@@ -26,4 +29,5 @@ public class Partida {
         this.nombre = nombrePartida;
         this.estado = "ESPERANDO_OPONENTE";
     }
+
 }
