@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class ServicioPartidaRompecabezaTest {
+public class ServicioPartidaTest {
 
     private Partida partida1;
     private Partida partida2;

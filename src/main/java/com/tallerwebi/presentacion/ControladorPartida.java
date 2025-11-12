@@ -13,17 +13,29 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
 
 @Controller
 public class ControladorPartida {
 
+    private final String juego;
     private ServicioPartida servicioPartida;
     private ServicioRompecabezas servicioRompecabezas;
+    private ServicioNivelJuego servicioNivelJuego;
+    private ServicioPuntosJuego servicioPuntosJuego;
+    private ServicioUsuario servicioUsuario;
 
     @Autowired
-    public ControladorPartida(ServicioPartida servicioPartida, ServicioRompecabezas servicioRompecabezas) {
+    public ControladorPartida(ServicioPartida servicioPartida, ServicioRompecabezas servicioRompecabezas,
+                              ServicioNivelJuego servicioNivelJuego, ServicioPuntosJuego servicioPuntosJuego,
+                              ServicioUsuario servicioUsuario) {
+
         this.servicioPartida = servicioPartida;
         this.servicioRompecabezas = servicioRompecabezas;
+        this.servicioNivelJuego = servicioNivelJuego;
+        this.servicioPuntosJuego = servicioPuntosJuego;
+        this.servicioUsuario = servicioUsuario;
+        this.juego = "Rompecabezas";
     }
 
 
@@ -169,6 +181,9 @@ public class ControladorPartida {
         Long usuarioId = (Long) request.getSession().getAttribute("id");
         String partidaId = (String) request.getSession().getAttribute("partidaId");
         servicioPartida.terminarPartida(partidaId, usuarioId.intValue(), "rompecabezas");
+        Usuario usuario = servicioUsuario.buscarUsuarioPorId(usuarioId);
+        NivelJuego nivelJuego = servicioNivelJuego.guardarNivelJuego(usuario, juego, 1);
+        servicioPuntosJuego.guardarPuntosJuegoRompecabezaMultijugador(nivelJuego);
 
     }
 
