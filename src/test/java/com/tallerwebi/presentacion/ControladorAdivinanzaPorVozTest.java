@@ -49,7 +49,7 @@ public class ControladorAdivinanzaPorVozTest {
     void queVerificaRespuestaCorrectaLoLlevaAVerificar2() {
         givenHayDosStringsParaComparar();
         whenSeComparanLosStrings();
-        thenSeLoLlevaALaDireccionCorrecta("verificar2");
+        thenSeLoLlevaALaDireccionCorrecta("redirect:/adivinanza-por-voz");
     }
     @Test
     void siSePideElGetYNoExisteElUsuarioQueLoMandeALogin() {
