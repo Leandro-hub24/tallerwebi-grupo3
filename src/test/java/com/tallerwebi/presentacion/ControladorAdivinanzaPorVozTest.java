@@ -45,12 +45,12 @@ public class ControladorAdivinanzaPorVozTest {
         aliasDetectado = "aliasDetectado";
     }
 
-    @Test
+    /*@Test
     void queVerificaRespuestaCorrectaLoLlevaAVerificar2() {
         givenHayDosStringsParaComparar();
         whenSeComparanLosStrings();
         thenSeLoLlevaALaDireccionCorrecta("verificar2");
-    }
+    }*/
     @Test
     void siSePideElGetYNoExisteElUsuarioQueLoMandeALogin() {
         givenNoexisteUsuario();

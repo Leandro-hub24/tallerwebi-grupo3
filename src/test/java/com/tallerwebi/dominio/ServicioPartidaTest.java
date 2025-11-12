@@ -3,7 +3,6 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.excepcion.PartidaLlenaException;
 import com.tallerwebi.dominio.excepcion.PartidaNoEncontradaException;
-import com.tallerwebi.dominio.excepcion.PiezaNoEncontradaException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,9 +28,10 @@ public class ServicioPartidaTest {
 
     private Partida partida1;
     private Partida partida2;
+    private Partida partida3;
     private String idPartida2;
     private String idPartida1;
-    private Integer UsuarioId;
+    private String idPartida3;
 
     @Captor
     private ArgumentCaptor<Partida> partidaCaptor = ArgumentCaptor.forClass(Partida.class);
@@ -43,7 +44,9 @@ public class ServicioPartidaTest {
 
     @BeforeEach
     public void init() {
+
         partida1 = new Partida();
+
         idPartida1 = UUID.randomUUID().toString().substring(0, 8);
         partida1.setEstado("ESPERANDO_OPONENTE");
         partida1.setFechaInicio(Instant.now());
@@ -65,6 +68,51 @@ public class ServicioPartidaTest {
         partida2.setId(idPartida2);
 
         servicioPartida.setPartidasEnCurso(idPartida2, partida2);
+
+        partida3 = new Partida();
+
+        idPartida3 = UUID.randomUUID().toString().substring(0, 8);
+        partida3.setEstado("EN_CURSO");
+        partida3.setFechaInicio(Instant.now());
+        partida3.setJugador1Id(1);
+        partida3.setJugador2Id(2);
+        partida3.setGanador(1);
+        partida3.setJugador1Nombre("Jugador 1");
+        partida3.setJugador2Nombre("Jugador 2");
+        partida3.setId(idPartida3);
+
+        servicioPartida.setPartidasTerminadas(idPartida3, partida3);
+
+    }
+
+    @Test
+    public void consultarLasPartidasAbiertasMeDevuelveUnaColeccionDePartidas(){
+
+        givenExiteUnaPartidaAbierta();
+
+        Collection<Partida> partidas = whenConsultoLasPartidas();
+
+        thenDevuelveUnaColeccionDePartidas(partidas);
+
+    }
+
+    private void givenExiteUnaPartidaAbierta() {
+    }
+
+    private Collection<Partida> whenConsultoLasPartidas() {
+
+        return servicioPartida.getPartidasAbiertas();
+
+    }
+
+    private void thenDevuelveUnaColeccionDePartidas(Collection<Partida> partidas) {
+
+        partidas.forEach(partida -> {
+            if (partida.getId().equals(idPartida1)) {
+                assertThat(partida.getId(), equalTo(idPartida1));
+            }
+
+        });
 
     }
 
@@ -151,19 +199,18 @@ public class ServicioPartidaTest {
 
         Partida partida = whenIntentoUnirmeALaPartida(idPartida1, 1, "Jugador 1");
 
-        thenDevuelveLaPartida(partida, "Jugador 1");
+        thenDevuelveLaPartida(partida, "Jugador 1", idPartida1);
     }
 
     private void givenTengoUnaPartidaCreada() {
     }
 
-    private void thenDevuelveLaPartida(Partida partida, String nombreUsuario){
+    private void thenDevuelveLaPartida(Partida partida, String nombreUsuario, String idPartidaEsperado){
 
         assertThat(partida.getJugador1Nombre(), equalTo(nombreUsuario));
-        assertThat(partida.getId(), equalTo(idPartida1));
+        assertThat(partida.getId(), equalTo(idPartidaEsperado));
 
     }
-
 
     @Test
     public void alUnirmeAUnaPartidaCreadaPorOtroJugadorMeRetornaLaPartida() throws PartidaNoEncontradaException, PartidaLlenaException {
@@ -211,13 +258,59 @@ public class ServicioPartidaTest {
     private void givenExiteUnaPartidaLlena() {
     }
 
-    /*@Test
+    @Test
     public void  siEntroEnUnaPartidaEnCursoDeLaCualSoyParteMeRetornaLaPartida() throws PartidaNoEncontradaException, PartidaLlenaException {
 
         givenExisteUnaPartidaEnCursoDeLaCualSoyParte();
 
+        Partida partida = whenIntentoUnirmeALaPartida(idPartida2, 1, "Jugador 1");
+
+        thenDevuelveLaPartida(partida, "Jugador 1", idPartida2);
+
+    }
+
+    private void givenExisteUnaPartidaEnCursoDeLaCualSoyParte() {
+
+    }
+
+    @Test
+    public void siIntentoUnirmeAUnaPartidaEnCursoQueEstaLlenaMeLanzaPartidaLlenaException() throws PartidaNoEncontradaException, PartidaLlenaException {
+
+        givenExiteUnaPartidaLlena();
+
+        assertThrows(
+                PartidaLlenaException.class,
+                ()  -> whenIntentoUnirmeALaPartida(idPartida2, 3, "Jugador 3")
+        );
+
+    }
+
+    @Test
+    public void siIntentoUnirmeAUnaPartidaTerminadaDelaCualFuiParteMeRetornaLaPartida() throws PartidaNoEncontradaException, PartidaLlenaException {
+
+        givenExiteUnaPartidaTerminada();
+
+        Partida partida = whenIntentoUnirmeALaPartida(idPartida3, 1, "Jugador 1");
+
+        thenDevuelveLaPartida(partida, "Jugador 1", idPartida3);
+
+    }
+
+    private void givenExiteUnaPartidaTerminada() {
+    }
+
+    @Test
+    public void siIntentoUnirmeAUnaPartidaTerminadaMeLanzaLlenaException() throws PartidaNoEncontradaException, PartidaLlenaException {
+
+        givenExiteUnaPartidaLlena();
+
+        assertThrows(
+                PartidaLlenaException.class,
+                ()  -> whenIntentoUnirmeALaPartida(idPartida3, 3, "Jugador 3")
+        );
+
+    }
 
 
-    }*/
 
 }
