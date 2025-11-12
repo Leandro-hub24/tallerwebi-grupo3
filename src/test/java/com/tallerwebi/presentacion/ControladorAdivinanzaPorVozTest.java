@@ -70,7 +70,7 @@ public class ControladorAdivinanzaPorVozTest {
         thenSeLoLlevaALaDireccionCorrecta("verificar2");
         thenSeReiniciaIntentosFallidos();
     }
-
+// testeando
 //    @Test
 //    void SiElTemporizadorLlevaA0SeLoLlevaAVerificar2() {
 //        givenTemporizadorLlegaACero();
