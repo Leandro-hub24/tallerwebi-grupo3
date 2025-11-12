@@ -14,7 +14,6 @@ import java.util.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,12 +65,9 @@ public class ControladorPartidaTest {
 
         controladorPartida = new ControladorPartida(servicioPartidaMock, servicioRompecabezasMock, servicioNivelJuegoMock, servicioPuntosJuegoMock, servicioUsuarioMock);
         when(servicioRompecabezasMock.consultarRompecabeza(1L)).thenReturn(rompecabezaMock);
-        when(servicioNivelJuegoMock.buscarNivelJuegoPorIdUsuario(1L, "Rompecabezas")).thenReturn(nivelJuegoMock);
-        when(nivelJuegoMock.getNivel()).thenReturn(1L);
-        when(servicioRompecabezasMock.buscarUltimoNivelId()).thenReturn(2L);
         when(servicioUsuarioMock.buscarUsuarioPorId(1L)).thenReturn(usuarioMock);
         when(servicioNivelJuegoMock.guardarNivelJuego(usuarioMock, "Rompecabezas", 1)).thenReturn(nivelJuegoMock);
-        when(servicioNivelJuegoMock.actualizarNivelJuego(1L, 2, 2, 2L)).thenReturn(3);
+
     }
 
 
