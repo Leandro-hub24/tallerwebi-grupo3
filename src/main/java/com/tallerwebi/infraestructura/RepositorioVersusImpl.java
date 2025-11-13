@@ -16,11 +16,26 @@ public class RepositorioVersusImpl implements RepositorioVersus {
     public RepositorioVersusImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
     @Override
     public List<Brainrot> obtenerTodosPorNivel(Integer nivel) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(Brainrot.class)
                 .add(org.hibernate.criterion.Restrictions.eq("nivel", nivel))
                 .list(); //esto es este codigo sql pero con criteria SELECT * FROM Brainrot WHERE nivel = 1 lo devuelve como lista,
+    }
+
+    @Override
+    public List<Brainrot> obtenerTodos() {
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(Brainrot.class)
+                .list();
+    }
+    @Override
+    public List<String> obtenerTodasLasOpciones() {
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(Brainrot.class)
+                .setProjection(org.hibernate.criterion.Projections.property("imagenPersonaje"))
+                .list();
     }
 }

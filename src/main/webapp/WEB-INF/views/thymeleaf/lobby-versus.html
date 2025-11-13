@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lobby Versus</title>
+</head>
+<body>
+<h1>Lobby Versus Multijugador</h1>
+
+<button id="btnCrear">Crear Nueva Partida</button>
+
+<hr>
+
+<h2>Partidas Disponibles:</h2>
+<div id="listaPartidas">
+    <p>Cargando partidas...</p>
+</div>
+
+<hr>
+
+<div id="mensajes">
+    <p>Estado: Desconectado</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script>
+    let stompClient = null;
+    const usuarioId = [[${usuarioId}]];
+
+    function conectar() {
+        const socket = new SockJS('/spring/mi-websocket');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            document.getElementById('mensajes').innerHTML = '<p>Estado: Conectado</p>';
+
+            stompClient.subscribe('/topic/lobby', function(mensaje) {
+                const datos = JSON.parse(mensaje.body);
+                manejarMensaje(datos);
+            });
+
+            stompClient.send("/app/listar-partidas", {}, "{}");
+        });
+    }
+
+    document.getElementById('btnCrear').addEventListener('click', function() {
+        const mensaje = {
+            tipo: 'CREAR_PARTIDA',
+            usuarioId: usuarioId
+        };
+        stompClient.send("/app/crear-partida", {}, JSON.stringify(mensaje));
+    });
+
+    function manejarMensaje(datos) {
+        if (datos.tipo === 'LISTA_PARTIDAS') {
+            mostrarPartidas(datos.partidas || []);
+        } else if (datos.tipo === 'PARTIDA_CREADA') {
+            document.getElementById('mensajes').innerHTML = '<p>¡Partida creada! ID: ' + datos.partidaId + '</p>';
+            stompClient.send("/app/listar-partidas", {}, "{}");
+        } else if (datos.tipo === 'PARTIDA_INICIADA') {
+            window.location.href = '/spring/versusMultijugador?partidaId=' + datos.partidaId;
+        }
+    }
+
+    function mostrarPartidas(partidas) {
+        let html = '';
+        if (partidas.length === 0) {
+            html = '<p>No hay partidas disponibles</p>';
+        } else {
+            partidas.forEach(function(partida) {
+                html += '<div>';
+                html += '<p>Partida #' + partida.id + ' - Jugador: ' + partida.jugador1Id + '</p>';
+                html += '<button onclick="unirse(' + partida.id + ')">Unirse</button>';
+                html += '</div><br>';
+            });
+        }
+        document.getElementById('listaPartidas').innerHTML = html;
+    }
+
+    function unirse(partidaId) {
+        stompClient.subscribe('/topic/partida/' + partidaId, function(mensaje) {
+            const datos = JSON.parse(mensaje.body);
+            if (datos.tipo === 'PARTIDA_INICIADA') {
+                window.location.href = '/spring/versusMultijugador?partidaId=' + partidaId;
+            }
+        });
+
+        const mensaje = {
+            tipo: 'UNIRSE_PARTIDA',
+            partidaId: partidaId,
+            usuarioId: usuarioId
+        };
+        stompClient.send("/app/unirse-partida", {}, JSON.stringify(mensaje));
+    }
+
+    window.onload = function() {
+        conectar();
+    };
+</script>
+</body>
+</html>

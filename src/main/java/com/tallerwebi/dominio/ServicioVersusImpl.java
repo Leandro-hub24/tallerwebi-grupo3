@@ -49,4 +49,30 @@ public class ServicioVersusImpl implements ServicioVersus{
     public boolean esTimeOut(String timeout){
         return "true".equals(timeout);
     }
+
+    @Override
+    public List<Brainrot> obtenerTodos(){
+        List<Brainrot> todosDesordenadosParaMultijugador = repositorioVersus.obtenerTodos();
+        Collections.shuffle(todosDesordenadosParaMultijugador);
+        return todosDesordenadosParaMultijugador;
+    }
+
+    @Override
+    public List<String> obtenerOpcionesAleatoriasParaPreguntaMultijugador(String imagenCorrecta) {
+        List<String> todasLasOpciones = repositorioVersus.obtenerTodasLasOpciones();
+
+        List<String> opcionesFinal = new ArrayList<>();
+
+        opcionesFinal.add(imagenCorrecta);
+
+        Collections.shuffle(todasLasOpciones);
+        for (String opcion : todasLasOpciones) {
+            if (!opcion.equals(imagenCorrecta) && opcionesFinal.size() < 4) {
+                opcionesFinal.add(opcion);
+            }
+        }
+        Collections.shuffle(opcionesFinal);
+
+        return opcionesFinal;
+    }
 }
