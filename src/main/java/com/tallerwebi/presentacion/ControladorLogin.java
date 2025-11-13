@@ -39,6 +39,8 @@ public class ControladorLogin {
         if (usuarioBuscado != null) {
             request.getSession().setAttribute("ROL", usuarioBuscado.getRol());
             request.getSession().setAttribute("id", usuarioBuscado.getId());
+            request.getSession().setAttribute("id", usuarioBuscado.getId());
+            request.getSession().setAttribute("username", usuarioBuscado.getUsername());
             request.getSession().setAttribute("rompecabezaNivel", usuarioBuscado.getRompecabezaNivel());
             request.getSession().setAttribute("USUARIO", usuarioBuscado);
             return new ModelAndView("redirect:/home");

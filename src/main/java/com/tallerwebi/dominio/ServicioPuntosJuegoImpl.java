@@ -71,4 +71,14 @@ public class ServicioPuntosJuegoImpl implements ServicioPuntosJuego{
 
         return 0;
     }
+
+    @Override
+    public void guardarPuntosJuegoRompecabezaMultijugador(NivelJuego nivelJuego) {
+
+        PuntosJuego puntosJuego = new PuntosJuego();
+        puntosJuego.setNivelJuego(nivelJuego);
+        puntosJuego.setPuntos(20);
+        repositorioPuntosJuego.agregarPuntos(puntosJuego);
+
+    }
 }

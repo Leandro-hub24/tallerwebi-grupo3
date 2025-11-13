@@ -1,7 +1,7 @@
 
 
-INSERT INTO Usuario(id, email, password, rol, activo, rompecabezaNivel) VALUES(null, 'test@unlam.edu.ar', 'test', 'ADMIN', true, 1);
-INSERT INTO Usuario(id, email, password, rol, activo, rompecabezaNivel) VALUES(null, 'admin@example.com', '1234', 'ADMIN', true, 1);
+INSERT INTO Usuario(id, username, email, password, rol, activo, rompecabezaNivel) VALUES(null,'Juan', 'test@unlam.edu.ar', 'test', 'ADMIN', true, 1);
+INSERT INTO Usuario(id, username,  email, password, rol, activo, rompecabezaNivel) VALUES(null,'Leandro', 'admin@example.com', '1234', 'ADMIN', true, 1);
 INSERT INTO Usuario(id, email, password, rol, activo, rompecabezaNivel, versusNivel) VALUES(null, 'ricardosk853@gmail.com', 'asd', 'ADMIN', true, 1, 1);
 INSERT INTO Usuario(id, email, password, rol, activo, rompecabezaNivel, versusNivel) VALUES(null, 'ricardosk8532@gmail.com', 'asd', 'ADMIN', true, 1, 1);
 INSERT INTO Usuario(id, email, password, rol, activo, rompecabezaNivel, versusNivel) VALUES(null, 'ricardosk8533@gmail.com', 'asd', 'ADMIN', true, 1, 1);

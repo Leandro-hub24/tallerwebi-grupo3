@@ -2,10 +2,30 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Rompecabezas</title>
+    <title th:text="${partida.nombre}"></title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/rompecabezas.css}"/>
+    <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <style>
+        #esperando-oponente {
+            padding: 20px; background: #eee; border: 1px solid #ccc;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            z-index: 9;
+        }
 
+        .deshabilitado {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
 
 </head>
 <body style="background-color: #f8fef6; width: 100%; height: 85vh;">
@@ -16,30 +36,42 @@
 
 </nav>
 
+<div id="esperando-oponente"
+     th:style="${estadoInicial == 'ESPERANDO_OPONENTE'} ? 'display:flex' : 'display:none'">
+    Esperando a que se una el oponente...
+</div>
+
 <main class="h-100 w-100 d-flex flex-column align-items-center" style="height: 90vh">
 
-    <section class="d-flex w-100 h-100">
+    <section class="d-flex w-100 h-100" id="tablero-de-juego">
 
-        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
+        <article th:id="${'Rompecabeza-' + rompecabeza.id}" class="imgOriginal w-75 h-100 d-flex flex-column align-items-center justify-content-center bg-light">
             <img id="imagen-original" th:src="@{${rompecabeza.urlImg}}" alt="Imagen Original" style="display: none;">
             <div id="contenedor-piezas"></div>
         </article>
 
         <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
             <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
+                <h1 th:text="${partida.nombre}">Nombre de la Partida</h1>
+                <p>
+                    <b>Jugador 1:</b>
+                    <span th:text="${partida.jugador1Nombre}">Jugador 1</span>
+                    <span th:if="${miUsuarioId == partida.jugador1Id}">(¡Eres tú!)</span>
+                    <br>
+
+                    <b>Jugador 2:</b>
+                    <span id="nombre-j2" th:text="${partida.jugador2Id} ? ${partida.jugador2Nombre} : '...'"></span>
+                    <span th:if="${partida.jugador2Id != null and miUsuarioId == partida.jugador2Id}">(¡Eres tú!)</span>
+                </p>
                 <p>Tiempo:</p>
                 <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
-            </div>
-            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
-                <input id="record" th:value="${mejorTiempo}" class="d-none" hidden="hidden">
-                <p>Mi mejor tiempo: </p>
-                <span id="horasRecord">00</span>:<span id="minutosRecord">00</span>:<span id="segundosRecord">00</span>
             </div>
         </aside>
     </section>
 
 
 </main>
+
 
 <!-- Button trigger modal -->
 <button type="button" id="modal_btn" class="btn btn-primary d-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -58,8 +90,7 @@
             <img th:src="@{${rompecabeza.urlImg}}" alt="Imagen Rompecabeza" style="height: 200px;">
         </div>
         <div id="modal-footer" class="modal-footer">
-            <button type="button" class="btn btn-primary" id="btn-comenzar" data-bs-dismiss="modal">Comenzar</button>
-            <button type="button" class="btn btn-primary" id="btn-niveles">Seleccionar nivel</button>
+            <button type="button" class="btn btn-primary" id="btn-volver" data-bs-dismiss="modal">Comenzar</button>
         </div>
     </div>
 </div>
@@ -69,8 +100,18 @@
 
 </footer>
 
-<script type="text/javascript" th:src="@{/js/rompecabezas.js}"></script>
+<script type="text/javascript" th:src="@{/js/rompecabezasMultijugador.js}"></script>
+<script type="text/javascript" th:src="@{/js/rompecabezasMultijugadorWebSocket.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const idPartida = /*[[${idPartida}]]*/ 'default-partida-id';
+    const miId = /*[[${miUsuarioId}]]*/ 0;
+    var estadoActual = /*[[${estadoInicial}]]*/ 'ESPERANDO_OPONENTE';
+    var timer = /*[[${tiempo}]]*/ 0;
+    const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
+    /*]]>*/
+</script>
 
 
 </body>

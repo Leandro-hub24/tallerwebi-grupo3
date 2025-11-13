@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioAdivinanza;
 import com.tallerwebi.dominio.ServicioAdivinanzaImpl;
+import com.tallerwebi.dominio.ServicioPartida;
 import com.tallerwebi.dominio.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,8 @@ public class ControladorAdivinanzaPorVozTest {
     @BeforeEach
     void init() {
         servicioAdivinanzaMock = mock(ServicioAdivinanza.class);
-        controlador = new ControladorAdivinanzaVoz(servicioAdivinanzaMock); // ✅ usás el que sí existe
+        ServicioPartida servicioPartidaMock = mock(ServicioPartida.class);
+        controlador = new ControladorAdivinanzaVoz(servicioAdivinanzaMock, servicioPartidaMock); // ✅ usás el que sí existe
 
         sessionMock = mock(HttpSession.class);
         usuarioMock = mock(Usuario.class);
@@ -47,7 +49,7 @@ public class ControladorAdivinanzaPorVozTest {
     void queVerificaRespuestaCorrectaLoLlevaAVerificar2() {
         givenHayDosStringsParaComparar();
         whenSeComparanLosStrings();
-        thenSeLoLlevaALaDireccionCorrecta("verificar2");
+        thenSeLoLlevaALaDireccionCorrecta("redirect:/adivinanza-por-voz");
     }
     @Test
     void siSePideElGetYNoExisteElUsuarioQueLoMandeALogin() {
@@ -68,7 +70,7 @@ public class ControladorAdivinanzaPorVozTest {
         thenSeLoLlevaALaDireccionCorrecta("verificar2");
         thenSeReiniciaIntentosFallidos();
     }
-
+// testeando
 //    @Test
 //    void SiElTemporizadorLlevaA0SeLoLlevaAVerificar2() {
 //        givenTemporizadorLlegaACero();
@@ -91,7 +93,7 @@ public class ControladorAdivinanzaPorVozTest {
     }
     private void whenSeVerificaLaRespuestaIncorrecta() {
 
-        mav = controlador.verificarPorVoz(textoReconocido, nombreArchivo, "aliasDetectado", sessionMock);
+        mav = controlador.verificarPorVoz(textoReconocido, nombreArchivo, "aliasDetectado", sessionMock,0,1);
     }
     private void thenSeReiniciaIntentosFallidos() {
         verify(sessionMock).setAttribute("intentosFallidos", 0);
@@ -124,7 +126,7 @@ public class ControladorAdivinanzaPorVozTest {
     }
 
     private void whenSeComparanLosStrings() {
-        mav = controlador.verificarPorVoz(transcripcionCorrecta, imagenActual, aliasDetectado, sessionMock);
+        mav = controlador.verificarPorVoz(transcripcionCorrecta, imagenActual, aliasDetectado, sessionMock,0,1);
     }
 
     private void thenSeLoLlevaALaDireccionCorrecta(String direccion) {

@@ -14,6 +14,12 @@
 <body>
 
 
+<div id="esperando-oponente"
+     th:style="${estadoInicial == 'ESPERANDO_OPONENTE'} ? 'display:flex' : 'display:none'">
+    Esperando a que se una el oponente...
+</div>
+
+
 
 <ul class="nav nav-pills nav-fill">
     <li class="nav-item">
@@ -66,6 +72,8 @@
             <input  type="hidden" name="transcripcion" id="inputTranscripcion">
             <input  type="hidden"  id="inputImagenActual" name="imagenActual" th:value="${imagenActual}">
             <input  type="hidden" name="aliasDetectado" id="inputAliasDetectado">
+            <input  type="hidden" name="cantidadIntentos" id="inputCantidadIntentos">
+            <input  type="hidden" name="tiempo" id="inputTiempo">
         </form>
         <p th:text="'Intentos actuales: ' + ${intentos}"></p>
     </div>

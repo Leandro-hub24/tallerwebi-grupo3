@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resultado - Brain Rot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .resultado-imagen {
+            max-height: 250px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container text-center py-5">
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body">
+            <h2 th:if="${esCorrecto}" class="text-success">¡Correcto! 🎉</h2>
+            <h2 th:unless="${esCorrecto}" class="text-danger">Incorrecto ❌</h2>
+
+            <div class="my-4">
+                <img th:src="@{${imagen}}"
+                     class="resultado-imagen"
+                     th:alt="${respuestaCorrecta}">
+            </div>
+
+            <p class="h4">
+                    <span th:if="!${esCorrecto}">
+                        La respuesta correcta era: <strong>[[${respuestaCorrecta}]]</strong><br>
+                    </span>
+                ¡Sigue practicando!
+            </p>
+            <div class="container mt-4">
+                <div class="alert" th:classappend="${esCorrecto} ? 'alert-success' : 'alert-danger'">
+                    <h4 th:text="${esCorrecto} ? '✅ ¡Correcto!' : '❌ Incorrecto'"></h4>
+                    <p><strong>Lo que dijiste:</strong> <span th:text="${transcripcion}">texto dicho</span></p>
+                    <p><strong>Respuesta esperada:</strong> <span th:text="${respuestaCorrecta}">respuesta</span></p>
+                </div>
+                <div>
+                    <p><strong>Alias reconocido:</strong> <span th:text="${aliasDetectado}">[alias]</span></p>
+                </div>
+
+
+            </div>
+
+            <div class="mt-4">
+                <a href="/spring/home" class="btn btn-primary btn-lg">Volver a home</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -149,4 +149,19 @@ public class ServicioPuntosJuegoTest {
     private void givenNoTengoPuntosJuego() {
         when(repositorioPuntosjuegoMock.buscarPuntosJuegoConMejorTiempoPorIdUsuario(1L, 1L, juego)).thenReturn(List.of());
     }
+
+    @Test
+    void siGanoUnaPartidaMultijugadorGanoVeintePuntos() {
+
+        NivelJuego nivelJuego = givenTengoUnNivelJuego();
+
+        whenGuardoLosPuntos(nivelJuego);
+
+        thenLosPuntosSeGuardaron();
+
+    }
+
+    private void whenGuardoLosPuntos(NivelJuego nivelJuego) {
+        servicioPuntosJuego.guardarPuntosJuegoRompecabezaMultijugador(nivelJuego);
+    }
 }
