@@ -36,6 +36,8 @@ public class SpringWebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
         // Static resources (images) under src/main/webapp/resources/**
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/imgBrainrot/**").addResourceLocations("/resources/core/imgBrainrot/");
+        registry.addResourceHandler("/audioBrainrot/**").addResourceLocations("/resources/core/audioBrainrot/");
 
     }
 
@@ -51,7 +53,6 @@ public class SpringWebConfig implements WebMvcConfigurer {
         templateResolver.setApplicationContext(this.applicationContext);
         templateResolver.setPrefix("/WEB-INF/views/thymeleaf/");
         templateResolver.setSuffix(".html");
-        templateResolver.setCharacterEncoding("UTF-8");
         // HTML is the default value, added here for the sake of clarity.
         templateResolver.setTemplateMode(TemplateMode.HTML);
         // Template cache is true by default. Set to false if you want
