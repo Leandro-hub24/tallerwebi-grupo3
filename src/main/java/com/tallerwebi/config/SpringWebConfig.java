@@ -1,10 +1,13 @@
 package com.tallerwebi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -27,6 +30,9 @@ public class SpringWebConfig implements WebMvcConfigurer {
     // Spring + Thymeleaf need this
     @Autowired
     private ApplicationContext applicationContext;
+    @Value("${upload.dir}")
+    private String UPLOAD_DIR;
+
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
@@ -36,9 +42,9 @@ public class SpringWebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**").addResourceLocations("/webjars/");
         // Static resources (images) under src/main/webapp/resources/**
         registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+        registry.addResourceHandler("/gen-img/**").addResourceLocations("/resources/brainrotsCreados/");
 
     }
-
 
 
     // https://www.thymeleaf.org/doc/tutorials/3.0/thymeleafspring.html
@@ -90,5 +96,12 @@ public class SpringWebConfig implements WebMvcConfigurer {
         viewResolver.setContentType("text/html; charset=UTF-8");
         return viewResolver;
     }
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
 
+        configurer.setLocation(new ClassPathResource("application.properties"));
+
+        return configurer;
+    }
 }

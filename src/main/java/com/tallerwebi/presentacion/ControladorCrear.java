@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -29,7 +30,12 @@ public class ControladorCrear {
     }
 
     @RequestMapping("/crear")
-    public ModelAndView irACrear() {
+    public ModelAndView irACrear(HttpServletRequest request) {
+        Long idUsuario = (Long) request.getSession().getAttribute("id");
+        System.out.println(idUsuario);
+        if (idUsuario == null) {
+            return irALogin();
+        }
         ModelMap modelo = new ModelMap();
 
         List<Imagen> imagenesDisponibles = List.of();
@@ -46,14 +52,14 @@ public class ControladorCrear {
     @PostMapping("/crear")
     public ModelAndView crearBrainrot(@RequestParam String estilo,
                                       @RequestParam List<Integer> imagenes,
+                                      @RequestParam String fondo,
                                       RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/crear");
 
         try {
 
-            BrainrotCreado brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes);
+            BrainrotCreado brainrotCreado = servicioCrear.crearBrainrot(estilo, imagenes, fondo);
             redirectAttributes.addFlashAttribute("brainrotCreado", brainrotCreado);
-            mav.addObject("brainrotCreado", brainrotCreado);
         } catch (NoSePuedeCrearUnBrainrotConMasDe4ImagenesException e) {
             redirectAttributes.addFlashAttribute("error", "No se puede crear un brainrot con más de 4 imágenes");
             mav.addObject("error", "No se puede crear un brainrot con más de 4 imágenes");
@@ -63,6 +69,9 @@ public class ControladorCrear {
         } catch (FaltaSeleccionarEstiloParaCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "Debes seleccionar un estilo para crear un Brainrot");
             mav.addObject("error", "Debes seleccionar un estilo para crear un Brainrot");
+        } catch (FaltaSeleccionarFondoParaCrearBrainrotException e) {
+            redirectAttributes.addFlashAttribute("error", "Debes seleccionar un fondo para crear un Brainrot");
+            mav.addObject("error", "Debes seleccionar un fondo para crear un Brainrot");
         } catch (NoSePudoCrearBrainrotException e) {
             redirectAttributes.addFlashAttribute("error", "No se pudo crear un Brainrot");
             mav.addObject("error", "No se pudo crear un Brainrot");
@@ -70,6 +79,10 @@ public class ControladorCrear {
 
         return mav;
     }
-
+    private ModelAndView irALogin() {
+        ModelMap model = new ModelMap();
+        model.put("error", "Inicie sesión para jugar");
+        return new ModelAndView("redirect:/login", model);
+    }
 
 }

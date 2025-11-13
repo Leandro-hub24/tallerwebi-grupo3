@@ -3,10 +3,7 @@ package com.tallerwebi.integracion;
 import com.tallerwebi.dominio.ServicioImagen;
 import com.tallerwebi.dominio.ServicioImagenImpl;
 import com.tallerwebi.dominio.Usuario;
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarEstiloParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.FaltaSeleccionarImagenParaCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.NoSePudoCrearBrainrotException;
-import com.tallerwebi.dominio.excepcion.NoSePuedeCrearUnBrainrotConMasDe4ImagenesException;
+import com.tallerwebi.dominio.excepcion.*;
 import com.tallerwebi.presentacion.ControladorCrear;
 import com.tallerwebi.dominio.ServicioCrear;
 import org.junit.jupiter.api.Test;
@@ -27,22 +24,22 @@ public class ControladorCrearTest {
 
 
     @Test
-    void siEnviaMasDe4ImagenesMuestraError() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException {
+    void siEnviaMasDe4ImagenesMuestraError() throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException, FaltaSeleccionarFondoParaCrearBrainrotException {
         givenExisteUsuario();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-        ModelAndView mav = whenUsuarioEnvia5ImagenesYEstilo(imagenes, "monstruoso", redirectAttributes);
+        ModelAndView mav = whenUsuarioEnvia5ImagenesYEstilo(imagenes, "monstruoso", "playa", redirectAttributes);
         verify(redirectAttributes).addFlashAttribute(eq("error"), anyString());
         thenMuestraError(mav);
     }
 
-    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException {
-        when(servicioCrear.crearBrainrot(estilo, imagenes)).thenThrow(new NoSePuedeCrearUnBrainrotConMasDe4ImagenesException("error"));
-        return EnviaImagenesYEstilo(imagenes, estilo, redirectAttributes);
+    private ModelAndView whenUsuarioEnvia5ImagenesYEstilo(List<Integer> imagenes, String estilo, String fondo, RedirectAttributes redirectAttributes) throws NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePudoCrearBrainrotException, FaltaSeleccionarFondoParaCrearBrainrotException {
+        when(servicioCrear.crearBrainrot(estilo, imagenes, fondo)).thenThrow(new NoSePuedeCrearUnBrainrotConMasDe4ImagenesException("error"));
+        return EnviaImagenesYEstilo(imagenes, estilo, fondo, redirectAttributes);
     }
 
-    private ModelAndView EnviaImagenesYEstilo(List<Integer> imagenes, String estilo, RedirectAttributes redirectAttributes) throws FaltaSeleccionarImagenParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarEstiloParaCrearBrainrotException {
-        ModelAndView mav = controladorCrear.crearBrainrot(estilo, imagenes, redirectAttributes);
+    private ModelAndView EnviaImagenesYEstilo(List<Integer> imagenes, String estilo, String fondo, RedirectAttributes redirectAttributes) throws FaltaSeleccionarImagenParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, FaltaSeleccionarEstiloParaCrearBrainrotException {
+        ModelAndView mav = controladorCrear.crearBrainrot(estilo, imagenes, fondo, redirectAttributes);
         return mav;
     }
 
@@ -56,7 +53,7 @@ public class ControladorCrearTest {
         givenExisteUsuario();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
         RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
-        ModelAndView mav = EnviaImagenesYEstilo(imagenes, "monstruoso", redirectAttributes);
+        ModelAndView mav = EnviaImagenesYEstilo(imagenes, "monstruoso", "playa", redirectAttributes);
         thenCreaBrainrotYLoMuestra(mav);
     }
 

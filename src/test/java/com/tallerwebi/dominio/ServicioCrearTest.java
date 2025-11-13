@@ -29,12 +29,12 @@ public class ServicioCrearTest {
         imagen.setUrl("a");
     }
     @Test
-    public void siEnviaCrearDevuelveUnBrainrot() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException, NoSeEncontraronImagenesException {
+    public void siEnviaCrearDevuelveUnBrainrot() throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException, NoSeEncontraronImagenesException, FaltaSeleccionarFondoParaCrearBrainrotException {
         givenUsuarioExiste();
         List<Integer> imagenes = List.of(1);
         Mockito.when(servicioImagen.getImagenesPorId(anyList())).thenReturn(List.of(imagen));
 
-        BrainrotCreado brainrot = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso");
+        BrainrotCreado brainrot = whenUsuarioCreaConImagenesSeleccionadasYEstilo(imagenes, "monstruoso", "playa");
 
     //    thenDevuelveUnBrainrot(brainrot);
     }
@@ -43,8 +43,8 @@ public class ServicioCrearTest {
         assertNotNull(brainrot);
     }
 
-    private BrainrotCreado whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException {
-       BrainrotCreado brainrot = servicioCrear.crearBrainrot(estilo, imagenes);
+    private BrainrotCreado whenUsuarioCreaConImagenesSeleccionadasYEstilo(List<Integer> imagenes, String estilo, String fondo) throws FaltaSeleccionarImagenParaCrearBrainrotException, FaltaSeleccionarEstiloParaCrearBrainrotException, NoSePuedeCrearUnBrainrotConMasDe4ImagenesException, NoSePudoCrearBrainrotException, FaltaSeleccionarFondoParaCrearBrainrotException {
+       BrainrotCreado brainrot = servicioCrear.crearBrainrot(estilo, imagenes, fondo);
        return brainrot;
     }
 
@@ -55,14 +55,14 @@ public class ServicioCrearTest {
     public void siEnviaCrearConMasDe4ImagenesObtengoUnaExcepcion() {
         givenUsuarioExiste();
         List<Integer> imagenes = List.of(1, 2, 3, 4, 5);
-       assertThrows(NoSePuedeCrearUnBrainrotConMasDe4ImagenesException.class, ()-> servicioCrear.crearBrainrot("monstruoso", imagenes));
+       assertThrows(NoSePuedeCrearUnBrainrotConMasDe4ImagenesException.class, ()-> servicioCrear.crearBrainrot("monstruoso", imagenes, "playa"));
     }
 
     @Test
     public void siEnviaCrearSinImagenesObtengoUnaExcepcion() {
         givenUsuarioExiste();
         List<Integer> imagenes = List.of();
-        assertThrows(FaltaSeleccionarImagenParaCrearBrainrotException.class, ()-> servicioCrear.crearBrainrot("monstruoso", imagenes));
+        assertThrows(FaltaSeleccionarImagenParaCrearBrainrotException.class, ()-> servicioCrear.crearBrainrot("monstruoso", imagenes, "playa"));
     }
 
 
@@ -70,7 +70,7 @@ public class ServicioCrearTest {
     public void siFaltaSeleccionarEstiloFalla() {
         givenUsuarioExiste();
         List<Integer> imagenes = List.of(1, 2);
-        assertThrows(FaltaSeleccionarEstiloParaCrearBrainrotException.class, ()-> servicioCrear.crearBrainrot("", imagenes));
+        assertThrows(FaltaSeleccionarEstiloParaCrearBrainrotException.class, ()-> servicioCrear.crearBrainrot("", imagenes, "playa"));
     }
 
 
