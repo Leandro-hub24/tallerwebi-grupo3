@@ -36,10 +36,45 @@
             </p>
 
             <div class="mt-4">
-                <a th:href="@{/versus(nivel=${nivelActual})}" class="btn btn-primary btn-lg">Continuar</a>
+                <a th:if="${esMultijugador}"
+                   th:href="@{/versusMultijugador(partidaId=${partidaId})}"
+                   class="btn btn-primary btn-lg">Continuar</a>
+
+                <a th:unless="${esMultijugador}"
+                   th:href="@{/versus(nivel=${nivelActual})}"
+                   class="btn btn-primary btn-lg">Continuar</a>
             </div>
         </div>
     </div>
 </div>
+
+<script th:if="${esMultijugador}" src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script th:if="${esMultijugador}" src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script th:if="${esMultijugador}">
+    let stompClient = null;
+    const partidaId = [[${partidaId}]];
+
+    function conectarWebSocket() {
+        const socket = new SockJS('/spring/mi-websocket');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('WebSocket conectado en resultado-versus');
+
+            stompClient.subscribe('/topic/partida/' + partidaId, function(mensaje) {
+                const datos = JSON.parse(mensaje.body);
+                if (datos.tipo === 'PARTIDA_FINALIZADA') {
+                    console.log('Partida finalizada, redirigiendo desde resultado...');
+                    window.location.href = '/spring/resultado-final-versus?partidaId=' + partidaId;
+                }
+            });
+        });
+    }
+
+    window.onload = function() {
+        conectarWebSocket();
+    };
+</script>
 </body>
 </html>
