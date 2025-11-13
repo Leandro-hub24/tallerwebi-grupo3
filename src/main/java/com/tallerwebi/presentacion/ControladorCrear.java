@@ -53,7 +53,7 @@ public class ControladorCrear {
     public ModelAndView crearBrainrot(@RequestParam String estilo,
                                       @RequestParam List<Integer> imagenes,
                                       @RequestParam String fondo,
-                                      RedirectAttributes redirectAttributes) {
+                                      HttpServletRequest mockRequest, RedirectAttributes redirectAttributes) {
         ModelAndView mav = new ModelAndView("redirect:/crear");
 
         try {
