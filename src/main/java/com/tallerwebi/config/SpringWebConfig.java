@@ -30,7 +30,7 @@ public class SpringWebConfig implements WebMvcConfigurer {
     // Spring + Thymeleaf need this
     @Autowired
     private ApplicationContext applicationContext;
-    @Value("${upload.dir}")
+    /*@Value("${upload.dir}")*/
     private String UPLOAD_DIR;
 
 
@@ -96,12 +96,14 @@ public class SpringWebConfig implements WebMvcConfigurer {
         viewResolver.setContentType("text/html; charset=UTF-8");
         return viewResolver;
     }
-    @Bean
+
+    // Comentado porque si no da error
+    /*@Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
 
         configurer.setLocation(new ClassPathResource("application.properties"));
 
         return configurer;
-    }
+    }*/
 }

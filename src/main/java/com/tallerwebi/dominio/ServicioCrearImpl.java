@@ -25,9 +25,9 @@ public class ServicioCrearImpl implements ServicioCrear {
     ServicioImagen servicioImagen;
     RepositorioCrear repositorioCrear;
 
-    @Value("${upload.dir}")
+    /*@Value("${upload.dir}")*/
     private String UPLOAD_DIR;
-    @Value("${google.api.key}")
+    /*@Value("${google.api.key}")*/
     private String GOOGLE_API_KEY;
 
     @Autowired
