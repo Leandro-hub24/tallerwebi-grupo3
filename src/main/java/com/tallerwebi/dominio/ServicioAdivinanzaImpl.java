@@ -57,9 +57,14 @@ public class ServicioAdivinanzaImpl implements ServicioAdivinanza {
 
     @Transactional
     @Override
-    public boolean verificarSiEsCorrecto(String nombreImagen, String transcripcion, int cantidadIntentos, HttpSession session, int cantidadIntentos1, PuntosJuego puntos, Usuario usuario, double tiempo) {
-        if(transcripcion.equalsIgnoreCase(nombreImagen)){
+    public boolean verificarSiEsCorrecto(String nombreImagen, String transcripcion,
+                                         int cantidadIntentos, HttpSession session,
+                                         int cantidadIntentos1, PuntosJuego puntos,
+                                         Usuario usuario, double tiempo
+    ) {
+        if( transcripcion.equalsIgnoreCase(nombreImagen)){
             puntos.setPuntos(10);
+            calcularPuntos(puntos, cantidadIntentos, tiempo);
             this.opcionIngresada(puntos, usuario,cantidadIntentos,tiempo);
             return true;
 
@@ -74,6 +79,7 @@ public class ServicioAdivinanzaImpl implements ServicioAdivinanza {
     @Override
     public void siFallo3IntentosSetPuntos0(int cantidadIntentos, PuntosJuego puntos, Usuario usuario, double tiempo) {
         if (cantidadIntentos >=3){
+
             puntos.setPuntos(0);
             this.opcionIngresada(puntos, usuario,cantidadIntentos,tiempo);
         }

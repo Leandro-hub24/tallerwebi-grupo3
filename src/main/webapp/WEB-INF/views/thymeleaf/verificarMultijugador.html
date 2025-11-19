@@ -35,6 +35,7 @@
                     <h4 th:text="${esCorrecto} ? '✅ ¡Correcto!' : '❌ Incorrecto'"></h4>
                     <p><strong>Lo que dijiste:</strong> <span th:text="${transcripcion}">texto dicho</span></p>
                     <p><strong>Respuesta esperada:</strong> <span th:text="${respuestaCorrecta}">respuesta</span></p>
+                    <p><strong>Puntos conseguidos:</strong> <span th:text="${puntos}">puntos</span></p>
                 </div>
                 <div>
                     <p><strong>Alias reconocido:</strong> <span th:text="${aliasDetectado}">[alias]</span></p>
