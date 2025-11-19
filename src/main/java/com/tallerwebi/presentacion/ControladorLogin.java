@@ -73,8 +73,17 @@ public class ControladorLogin {
     }
 
     @RequestMapping(path = "/home", method = RequestMethod.GET)
-    public ModelAndView irAHome() {
+    public ModelAndView irAHome(HttpServletRequest request) {
+        if(request.getSession().getAttribute("id") == null){
+            return redirectLogin();
+        }
         return new ModelAndView("home");
+    }
+
+    private ModelAndView redirectLogin() {
+        ModelMap model = new ModelMap();
+        model.put("error", "Inicie sesión para jugar");
+        return new ModelAndView("redirect:/login", model);
     }
 
     @RequestMapping(path = "/", method = RequestMethod.GET)

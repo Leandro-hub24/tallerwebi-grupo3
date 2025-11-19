@@ -11,7 +11,7 @@
 <body style="background-color: #f8fef6; width: 100%; height: 85vh;">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 10vh">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Rompezabezas</a>
+        <a class="navbar-brand" th:href="@{/home}">BrainrotGames</a>
     </div>
 
 </nav>
@@ -25,16 +25,19 @@
             <div id="contenedor-piezas"></div>
         </article>
 
-        <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
-            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
-                <p>Tiempo:</p>
-                <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
-            </div>
-            <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
+        <aside class="w-25 h-100 d-flex flex-column align-items-center" style="background-color: #eff2f5; border: 1px solid #ccc;">
+
+            <div th:if="${mejorTiempo > 0}" style="padding: 1.5em; background-color: beige; border: 1px solid #ccc;" class="mt-4 fw-bold rounded-2 text-center">
                 <input id="record" th:value="${mejorTiempo}" class="d-none" hidden="hidden">
                 <p>Mi mejor tiempo: </p>
                 <span id="horasRecord">00</span>:<span id="minutosRecord">00</span>:<span id="segundosRecord">00</span>
             </div>
+
+            <div style="padding: 1.5em; background-color: beige; border: 1px solid #ccc;" class="mt-4 fw-bold rounded-2 text-center">
+                <p>Tiempo:</p>
+                <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
+            </div>
+
         </aside>
     </section>
 
