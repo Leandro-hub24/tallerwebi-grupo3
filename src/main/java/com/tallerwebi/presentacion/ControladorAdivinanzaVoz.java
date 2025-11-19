@@ -121,6 +121,7 @@ public class ControladorAdivinanzaVoz {
             model.addObject("imagenActual", imagenActual);
             model.addObject("aliasDetectado", aliasDetectado);
             model.addObject("intentos", cantidadIntentos);
+            model.addObject("puntos", puntos.getPuntos());
             return model;
         }
 
@@ -166,6 +167,7 @@ public class ControladorAdivinanzaVoz {
             model.addObject("imagenActual", imagenActual);
             model.addObject("aliasDetectado", aliasDetectado);
             model.addObject("intentos", cantidadIntentos);
+            model.addObject("puntos", puntos.getPuntos());
 
                 servicioPartida.terminarPartida(idPartida, usuarioId, "adivinanza");
 

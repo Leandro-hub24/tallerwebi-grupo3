@@ -4,6 +4,8 @@
     <title>Lobby Multijugador</title>
     <script th:src="@{/webjars/sockjs-client/1.5.1/sockjs.min.js}"></script>
     <script th:src="@{/webjars/stomp-websocket/2.3.3/stomp.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/rompecabezas.css}"/>
     <style>
         body { font-family: sans-serif; }
         #listaDePartidas li { padding: 5px; border-bottom: 1px solid #ccc; }
@@ -11,91 +13,96 @@
         .error { color: red; }
     </style>
 </head>
-<body>
+<body style="background-color: #f8fef6; width: 100%; height: 85vh;">
+    <main class="container d-flex flex-column">
+        <section class="d-flex flex-column mt-3">
 
-<h2>Lobby de Partidas</h2>
+            <h2>Lobby de Partidas</h2>
 
-<p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
+            <p th:if="${error}" th:text="|Error: ${error}|" class="error"></p>
 
-<form th:action="@{/adivinanza/partida}" method="post">
+            <form th:action="@{/adivinanza/partida}" method="post">
 
-    <input type="text" name="nombrePartida" placeholder="Nombre de tu partida" required>
-    <button type="submit">Crear Partida</button>
-</form>
+                <input type="text" name="nombrePartida" placeholder="Nombre de tu partida" required>
+                <button type="submit">Crear Partida</button>
+            </form>
+        </section>
+        <hr>
+        <section class="d-flex flex-column mt-5">
+            <h3>Partidas Disponibles:</h3>
 
-<hr>
-<h3>Partidas Disponibles:</h3>
+            <ul id="listaDePartidas">
+                <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
 
-<ul id="listaDePartidas">
-    <li th:each="partida : ${partidas}" th:id="'partida-' + ${partida.id}">
+                        <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1Nombre} + ')'">
+                            Nombre de la partida (Creada por: Jugador)
+                        </span>
 
-            <span th:text="${partida.nombre} + ' (Creada por: ' + ${partida.jugador1Nombre} + ')'">
-                Nombre de la partida (Creada por: Jugador)
-            </span>
+                    <a class="btn btn-info text-white" th:href="@{/adivinanza/partida/{id}(id=${partida.id})}">Unirse</a>
+                </li>
+            </ul>
+        </section>
+    </main>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        // Pasa las URLs generadas por Thymeleaf a constantes de JS
+        const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
+        const contextPath = /*[[@{/}]]*/ '/'; // Ej: /tallerwebi-base/
+        const partidaBaseUrl = /*[[@{/partida/}]]*/ '/partida/';
+        /*]]>*/
+    </script>
 
-        <a class="btn btn-info text-white" th:href="@{/adivinanza/partida/{id}(id=${partida.id})}">Unirse</a>
-    </li>
-</ul>
+    <script type="text/javascript">
+        var stompClient = null;
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    // Pasa las URLs generadas por Thymeleaf a constantes de JS
-    const wsConnectUrl = /*[[@{/mi-websocket}]]*/ '/mi-websocket';
-    const contextPath = /*[[@{/}]]*/ '/'; // Ej: /tallerwebi-base/
-    const partidaBaseUrl = /*[[@{/partida/}]]*/ '/partida/';
-    /*]]>*/
-</script>
-
-<script type="text/javascript">
-    var stompClient = null;
-
-    document.addEventListener("DOMContentLoaded", function() {
-        conectarAlLobby();
-    });
-
-    function conectarAlLobby() {
-        const tipoJuego = /*[[${tipoJuego}]]*/ 'rompecabezas';// Usamos la URL inyectada por Thymeleaf
-        var socket = new SockJS(wsConnectUrl);
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect({}, function (frame) {
-            console.log('Conectado al Lobby: ' + frame);
-
-            stompClient.subscribe('/topic/lobbyAdivinanza/nueva', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                agregarPartidaALista(partida);
-            });
-
-            stompClient.subscribe('/topic/lobbyAdivinanza/removida', function (mensaje) {
-                const partida = JSON.parse(mensaje.body);
-                removerPartidaDeLista(partida);
-            });
+        document.addEventListener("DOMContentLoaded", function() {
+            conectarAlLobby();
         });
-    }
 
-    function agregarPartidaALista(partida) {
-        const lista = document.getElementById("listaDePartidas");
-        const item = document.createElement("li");
-        item.id = "partida-" + partida.id;
+        function conectarAlLobby() {
+            const tipoJuego = /*[[${tipoJuego}]]*/ 'rompecabezas';// Usamos la URL inyectada por Thymeleaf
+            var socket = new SockJS(wsConnectUrl);
+            stompClient = Stomp.over(socket);
 
-        // Usamos la URL base inyectada por Thymeleaf
-        item.innerHTML = `
-         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-         <a href="/${tipoJuego}/partida/${partida.id}">Unirse</a>
-            `;
-        // item.innerHTML = `
-        //         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
-        //         <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
-        //     `;
-        lista.appendChild(item);
-    }
+            stompClient.connect({}, function (frame) {
+                console.log('Conectado al Lobby: ' + frame);
 
-    function removerPartidaDeLista(partida) {
-        const item = document.getElementById("partida-" + partida.id);
-        if (item) {
-            item.remove();
+                stompClient.subscribe('/topic/lobbyAdivinanza/nueva', function (mensaje) {
+                    const partida = JSON.parse(mensaje.body);
+                    agregarPartidaALista(partida);
+                });
+
+                stompClient.subscribe('/topic/lobbyAdivinanza/removida', function (mensaje) {
+                    const partida = JSON.parse(mensaje.body);
+                    removerPartidaDeLista(partida);
+                });
+            });
         }
-    }
-</script>
+
+        function agregarPartidaALista(partida) {
+            const lista = document.getElementById("listaDePartidas");
+            const item = document.createElement("li");
+            item.id = "partida-" + partida.id;
+
+            // Usamos la URL base inyectada por Thymeleaf
+            item.innerHTML = `
+             <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
+             <a href="/${tipoJuego}/partida/${partida.id}">Unirse</a>
+                `;
+            // item.innerHTML = `
+            //         <span>${partida.nombre} (Creada por: ${partida.jugador1})</span>
+            //         <a href="${partidaBaseUrl}${partida.id}">Unirse</a>
+            //     `;
+            lista.appendChild(item);
+        }
+
+        function removerPartidaDeLista(partida) {
+            const item = document.getElementById("partida-" + partida.id);
+            if (item) {
+                item.remove();
+            }
+        }
+    </script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>

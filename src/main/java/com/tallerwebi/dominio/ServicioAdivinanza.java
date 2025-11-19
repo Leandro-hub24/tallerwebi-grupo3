@@ -13,7 +13,16 @@ public interface ServicioAdivinanza {
 
     void calcularPuntos(PuntosJuego puntos, int cantidadIntentos, double cantidadTiempoEnSegundos);
 
-    boolean verificarSiEsCorrecto(String nombreImagen, String transcripcion, int cantidadIntentos, HttpSession session, int cantidadIntentos1, PuntosJuego puntos, Usuario usuario, double tiempo);
+
+
+
+
+    @Transactional
+    boolean verificarSiEsCorrecto(String nombreImagen, String transcripcion,
+                                  int cantidadIntentos, HttpSession session,
+                                  int cantidadIntentos1, PuntosJuego puntos,
+                                  Usuario usuario, double tiempo
+    );
 
     void siFallo3IntentosSetPuntos0(int cantidadIntentos, PuntosJuego puntos, Usuario usuario, double tiempo);
 
