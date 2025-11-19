@@ -24,7 +24,10 @@ public class ControladorLogin {
     }
 
     @RequestMapping("/login")
-    public ModelAndView irALogin() {
+    public ModelAndView irALogin(HttpServletRequest request) {
+        if(request.getSession().getAttribute("id") != null){
+            return new ModelAndView("redirect:/home");
+        }
 
         ModelMap modelo = new ModelMap();
         modelo.put("datosLogin", new DatosLogin());
