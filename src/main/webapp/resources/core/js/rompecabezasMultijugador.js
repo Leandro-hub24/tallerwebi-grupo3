@@ -154,7 +154,7 @@ function iniciarPartida(){
             }
         }
 
-        const piezasDesordenadas =  piezasArray //desordenarArray(piezasArray);
+        const piezasDesordenadas =  desordenarArray(piezasArray);
         let m = 0
 
         for (let y = 0; y < filas; y++) {

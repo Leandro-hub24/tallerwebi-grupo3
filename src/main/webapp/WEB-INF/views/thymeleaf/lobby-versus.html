@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Lobby Versus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/home}">BrainrotGames</a>
+    </div>
+
+</nav>
+
 <h1>Lobby Versus Multijugador</h1>
 
 <button id="btnCrear">Crear Nueva Partida</button>
@@ -99,5 +108,6 @@
         conectar();
     };
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

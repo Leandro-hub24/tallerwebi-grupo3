@@ -33,7 +33,12 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/home}">BrainrotGames</a>
+    </div>
 
+</nav>
 
 
 
@@ -93,7 +98,7 @@
             <input type="hidden" name="jugador2" th:value="${partida.jugador2Id}">
         </form>
         <p th:text="'Intentos actuales: ' + ${intentos}"></p>
-        <aside class="w-25 h-100 d-flex flex-column align-items-center bg-info">
+        <aside class="w-25 h-100 d-flex flex-column align-items-center">
             <div style="padding: 2em; background-color: beige" class="mt-4 fw-bold rounded-2 text-center">
                 <h1 th:text="${partida.nombre}">Nombre de la Partida</h1>
                 <p>
@@ -106,8 +111,7 @@
                     <span id="nombre-j2" th:text="${partida.jugador2Id} ? ${partida.jugador2Nombre} : '...'"></span>
                     <span th:if="${partida.jugador2Id != null and miUsuarioId == partida.jugador2Id}">(¡Eres tú!)</span>
                 </p>
-                <p>Tiempo:</p>
-                <span id="horas">00</span>:<span id="minutos">00</span>:<span id="segundos">00</span>
+
             </div>
         </aside>
     </div>
