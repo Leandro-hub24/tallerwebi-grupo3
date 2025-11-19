@@ -68,15 +68,27 @@
                     </select>
                 </div>
 
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Selecciona un fondo:</label>
+                    <select class="form-select" name="fondo" required>
+                        <option value="">-- Elige un fondo --</option>
+                        <option value="monstruoso">Campo</option>
+                        <option value="romantico">Montaña</option>
+                        <option value="elegante">Playa</option>
+                        <option value="abstracto">Ciudad</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-primary w-100">Crear Brainrot</button>
+
             </form>
         </div>
 
         <div class="col-md-6">
             <label class="form-label fw-bold">Resultado:</label>
             <div class="resultado-brainrot">
-                <img th:if="${brainrot != null}" th:src="@{/img/${brainrot}}" alt="Brainrot generado">
-                <span th:if="${brainrot == null}" class="text-muted">Aquí se mostrará tu Brainrot</span>
+                <img th:if="${brainrotCreado != null}" th:src="@{${brainrotCreado.imagen.url}}" alt="Brainrot generado">
+                <span th:if="${brainrotCreado == null}" class="text-muted">Aquí se mostrará tu Brainrot</span>
             </div>
 
         </div>

@@ -20,30 +20,43 @@ INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Saturno-saturn
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tralalero', '/img/versus/pjpngs/tralalero.png', 9);
 INSERT INTO Rompecabeza(id, nombre, urlImg, nivel) VALUES (null, 'Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 10);
 
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (1, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom', 1);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (2, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom', 1);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (3, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom',1);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (4, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom',1);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom', 1);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom', 1);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom',1);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom',1);
 
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (5, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom', 2);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (6, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom', 2);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (7, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom',2);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (8, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom',2);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'ballerinabg', 'Ballerina Capuchina', 'ballerinasound', 'ballerinashadow', 'ballerinacom', 2);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'capibarelobg', 'Capibarelo Cocosini', 'capisound', 'capishadow', 'capicom', 2);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'capuccinobg', 'Capuchino Assasino', 'capuccinosound', 'capuccinoshadow', 'capuccinocom',2);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'lirilibg', 'Lirili Larila', 'lirilisound', 'lirilishadow', 'lirilicom',2);
 
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (9, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom', 3);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (10, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom', 3);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (11, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom',3);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (12, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom',3);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'bobritobg', 'Bobrito Bandido', 'bobritosound', 'bobritoshadow', 'bobritocom', 3);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'bombinibg', 'Bombini Gusini', 'bombinisound', 'bombinishadow', 'bombinicom', 3);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'lirilibg', 'Lirili Larila', 'lirilisound', 'lirilishadow', 'lirilicom',3);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'frigobg', 'Frigo Camelo', 'frigosound', 'frigoshadow', 'frigocom',3);
 
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (13, 'tralalerobg', 'Tralalero tralala', 'tralalerosound', 'tralaleroshadow', 'tralalerocom', 4);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (14, 'tuntunbg', 'Tung tung tung Sahur', 'tuntunsound', 'tuntunshadow', 'tuntuncom', 4);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (15, 'chimpancinibg', 'Chimpancini bananini', 'chimpancinisound', 'chimpancinishadow', 'chimpancinicom',4);
-INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (16, 'brrbrrbg', 'Brr brr patapi', 'brrbrrsound', 'brrbrrshadow', 'brrbrrcom',4);
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
--- INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'adivinar');
-INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
-INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
-INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
-INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tuntuntunsahur', '/img/versus/pjpngs/tuntuntunsahur.png', 'crear');
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'bonecabg', 'Boneca Ambalabu', 'bonecasound', 'bonecashadow', 'bonecacom', 4);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'mateobg', 'Matteo', 'mateosound', 'mateoshadow', 'mateocom', 4);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'saturnitobg', 'Saturnito Saturnita', 'saturnitosound', 'saturnitoshadow', 'saturnitocom',4);
+INSERT INTO Brainrot(id, imagenFondo, imagenPersonaje, audio, imagenSombra, imagenCompleta, nivel) VALUES (null, 'tripibg', 'Trippi Troppi', 'tripisound', 'tripishadow', 'tripicom',4);
+
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Taza', '/img/Ingredientes/taza.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Tiburón', '/img/Ingredientes/tiburon.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Gato', '/img/Ingredientes/gato.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Perro', '/img/Ingredientes/perro.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Banana', '/img/Ingredientes/banana.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Pato', '/img/Ingredientes/pato.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Pizza', '/img/Ingredientes/pizza.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Calavera', '/img/Ingredientes/calavera.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Alienígena', '/img/Ingredientes/alienigena.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Robot', '/img/Ingredientes/robot.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Fantasma', '/img/Ingredientes/fantasma.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Ojo', '/img/Ingredientes/ojo.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Hamburguesa', '/img/Ingredientes/hamburguesa.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Carpincho', '/img/Ingredientes/carpincho.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Hongo', '/img/Ingredientes/hongo.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Cohete', '/img/Ingredientes/cohete.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Payaso', '/img/Ingredientes/payaso.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Espada', '/img/Ingredientes/espada.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Dinosaurio', '/img/Ingredientes/dinosaurio.png', 'crear');
+INSERT INTO IMAGEN(nombre, url, tipo) VALUES ('Queso', '/img/Ingredientes/queso.png', 'crear');
