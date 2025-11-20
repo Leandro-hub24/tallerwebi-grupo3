@@ -42,7 +42,6 @@ public class ControladorVersus {
         if (usuario == null) {
             return new ModelAndView("redirect:/login");
         }
-        Usuario usuarioDB = servicioUsuario.buscarUsuarioPorId(usuario.getId());
 
         ModelMap model = new ModelMap();
         model.put("usuario", usuario);
@@ -126,11 +125,12 @@ public class ControladorVersus {
         if (nivel > usuario.getVersusNivel()) {
             return new ModelAndView("redirect:/seleccionar-nivel");
         }
+
         Integer nivelActual = (Integer) request.getSession().getAttribute("NIVEL_ACTUAL");
         Integer preguntaActual = (Integer) request.getSession().getAttribute("PREGUNTA_ACTUAL");
         List<Brainrot> brainrotsDelNivel = (List<Brainrot>) request.getSession().getAttribute("BRAINROTS_NIVEL");
 
-        if (nivelActual == null || !nivelActual.equals(nivel)) {
+            if (nivelActual == null || !nivelActual.equals(nivel)) {
             brainrotsDelNivel = servicioVersus.obtenerTodosPorNivel(nivel);
 
             request.getSession().setAttribute("NIVEL_ACTUAL", nivel);
